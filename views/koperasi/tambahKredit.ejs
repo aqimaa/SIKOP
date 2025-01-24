@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Input Kredit Barang</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="flex">
+    <!-- Sidebar -->
+    <div class="w-72 text-white min-h-screen" style="background-color: #5D8736;">
+        <div class="p-4 text-2xl font-bold flex items-center">
+            <img src="D:\KULIAH\Magang\SIKOP-2\public\images\logo.png" alt="SIKOP Logo" class="h-8 mr-2" />
+            SIKOP
+          </div>
+        
+        <nav class="mt-4">
+            <a href="/dashboard" class="block p-4 hover:bg-gray-700">Dashboard</a>
+            <div class="block">
+                <p class="p-4">Simpanan</p>
+                <p class="p-4">Pinjaman</p>
+                
+                <div class="block">
+                    <p class="p-4">Kredit</p>
+                    <a href="/kredit-barang" class="block pl-8 py-2 hover:bg-gray-700">Kredit Barang</a>
+                    <a href="/kredit-elektronik" class="block pl-8 py-2 hover:bg-gray-700">Kredit Elektronik</a>
+                    <a href="/kredit-motor" class="block pl-8 py-2 hover:bg-gray-700">Kredit Motor</a>
+                    <a href="/kredit-umroh" class="block pl-8 py-2 hover:bg-gray-700">Kredit Umroh</a>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 p-8">
+        <h1 class="text-2xl mb-6">Form Input Kredit Barang</h1>
+
+        <!-- Form Section -->
+        <form class="space-y-6">
+            <!-- Data Anggota -->
+            <div class="bg-gray-100 p-6 rounded-lg">
+                <h2 class="text-lg font-semibold mb-4">Data Anggota</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block mb-2">No. Anggota</label>
+                        <input type="text" class="w-full border p-2 rounded" placeholder="Masukkan No. Anggota">
+                    </div>
+                    <div>
+                        <label class="block mb-2">Nama Anggota</label>
+                        <input type="text" class="w-full border p-2 rounded" placeholder="Masukkan Nama Anggota">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Kredit -->
+            <div class="bg-gray-100 p-6 rounded-lg">
+                <h2 class="text-lg font-semibold mb-4">Data Kredit</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block mb-2">Harga Pokok</label>
+                        <input type="number" class="w-full border p-2 rounded" placeholder="Masukkan Harga Pokok">
+                    </div>
+                    <div>
+                        <label class="block mb-2">Jangka Waktu (Bulan)</label>
+                        <input type="number" class="w-full border p-2 rounded" placeholder="Masukkan Jangka Waktu">
+                    </div>
+                    <div>
+                        <label class="block mb-2">Pokok DP (Angsuran 1)</label>
+                        <input type="number" class="w-full border p-2 rounded" placeholder="Masukkan Pokok DP">
+                    </div>
+                    <div>
+                        <label class="block mb-2">Margin (%)</label>
+                        <input type="number" class="w-full border p-2 rounded" placeholder="Masukkan Margin">
+                    </div>
+                    <div>
+                        <label class="block mb-2">Tanggal Perjanjian</label>
+                        <input type="date" class="w-full border p-2 rounded">
+                    </div>
+                    <div>
+                        <label class="block mb-2">Keterangan</label>
+                        <textarea class="w-full border p-2 rounded" placeholder="Masukkan Keterangan"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hasil Perhitungan -->
+            <div class="bg-blue-100 p-6 rounded-lg">
+                <h2 class="text-lg font-semibold mb-4">Hasil Perhitungan</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block mb-2">Angsuran Pokok</label>
+                        <input type="number" class="w-full border p-2 rounded" placeholder="Masukkan Angsuran Pokok">
+                    </div>
+                    <div>
+                        <label class="block mb-2">Margin per Bulan</label>
+                        <input type="number" class="w-full border p-2 rounded" placeholder="Masukkan Margin per Bulan">
+                    </div>
+                    <div>
+                        <label class="block mb-2">Total Angsuran per Bulan</label>
+                        <input type="number" class="w-full border p-2 rounded" placeholder="Masukkan Total Angsuran">
+                    </div>
+                    <div>
+                        <label class="block mb-2">Total Margin</label>
+                        <input type="number" class="w-full border p-2 rounded" placeholder="Masukkan Total Margin">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-end space-x-4">
+                <button type="reset" class="bg-gray-400 text-white px-4 py-2 rounded">Batal</button>
+                <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Simpan</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

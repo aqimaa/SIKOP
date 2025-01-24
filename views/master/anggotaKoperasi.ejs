@@ -5,11 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SIKOP - Sistem Informasi Koperasi</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body class="bg-gray-100 font-sans antialiased">
     <div class="flex">
         <!-- Sidebar -->
-        <div class="w-64 text-white min-h-screen p-4" style="background-color: #5D8736;">
+        <div class="w-72 text-white min-h-screen p-4" style="background-color: #5D8736;">
             <div class="flex items-center mb-8">
                 <img src="../../public/images/logo.png" alt="Logo" class="w-16 h-16 mr-4">
                 <div>
@@ -20,22 +26,23 @@
             <nav>
                 <ul>
                     <li class="mb-4">
-                        <a href="#" class="flex items-center space-x-2">
+                        <a href="#" class="flex items-center space-x-2 py-2">
                             <span class="material-icons">home</span>
                             <span>Dashboard</span>
                         </a>
                     </li>
-                    <li>
-                        <div class="flex items-center space-x-2 mb-2">
+                    <li class="mb-4">
+                        <div class="flex items-center space-x-2 cursor-pointer py-2" onclick="toggleMenu()">
                             <span class="material-icons">storage</span>
                             <span>Data Master</span>
+                            <span class="material-icons">expand_more</span>
                         </div>
-                        <ul class="pl-6">
+                        <ul class="pl-6 hidden" id="dataMasterMenu">
                             <li class="mb-2">
-                                <a href="#" class="block bg-white text-green-700 p-2 rounded">Anggota Koperasi</a>
+                                <a href="#" class="block text-white py-2">Anggota Koperasi</a>
                             </li>
                             <li>
-                                <a href="#" class="block text-white p-2">User</a>
+                                <a href="#" class="block text-white py-2">User</a>
                             </li>
                         </ul>
                     </li>
@@ -49,13 +56,17 @@
                 <button class="material-icons text-gray-600">arrow_back</button>
                 <div class="flex items-center space-x-4">
                     <span>admin</span>
-                    <img src="../../public/images/profile-user.png" alt="User" class="rounded-full w-10 h-10">
+                    <img src="../../public/images/profile-user.png" alt="User Avatar" class="rounded-full w-10 h-10">
                 </div>
             </header>
             
+            <!-- Content Container -->
             <div class="bg-white p-6 rounded-lg shadow-md">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-semibold">Data Anggota Koperasi</h2>
+                <!-- Centered Title -->
+                <div class="text-center mb-4">
+                    <h2 class="text-2xl font-bold">Data Anggota Koperasi</h2>
+                </div>
+                <div class="flex justify-end mb-4">
                     <button class="text-white px-4 py-2 rounded flex items-center space-x-2" style="background-color: #5D8736;">
                         <span class="material-icons">add</span>
                         <span>Tambah Anggota</span>
@@ -106,7 +117,11 @@
         </div>
     </div>
 
-    <!-- Material Icons -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('dataMasterMenu');
+            menu.classList.toggle('hidden');
+        }
+    </script>
 </body>
 </html>

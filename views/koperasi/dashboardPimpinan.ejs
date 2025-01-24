@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Pimpinan</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="flex">
+    <!-- Sidebar -->
+    <div class="w-64 h-screen bg-green-700 text-white">
+        <div class="p-4 text-2xl font-bold">SIKOP</div>
+        <nav class="mt-4">
+            <a href="/dashboard" class="block p-4 hover:bg-green-600">Dashboard</a>
+            <div class="block">
+                <p class="p-4">Lihat Data</p>
+                <a href="/simpanan" class="block pl-8 py-2 hover:bg-gray-700">Data Simpanan</a>
+                <a href="/pinjaman" class="block pl-8 py-2 hover:bg-gray-700">Data Pinjaman</a>
+                <a href="/kredit" class="block pl-8 py-2 hover:bg-gray-700">Data Kredit</a>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <!-- <div class="flex-1 bg-gray-100 ">
+        <h1 class="text-2xl mb-6">Selamat Datang di Aplikasi Sistem Informasi Koperasi</h1> -->
+        
+    <div class="flex-1 bg-gray-100">
+            <div class="flex justify-between items-center p-4 bg-white">
+                <h1 class="text-2xl">Selamat Datang di Aplikasi Sistem Informasi Koperasi</h1>
+                <div class="flex items-center">
+                    <span>Pimpinan</span>
+                    <img src="/path-to-avatar.png" class="w-10 h-10 rounded-full ml-2">
+                </div>
+            </div>
+    
+        
+        <!-- Stats Cards
+        <div class="grid grid-cols-3 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-xl mb-2">Jumlah Pegawai</h3>
+                <p class="text-3xl font-bold">5</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-xl mb-2">Jumlah Anggota</h3>
+                <p class="text-3xl font-bold">5</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-xl mb-2">Jumlah Peminjam Aktif</h3>
+                <p class="text-3xl font-bold">5</p>
+            </div>
+        </div> -->
+
+        <div class="p-8">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-3 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-green-700">
+                    <h3 class="text-gray-600">Jumlah Pegawai</h3>
+                    <p class="text-3xl font-bold">5</p>
+                    <div class="mt-2">
+                        <svg class="w-8 h-8 text-gray-400" /* Add user icon SVG here */></svg>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-green-700">
+                    <h3 class="text-gray-600">Jumlah Anggota</h3>
+                    <p class="text-3xl font-bold">5</p>
+                    <div class="mt-2">
+                        <svg class="w-8 h-8 text-gray-400" /* Add user icon SVG here */></svg>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-green-700">
+                    <h3 class="text-gray-600">Jumlah Pinjaman Aktif</h3>
+                    <p class="text-3xl font-bold">5</p>
+                    <div class="mt-2">
+                        <svg class="w-8 h-8 text-gray-400" /* Add user icon SVG here */></svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6">
+                <!-- LLDIKTI Section -->
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h2 class="text-xl font-semibold mb-4">LLDIKTI Wilayah X</h2>
+                    <img src="/public/images/dasbor.jpg" class="w-full object-contain rounded" alt="LLDIKTI Dashboard">
+                    <p class="text-gray-600 mb-4">Lorem ipsum dolor sit amet...</p>
+                    <a href="#" class="text-green-700">Website Resmi LLDIKTI Wilayah X</a>
+                </div>
+
+        <!-- Visi Misi Section -->
+        <div class="bg-white p-6 rounded-lg shadow-sm">
+            <h2 class="text-xl font-semibold mb-4">Visi Misi LLDIKTI Wilayah X</h2>
+            <div class="mb-6">
+                <h3 class="font-bold mb-2">Visi</h3>
+                <ol class="list-decimal pl-4 space-y-2">
+                    <li>Lorem ipsum dolor sit amet consectetur...</li>
+                    <li>Mollis lorem varius elementum...</li>
+                    <li>Suspendisse sollicitudin ut aliquam...</li>
+                </ol>
+            </div>
+            <div>
+                <h3 class="font-bold mb-2">Misi</h3>
+                <ol class="list-decimal pl-4 space-y-2">
+                    <li>Lorem ipsum dolor sit amet consectetur...</li>
+                    <li>Mollis lorem varius elementum...</li>
+                    <li>Suspendisse sollicitudin ut aliquam...</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

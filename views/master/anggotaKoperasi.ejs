@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIKOP - Sistem Informasi Koperasi</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 font-sans antialiased">
+    <div class="flex">
+        <!-- Sidebar -->
+        <div class="w-64 text-white min-h-screen p-4" style="background-color: #5D8736;">
+            <div class="flex items-center mb-8">
+                <img src="../../public/images/logo.png" alt="Logo" class="w-16 h-16 mr-4">
+                <div>
+                    <h1 class="text-2xl font-bold">SIKOP</h1>
+                    <p class="text-sm">Sistem Informasi Koperasi</p>
+                </div>
+            </div>
+            <nav>
+                <ul>
+                    <li class="mb-4">
+                        <a href="#" class="flex items-center space-x-2">
+                            <span class="material-icons">home</span>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <div class="flex items-center space-x-2 mb-2">
+                            <span class="material-icons">storage</span>
+                            <span>Data Master</span>
+                        </div>
+                        <ul class="pl-6">
+                            <li class="mb-2">
+                                <a href="#" class="block bg-white text-green-700 p-2 rounded">Anggota Koperasi</a>
+                            </li>
+                            <li>
+                                <a href="#" class="block text-white p-2">User</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-6">
+            <header class="flex justify-between items-center mb-8">
+                <button class="material-icons text-gray-600">arrow_back</button>
+                <div class="flex items-center space-x-4">
+                    <span>admin</span>
+                    <img src="../../public/images/profile-user.png" alt="User" class="rounded-full w-10 h-10">
+                </div>
+            </header>
+            
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold">Data Anggota Koperasi</h2>
+                    <button class="text-white px-4 py-2 rounded flex items-center space-x-2" style="background-color: #5D8736;">
+                        <span class="material-icons">add</span>
+                        <span>Tambah Anggota</span>
+                    </button>
+                </div>
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr>
+                            <th class="border px-4 py-2">No.</th>
+                            <th class="border px-4 py-2">Nomor Anggota</th>
+                            <th class="border px-4 py-2">NIP</th>
+                            <th class="border px-4 py-2">Nama</th>
+                            <th class="border px-4 py-2">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border px-4 py-2 text-center">1.</td>
+                            <td class="border px-4 py-2 text-center">643</td>
+                            <td class="border px-4 py-2 text-center">197810092005011002</td>
+                            <td class="border px-4 py-2">Ahmad Hidayat, S.Psi</td>
+                            <td class="border px-4 py-2 text-center">
+                                <button class="bg-blue-500 text-white px-2 py-1 rounded mr-2">
+                                    <span class="material-icons">edit</span>
+                                </button>
+                                <button class="bg-red-500 text-white px-2 py-1 rounded">
+                                    <span class="material-icons">delete</span>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="border px-4 py-2 text-center">2.</td>
+                            <td class="border px-4 py-2 text-center">728</td>
+                            <td class="border px-4 py-2 text-center">197912092009031002</td>
+                            <td class="border px-4 py-2">Adril Donal, M.Pd</td>
+                            <td class="border px-4 py-2 text-center">
+                                <button class="bg-blue-500 text-white px-2 py-1 rounded mr-2">
+                                    <span class="material-icons">edit</span>
+                                </button>
+                                <button class="bg-red-500 text-white px-2 py-1 rounded">
+                                    <span class="material-icons">delete</span>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</body>
+</html>

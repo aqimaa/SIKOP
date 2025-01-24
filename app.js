@@ -7,7 +7,7 @@ const flash = require('connect-flash');
 // const createError = require('http-errors');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const allRoutes = require('./route/indexRoutes.js');
+const allRoutes = require('./routes/indexRoutes.js');
 
 // Initialize app
 const app = express();
@@ -31,12 +31,13 @@ app.use(
 app.use(flash());
 
 // Default Home Route
-app.get('/', (req, res) => {
-  res.redirect('/auth/login'); // Redirect ke halaman login
+// Route to render the login page
+app.get('/login', (req, res) => {
+  res.render('auth/login'); // Ensure this matches the filename
 });
 
-// Routes
-app.use(allRoutes);
+// // Routes
+// app.use(allRoutes);
 
 // // Catch 404 and Forward to Error Handler
 // app.use((req, res, next) => {
@@ -66,3 +67,19 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
+
+// // app.js
+// const express = require('express');
+// const path = require('path');
+// const app = express();
+
+// app.set('views', path.join(__dirname, 'views'));
+// app.set('view engine', 'ejs');
+
+// app.get('/login', (req, res) => {
+//   res.render('auth/login');
+// });
+
+// app.listen(3000, () => {
+//   console.log('Server running on port 3000');
+// });

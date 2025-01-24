@@ -73,6 +73,11 @@ app.use((err, req, res, next) => {
   res.render('error');
 });
 
+// Handle 404 errors
+app.use('*', (req, res) => {
+  res.status(404).json({ message: 'Not Found Error!!' });
+});
+
 // Start Server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

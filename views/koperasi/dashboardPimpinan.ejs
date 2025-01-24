@@ -8,29 +8,68 @@
 </head>
 <body class="flex">
     <!-- Sidebar -->
-    <div class="w-64 h-screen bg-green-700 text-white">
-        <div class="p-4 text-2xl font-bold">SIKOP</div>
-        <nav class="mt-4">
-            <a href="/dashboard" class="block p-4 hover:bg-green-600">Dashboard</a>
-            <div class="block">
-                <p class="p-4">Lihat Data</p>
-                <a href="/simpanan" class="block pl-8 py-2 hover:bg-gray-700">Data Simpanan</a>
-                <a href="/pinjaman" class="block pl-8 py-2 hover:bg-gray-700">Data Pinjaman</a>
-                <a href="/kredit" class="block pl-8 py-2 hover:bg-gray-700">Data Kredit</a>
+    <div class="w-72 text-white min-h-screen p-4" style="background-color: #5D8736;">
+        <div class="flex items-center mb-8">
+            <img src="../../public/images/logo.png" alt="Logo" class="w-16 h-16 mr-7">
+            <div>
+                <h1 class="text-2xl font-bold">SIKOP</h1>
+                <p class="text-sm">Sistem Informasi Koperasi</p>
             </div>
+        </div>
+        <nav>
+            <ul>
+                <li class="mb-4">
+                    <a href="#" class="block p-3 py-3 hover:bg-green-900 rounded">
+                        <span class="material-icons"></span>
+                        <span class="ml-2">Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <button onclick="toggleDropdown()" class="flex items-center justify-between w-full focus:outline-none">
+                        <div class="flex items-center">
+                            <a href="#" class="block p-3 py-2 hover:">
+                                <span class="material-icons"></span>
+                                <span class="ml-2">Lihat Data</span>
+                            </a>
+                        </div>
+                        <img src="../../public/images/angle-small-down.png" alt="dropdown icon" class="w-6 h-6 transform transition-transform" id="dropdownIcon">
+                    </button>
+                    <ul id="dropdownMenu" class="pl-6 hidden">
+                        <li class="mb-2">
+                            <a href="#" class="block p-3 py-3 hover:bg-green-900 rounded">Data Simpanan</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="#" class="block p-3 py-3 hover:bg-green-900 rounded">Data Pinjaman</a>
+                        </li>
+                        <li>
+                            <a href="#" class="block p-3 py-3 hover:bg-green-900 rounded">Data Kredit</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
         </nav>
     </div>
+    
+    <script>
+    function toggleDropdown() {
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        const dropdownIcon = document.getElementById('dropdownIcon');
+        
+        dropdownMenu.classList.toggle('hidden');
+        dropdownIcon.style.transform = dropdownMenu.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+    }
+    </script>
 
     <!-- Main Content -->
     <!-- <div class="flex-1 bg-gray-100 ">
         <h1 class="text-2xl mb-6">Selamat Datang di Aplikasi Sistem Informasi Koperasi</h1> -->
         
     <div class="flex-1 bg-gray-100">
-            <div class="flex justify-between items-center p-4 bg-white">
-                <h1 class="text-2xl">Selamat Datang di Aplikasi Sistem Informasi Koperasi</h1>
+            <div class="flex justify-between shadow-md p-4 bg-white">
+                <h1 class="text-2xl font-bold">Selamat Datang di Aplikasi Sistem Informasi Koperasi</h1>
                 <div class="flex items-center">
                     <span>Pimpinan</span>
-                    <img src="/path-to-avatar.png" class="w-10 h-10 rounded-full ml-2">
+                    <img src="/public/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
                 </div>
             </div>
     

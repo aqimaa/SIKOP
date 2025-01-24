@@ -42,7 +42,7 @@
                             <a href="#" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Data Pinjaman</a>
                         </li>
                         <li class="mb-3">
-                            <a href="#" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Data Pinjaman</a>
+                            <a href="#" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Data Kredit</a>
                         </li>
                     </ul>
                 </li>
@@ -74,32 +74,30 @@
         <h1 class="text-4xl font-bold text-center mb-10">Data Kredit Koperasi</h1>
         
         <!-- Filter Section -->
-        <div class="bg-white rounded-lg shadow p-10 mb-10">
+        <div class="bg-white rounded-lg shadow p-10 mb-10" style="background: linear-gradient(to right, rgb(93, 135, 54) 10%, rgba(93, 135, 54, 0.8) 50%, rgba(93, 135, 54, 0.4) 70%), url('/public/images/backroundLldikti10.jpeg'); background-size:cover; background-position: right 20%;">
             <div class="flex gap-9">
-                    <div>
-                        <label class="block mb-2 font-bold">Tahun</label>
-                        <select class="border rounded-lg px-4 py-2 w-60 bg-white">
-                            <option>Pilih Tahun</option>
-                        </select>
-                    </div>
                 <div>
-                    <label class="block mb-2 font-bold">Bulan</label>
-                    <select class="border rounded-lg px-4 py-2 w-60 bg-white">
+                    <label class="block mb-2 text-xl font-semibold text-white">Tahun</label>
+                    <select class="border rounded-lg px-5 py-3 w-60 bg-white">
+                        <option>Pilih Tahun</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block mb-2 text-xl font-semibold text-white">Bulan</label>
+                    <select class="border rounded-lg px-5 py-3 w-60 bg-white">
                         <option>Pilih Bulan</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block mb-2 font-bold">Jenis Kredit</label>
-                    <select class="border rounded-lg px-4 py-2 w-60 bg-white">
+                    <label class="block mb-2 text-xl font-semibold text-white">Jenis Kredit</label>
+                    <select class="border rounded-lg px-5 py-3 w-60 bg-white">
                         <option>Pilih Kredit</option>
                     </select>
                 </div>
             </div>
-            <button style="background-color: #5D8736" class="text-white px-4 py-2 rounded mt-6">Tampilkan Data</button>
+            <button style="background-color: #fff" class="text-base  text-black font-base px-3 py-3 rounded mt-9">Tampilkan Data</button>
         </div>
-
-
-
+        
 
         <!-- Table -->
         <div class="bg-white rounded-lg shadow overflow-x-auto">
@@ -115,7 +113,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                    <tr class="border-b border-gray-200">
                         <td class="px-6 py-4">1</td>
                         <td class="px-6 py-4">197810092005011002</td>
                         <td class="px-6 py-4">AHMAD HIDAYAT S.Psi</td>
@@ -123,14 +121,46 @@
                         <td class="px-6 py-4">15</td>
                         <td class="px-6 py-4">150.000</td>
                     </tr>
+                    <tr class="border-b border-gray-200">
+                        <td class="px-6 py-4">2</td>
+                        <td class="px-6 py-4">198505122010012015</td>
+                        <td class="px-6 py-4">SITI NURHALIZA M.Pd</td>
+                        <td class="px-6 py-4">EFGH</td>
+                        <td class="px-6 py-4">20</td>
+                        <td class="px-6 py-4">200.000</td>
+                    </tr>
+                    <tr> 
+                        <td class="px-6 py-4">3</td>
+                        <td class="px-6 py-4">198505122010012016</td>
+                        <td class="px-6 py-4">BUDI SANTOSO M.Kom</td>
+                        <td class="px-6 py-4">IJKL</td>
+                        <td class="px-6 py-4">25</td>
+                        <td class="px-6 py-4">250.000</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
 
-        <!-- Actions -->
-        <div class="mt-4 flex justify-end gap-4">
-            <button class="text-blue-500">See more</button>
-            <button style="background-color: #5D8736" class="text-white px-4 py-2 rounded">Cetak Laporan</button>
+        <!-- Pagination -->
+        <div class="mt-4 flex items-center justify-between">
+            <div class="text-sm text-gray-600">
+                Menampilkan 1-10 dari 100 data
+            </div>
+            
+            <div class="flex gap-2">
+                <button class="px-3 py-1 border rounded" disabled>Previous</button>
+                <button class="px-3 py-1 border text-white rounded" style="background-color: #5D8736">1</button>
+                <button class="px-3 py-1 border rounded">2</button>
+                <button class="px-3 py-1 border rounded">3</button>
+                <button class="px-3 py-1 border rounded">4</button>
+                <span class="px-3 py-1">...</span>
+                <button class="px-3 py-1 border rounded">11</button>
+                <button class="px-3 py-1 border rounded">Next</button>
+            </div>
+
+            <button style="background-color: #5D8736" class="text-white px-4 py-2 rounded">
+                Cetak Laporan
+            </button>
         </div>
     </div>
 </body>

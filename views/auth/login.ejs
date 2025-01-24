@@ -22,6 +22,10 @@
             position: relative; /* Position relative for the form */
             z-index: 10; /* Bring the form in front of the background */
         }
+        .logo {
+            width: 70px; /* Adjust logo size */
+            height: 70px; /* Adjust logo size */
+        }
     </style>
 </head>
 <body class="flex min-h-screen relative">
@@ -31,7 +35,10 @@
     <!-- Login Form -->
     <div class="flex items-center justify-center w-full h-screen form-container">
         <div class="bg-white p-10 rounded-lg shadow-md w-full max-w-md"> <!-- Adjusted max-w-sm to max-w-md for a wider form -->
-            <h2 class="text-4xl font-bold text-center mb-6">Login SIKOP</h2> <!-- Increased text size -->
+            <div class="flex items-center mb-6"> <!-- Flex container for logo and title -->
+                <img src="/images/logo.png" alt="Logo" class="logo mr-3"> <!-- Logo -->
+                <h2 class="text-4xl font-bold">Login SIKOP</h2> <!-- Increased text size -->
+            </div>
             <form action="/auth/login" method="POST">
                 <div class="mb-6"> <!-- Increased margin bottom -->
                     <label for="email" class="block text-lg font-medium text-gray-700">Email</label> <!-- Increased text size -->

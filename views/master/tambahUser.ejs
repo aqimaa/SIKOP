@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIKOP - Sistem Informasi Koperasi</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans antialiased">
+    <div class="flex">
+        <!-- Sidebar -->
+        <div class="w-72 text-white min-h-screen p-4" style="background-color: #5D8736;">
+            <div class="flex items-center mb-8">
+                <img src="../../public/images/logo.png" alt="Logo" class="w-16 h-16 mr-4">
+                <div>
+                    <h1 class="text-2xl font-bold">SIKOP</h1>
+                    <p class="text-sm">Sistem Informasi Koperasi</p>
+                </div>
+            </div>
+            <nav>
+                <ul>
+                    <li class="mb-4">
+                        <a href="#" class="flex items-center space-x-2 py-2">
+                            <span class="material-icons">home</span>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="mb-4">
+                        <div class="flex items-center space-x-2 cursor-pointer py-2" onclick="toggleMenu()">
+                            <span class="material-icons">storage</span>
+                            <span>Data Master</span>
+                            <span class="material-icons">expand_more</span>
+                        </div>
+                        <ul class="pl-6 hidden" id="dataMasterMenu">
+                            <li class="mb-2">
+                                <a href="#" class="block text-white py-2">Anggota Koperasi</a>
+                            </li>
+                            <li>
+                                <a href="#" class="block text-white py-2">User</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-6">
+            <header class="flex justify-between items-center mb-8">
+                <button class="material-icons text-gray-600">arrow_back</button>
+                <div class="flex items-center space-x-4">
+                    <span>admin</span>
+                    <img src="../../public/images/profile-user.png" alt="User Avatar" class="rounded-full w-10 h-10">
+                </div>
+            </header>
+            
+            <!-- Content Container -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <!-- Centered Title -->
+                <div class="text-center mb-4">
+                    <h2 class="text-2xl font-bold">Tambah User</h2>
+                </div>
+
+                <!-- Form -->
+                <form class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700">Nama</label>
+                        <input type="text" class="w-full p-2 border border-gray-300 rounded">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700">Email</label>
+                        <input type="email" class="w-full p-2 border border-gray-300 rounded">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700">Password</label>
+                        <input type="password" class="w-full p-2 border border-gray-300 rounded">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700">Role User</label>
+                        <select class="w-full p-2 border border-gray-300 rounded">
+                            <option>Pilih Role</option>
+                            <option>Super Admin</option>
+                            <option>Pimpinan</option>
+                            <option>Admin Keuangan</option>
+                        </select>
+                    </div>
+                    <div class="text-center mt-12">
+                        <button type="submit" class="bg-green-700 text-white px-4 py-2 rounded w-full" style="background-color: #5D8736;">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('dataMasterMenu');
+            menu.classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>

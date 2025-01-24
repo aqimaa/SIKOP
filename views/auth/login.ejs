@@ -7,31 +7,48 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
         .bg-blur {
-            background-image: url('/images/backroundLldikti10.jpeg'); /* Ganti dengan jalur gambar lokal */
+            background-image: url('/images/backroundLldikti10.jpeg'); /* Local image path */
             background-size: cover;
             background-position: center;
-            filter: blur(8px);
+            filter: blur(8px); /* Increased blur for a more pronounced effect */
+            position: absolute; /* Positioning for full coverage */
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0; /* Send the background to the back */
+        }
+        .form-container {
+            position: relative; /* Position relative for the form */
+            z-index: 10; /* Bring the form in front of the background */
+        }
+        .logo {
+            width: 70px; /* Adjust logo size */
+            height: 70px; /* Adjust logo size */
         }
     </style>
 </head>
-<body class="flex min-h-screen">
-    <!-- Left Side Image -->
-    <div class="hidden lg:block w-1/2 bg-blur h-screen"></div>
+<body class="flex min-h-screen relative">
+    <!-- Background Image -->
+    <div class="bg-blur"></div>
 
-    <!-- Right Side Login Form -->
-    <div class="flex items-center justify-center w-full lg:w-1/2 bg-gray-100 p-8">
-        <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
-            <h2 class="text-2xl font-bold text-center mb-6">Login</h2>
-            <form action="/login" method="POST">
-                <div class="mb-4">
-                    <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
-                    <input type="text" id="username" name="username" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500" placeholder="your username">
+    <!-- Login Form -->
+    <div class="flex items-center justify-center w-full h-screen form-container">
+        <div class="bg-white p-10 rounded-lg shadow-md w-full max-w-md"> <!-- Adjusted max-w-sm to max-w-md for a wider form -->
+            <div class="flex items-center mb-6"> <!-- Flex container for logo and title -->
+                <img src="/images/logo.png" alt="Logo" class="logo mr-3"> <!-- Logo -->
+                <h2 class="text-4xl font-bold">Login SIKOP</h2> <!-- Increased text size -->
+            </div>
+            <form action="/auth/login" method="POST">
+                <div class="mb-6"> <!-- Increased margin bottom -->
+                    <label for="email" class="block text-lg font-medium text-gray-700">Email</label> <!-- Increased text size -->
+                    <input type="text" id="email" name="email" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500" placeholder="youremail@mail.com"> <!-- Increased padding -->
                 </div>
-                <div class="mb-4">
-                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                    <input type="password" id="password" name="password" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500" placeholder="••••••••">
+                <div class="mb-6"> <!-- Increased margin bottom -->
+                    <label for="password" class="block text-lg font-medium text-gray-700">Password</label> <!-- Increased text size -->
+                    <input type="password" id="password" name="password" required class="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500" placeholder="••••••••"> <!-- Increased padding -->
                 </div>
-                <button type="submit" class="w-full bg-green-500 text-white font-semibold py-2 rounded-md hover:bg-green-600 transition duration-200">Login</button>
+                <button type="submit" style="background-color: #5D8736;" class="w-full text-white font-semibold py-3 rounded-md hover:bg-green-600 transition duration-200 text-lg">Login</button> <!-- Custom button color -->
             </form>
         </div>
     </div>

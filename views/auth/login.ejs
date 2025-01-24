@@ -5,12 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .bg-blur {
+            background-image: url('/images/backroundLldikti10.jpeg'); /* Ganti dengan jalur gambar lokal */
+            background-size: cover;
+            background-position: center;
+            filter: blur(8px);
+        }
+    </style>
 </head>
 <body class="flex min-h-screen">
     <!-- Left Side Image -->
-    <div class="hidden lg:block w-1/2 bg-cover bg-center" style="background-image: url('https://th.bing.com/th/id/OIP.TVNSKZ16fuQSM-N7_RwisgHaE8?rs=1&pid=ImgDetMain');">
-        <!-- You can replace the URL above with your desired image -->
-    </div>
+    <div class="hidden lg:block w-1/2 bg-blur h-screen"></div>
 
     <!-- Right Side Login Form -->
     <div class="flex items-center justify-center w-full lg:w-1/2 bg-gray-100 p-8">
@@ -19,17 +25,14 @@
             <form action="/login" method="POST">
                 <div class="mb-4">
                     <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
-                    <input type="username" id="username" name="username" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500" placeholder="your username">
+                    <input type="text" id="username" name="username" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500" placeholder="your username">
                 </div>
                 <div class="mb-4">
                     <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
                     <input type="password" id="password" name="password" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500" placeholder="••••••••">
                 </div>
-                <button type="submit" class="w-full bg-blue-500 text-white font-semibold py-2 rounded-md hover:bg-blue-600 transition duration-200">Login</button>
+                <button type="submit" class="w-full bg-green-500 text-white font-semibold py-2 rounded-md hover:bg-green-600 transition duration-200">Login</button>
             </form>
-            <p class="mt-4 text-center text-sm text-gray-600">
-                Don't have an account? <a href="/register" class="text-blue-500 hover:underline">Register</a>
-            </p>
         </div>
     </div>
 </body>

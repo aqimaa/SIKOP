@@ -3,92 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anggota Koperasi</title>
+    <title>Data Anggota Koperasi</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <style>
-        .hidden {
-            display: none;
-        }
-    </style>
 </head>
-<body class="bg-gray-100 font-sans antialiased">
-    <div class="flex">
-        <!-- Sidebar -->
-        <div class="w-72 text-white min-h-screen p-4" style="background-color: #5D8736;">
-            <div class="flex items-center mb-8">
-                <img src="../../public/images/logo.png" alt="Logo" class="w-16 h-16 mr-4">
-                <div>
-                    <h1 class="text-2xl font-bold">SIKOP</h1>
-                    <p class="text-sm">Sistem Informasi Koperasi</p>
-                </div>
+<body class="flex bg-gray-100">
+    <!-- Sidebar -->
+    <div class="w-72 text-white min-h-screen p-4 fixed" style="background-color: #5D8736;">
+        <div class="flex items-center mb-8">
+            <img src="../../public/images/logo.png" alt="Logo" class="w-16 h-16 mr-7">
+            <div>
+                <h1 class="text-2xl font-bold">SIKOP</h1>
+                <p class="text-sm">Sistem Informasi Koperasi</p>
             </div>
-            <nav>
-                <ul>
-                    <li class="mb-4">
-                        <a href="#" class="flex items-center space-x-2 py-2">
-                            <span class="material-icons">home</span>
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
-                    <li class="mb-4">
-                        <div class="flex items-center space-x-2 cursor-pointer py-2" onclick="toggleMenu()">
-                            <span class="material-icons">storage</span>
-                            <span>Data Master</span>
-                            <span class="material-icons">expand_more</span>
+        </div>
+        <nav>
+            <ul>
+                <li class="mb-4">
+                    <a href="../master/dashboardSuperadmin.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
+                        <img src="/public/images/vectordasbor.png" alt="lihat data icon" class="w=5 h-5 ">
+                        <span class="ml-2 text-xl ml-5">Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <button onclick="toggleDropdown()" class="flex items-center justify-between w-full focus:outline-none">
+                        <div class="flex items-center">
+                            <a href="#" class="flex items-center block p-6 py-3 hover:">
+                                <img src="/public/images/lihatdata.png" alt="lihat data icon" class="w=5 h-5 ">
+                                <span class="ml-2 text-xl ml-5">Data Master</span>
+                            </a>
                         </div>
-                        <ul class="pl-6 hidden" id="dataMasterMenu">
-                            <li class="mb-2">
-                                <a href="#" class="block text-white py-2">Anggota Koperasi</a>
-                            </li>
-                            <li>
-                                <a href="#" class="block text-white py-2">User</a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </nav>
+                        <img src="../../public/images/angle-small-down.png" alt="dropdown icon" class="w-6 h-6 transform transition-transform" id="dropdownIcon">
+                    </button>
+                    <ul id="dropdownMenu" class="pl-6 hidden">
+                        <li class="mb-2">
+                            <a href="../master/anggotaKoperasi.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Anggota Koperasi</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="../master/userKoperasi.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">User</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    
+    <script>
+    function toggleDropdown() {
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        dropdownMenu.classList.toggle('hidden');
+    }
+    </script>
+
+    <!-- Main Content -->
+    <div class="flex-1 ml-72">
+        <div class="flex justify-between shadow-md p-4 bg-white">
+            <h1 class="text-2xl"></h1>
+            <div class="flex items-center">
+                <span>Super Admin</span>
+                <img src="/public/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
+            </div>
         </div>
 
-        <!-- Main Content -->
-        <div class="flex-1 p-6">
-            <header class="flex justify-between items-center mb-8">
-                <button class="material-icons text-gray-600">arrow_back</button>
-                <div class="flex items-center space-x-4">
-                    <span>admin</span>
-                    <img src="../../public/images/profile-user.png" alt="User Avatar" class="rounded-full w-10 h-10">
-                </div>
-            </header>
-            
-            <!-- Content Container -->
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <!-- Centered Title -->
-                <div class="text-center mb-4">
-                    <h2 class="text-2xl font-bold">Data Anggota Koperasi</h2>
-                </div>
-                <div class="flex justify-end mb-4">
-                    <button class="text-white px-4 py-2 rounded flex items-center space-x-2" style="background-color: #5D8736;">
-                        <span class="material-icons">add</span>
-                        <span>Tambah Anggota</span>
-                    </button>
-                </div>
-                <table class="w-full border-collapse">
-                    <thead>
+        <div class="flex-1 p-8">
+            <div class="text-center mb-4">
+                <h2 class="text-2xl font-bold">Data Anggota Koperasi</h2>
+            </div>
+            <div class="flex justify-end mb-4">
+                <button class="text-white px-4 py-2 rounded flex items-center space-x-2" style="background-color: #5D8736;">
+                    <span class="material-icons">add</span>
+                    <span>Tambah Anggota</span>
+                </button>
+            </div>        
+
+            <!-- Table -->
+            <div class="bg-white rounded-lg shadow overflow-x-auto">
+                <table class="w-full">
+                    <thead style="background-color: #5D8736;">
                         <tr>
-                            <th class="border px-4 py-2">No.</th>
-                            <th class="border px-4 py-2">Nomor Anggota</th>
-                            <th class="border px-4 py-2">NIP</th>
-                            <th class="border px-4 py-2">Nama</th>
-                            <th class="border px-4 py-2">Aksi</th>
+                            <th class="px-6 py-3 text-left text-white">No.</th>
+                            <th class="px-6 py-3 text-left text-white">Nomor Anggota</th>
+                            <th class="px-6 py-3 text-left text-white">NIP</th>
+                            <th class="px-6 py-3 text-left text-white">Nama</th>
+                            <th class="px-6 py-3 text-left text-white">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td class="border px-4 py-2 text-center">1.</td>
-                            <td class="border px-4 py-2 text-center">643</td>
-                            <td class="border px-4 py-2 text-center">197810092005011002</td>
-                            <td class="border px-4 py-2">Ahmad Hidayat, S.Psi</td>
-                            <td class="border px-4 py-2 text-center">
+                        <tr class="border-b border-gray-200">
+                            <td class="px-6 py-4">1</td>
+                            <td class="px-6 py-4">643</td>
+                            <td class="px-6 py-4">197810092005011002</td>
+                            <td class="px-6 py-4">Ahmad Hidayat, S.Psi</td>
+                            <td class="px-6 py-4">
                                 <button class="bg-blue-500 text-white px-2 py-1 rounded mr-2">
                                     <span class="material-icons">edit</span>
                                 </button>
@@ -97,18 +103,14 @@
                                 </button>
                             </td>
                         </tr>
-                        <tr>
-                            <td class="border px-4 py-2 text-center">2.</td>
-                            <td class="border px-4 py-2 text-center">728</td>
-                            <td class="border px-4 py-2 text-center">197912092009031002</td>
-                            <td class="border px-4 py-2">Adril Donal, M.Pd</td>
-                            <td class="border px-4 py-2 text-center">
-                                <button class="bg-blue-500 text-white px-2 py-1 rounded mr-2">
-                                    <span class="material-icons">edit</span>
-                                </button>
-                                <button class="bg-red-500 text-white px-2 py-1 rounded">
-                                    <span class="material-icons">delete</span>
-                                </button>
+                        <tr class="border-b border-gray-200">
+                            <td class="px-6 py-4">2</td>
+                            <td class="px-6 py-4">728</td>
+                            <td class="px-6 py-4">197912092009031002</td>
+                            <td class="px-6 py-4">Adril Donal, M.Pd</td>
+                            <td class="px-6 py-4">
+                                <button class="bg-blue-500 text-white px-2 py-1 rounded mr-2"><span class="material-icons">edit</span></button>
+                                <button class="bg-red-500 text-white px-2 py-1 rounded"><span class="material-icons">delete</span></button>
                             </td>
                         </tr>
                     </tbody>
@@ -116,12 +118,5 @@
             </div>
         </div>
     </div>
-
-    <script>
-        function toggleMenu() {
-            const menu = document.getElementById('dataMasterMenu');
-            menu.classList.toggle('hidden');
-        }
-    </script>
 </body>
 </html>

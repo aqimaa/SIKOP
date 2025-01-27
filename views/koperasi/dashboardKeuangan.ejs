@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Pimpinan</title>
+    <title>Dashboard Admin Keuangan</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body class="flex">
     <!-- Sidebar -->
@@ -19,43 +20,32 @@
         <nav>
             <ul>
                 <li class="mb-4">
-                    <a href="#" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
+                    <a href="../koperasi/dashboardKeuangan.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
                         <img src="/public/images/vectordasbor.png" alt="lihat data icon" class="w=5 h-5 ">
                         <span class="ml-2 text-xl ml-5">Dashboard</span>
                     </a>
                 </li>
-                <li>
-                    <button onclick="toggleDropdown()" class="flex items-center justify-between w-full focus:outline-none">
-                        <div class="flex items-center">
-                            <a href="#" class="flex items-center block p-6 py-3 hover:">
-                                <img src="/public/images/lihatdata.png" alt="lihat data icon" class="w=5 h-5 ">
-                                <span class="ml-2 text-xl ml-5">Lihat Data</span>
-                            </a>
-                        </div>
-                        <img src="../../public/images/angle-small-down.png" alt="dropdown icon" class="w-6 h-6 transform transition-transform" id="dropdownIcon">
-                    </button>
-                    <ul id="dropdownMenu" class="pl-6 hidden">
-                        <li class="mb-2">
-                            <a href="../koperasi/simpananPimpinan.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Data Simpanan</a>
-                        </li>
-                        <li class="mb-2">
-                            <a href="../koperasi/pinjamanPimpinan.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Data Pinjaman</a>
-                        </li>
-                        <li class="mb-3">
-                            <a href="../koperasi/kreditPimpinan.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Data Kredit</a>
-                        </li>
-                    </ul>
+                <li class="mb-4">
+                    <a href="#" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
+                    <span class="material-icons">account_balance_wallet</span>
+                    <span class="ml-2 text-xl ml-5">Simpanan</span>
+                    </a>
+                </li>
+                <li class="mb-4">
+                    <a href="#" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
+                    <span class="material-icons">credit_card</span>
+                    <span class="ml-2 text-xl ml-5">Pinjaman</span>
+                    </a>
+                </li>
+                <li class="mb-4">
+                    <a href="#" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
+                    <span class="material-icons">attach_money</span>
+                    <span class="ml-2 text-xl ml-5">Kredit</span>
+                    </a>
                 </li>
             </ul>
         </nav>
     </div>
-    
-    <script>
-    function toggleDropdown() {
-        const dropdownMenu = document.getElementById('dropdownMenu');
-        dropdownMenu.classList.toggle('hidden');
-    }
-    </script>
 
     <!-- Main Content -->
     <!-- <div class="flex-1 bg-gray-100 ">
@@ -65,7 +55,7 @@
             <div class="flex justify-between shadow-md p-4 bg-white">
                 <h1 class="text-2xl font-bold">Selamat Datang di Aplikasi Sistem Informasi Koperasi</h1>
                 <div class="flex items-center">
-                    <span>Pimpinan</span>
+                    <span>Admin Keuangan</span>
                     <img src="/public/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
                 </div>
             </div>

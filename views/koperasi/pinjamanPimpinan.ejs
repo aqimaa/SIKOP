@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Pinjaman</title>
+    <title>Dashboard Pimpinan</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="flex">
     <!-- Sidebar -->
-    <div class="w-72 text-white min-h-screen p-4" style="background-color: #5D8736;">
+    <div class="w-72 text-white min-h-screen p-4 fixed" style="background-color: #5D8736;">
         <div class="flex items-center mb-8">
             <img src="../../public/images/logo.png" alt="Logo" class="w-16 h-16 mr-7">
             <div>
@@ -19,7 +19,7 @@
         <nav>
             <ul>
                 <li class="mb-4">
-                    <a href="#" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
+                    <a href="../koperasi/dashboardPimpinan.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
                         <img src="/public/images/vectordasbor.png" alt="lihat data icon" class="w=5 h-5 ">
                         <span class="ml-2 text-xl ml-5">Dashboard</span>
                     </a>
@@ -36,13 +36,13 @@
                     </button>
                     <ul id="dropdownMenu" class="pl-6 hidden">
                         <li class="mb-2">
-                            <a href="#" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Data Simpanan</a>
+                            <a href="../koperasi/simpananPimpinan.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Data Simpanan</a>
                         </li>
                         <li class="mb-2">
-                            <a href="#" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Data Pinjaman</a>
+                            <a href="../koperasi/pinjamanPimpinan.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Data Pinjaman</a>
                         </li>
                         <li class="mb-3">
-                            <a href="#" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Data Kredit</a>
+                            <a href="../koperasi/kreditPimpinan.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Data Kredit</a>
                         </li>
                     </ul>
                 </li>
@@ -53,15 +53,12 @@
     <script>
     function toggleDropdown() {
         const dropdownMenu = document.getElementById('dropdownMenu');
-        const dropdownIcon = document.getElementById('dropdownIcon');
-        
         dropdownMenu.classList.toggle('hidden');
-        dropdownIcon.style.transform = dropdownMenu.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
     }
     </script>
 
     <!-- Main Content -->
-    <div class="flex-1 bg-gray-100">
+    <div class="flex-1 bg-gray-100 ml-72">
         <div class="flex justify-between shadow-md p-4 bg-white">
             <h1 class="text-2xl"></h1>
             <div class="flex items-center">

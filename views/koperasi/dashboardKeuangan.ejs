@@ -26,7 +26,7 @@
                     </a>
                 </li>
                 <li class="mb-4">
-                    <a href="#" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
+                    <a href="/views/koperasi/simpananKeuangan/lihatSimpanan.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
                     <span class="material-icons">account_balance_wallet</span>
                     <span class="ml-2 text-xl ml-5">Simpanan</span>
                     </a>
@@ -37,15 +37,41 @@
                     <span class="ml-2 text-xl ml-5">Pinjaman</span>
                     </a>
                 </li>
-                <li class="mb-4">
-                    <a href="/views/koperasi/lihatKreditBarang.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
-                    <span class="material-icons">attach_money</span>
-                    <span class="ml-2 text-xl ml-5">Kredit</span>
-                    </a>
+                <li>
+                    <button onclick="toggleDropdown()" class="flex items-center justify-between w-full focus:outline-none">
+                        <div class="flex items-center">
+                            <a href="#" class="flex items-center block p-6 py-3">
+                                <span class="material-icons">attach_money</span>
+                                <span class="ml-2 text-xl ml-5">Kredit</span>
+                            </a>
+                        </div>
+                        <img src="../../public/images/angle-small-down.png" alt="dropdown icon" class="w-6 h-6 transform transition-transform" id="dropdownIcon">
+                    </button>
+                    <ul id="dropdownMenu" class="pl-6 hidden">
+                        <li class="mb-2">
+                            <a href="/views/koperasi/kreditKeuangan/lihatKreditBarang.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Barang</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="#" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Elektronik</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="#" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Motor</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="#" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Umroh</a>
+                        </li>
+                    </ul>
                 </li>
             </ul>
         </nav>
     </div>
+
+    <script>
+        function toggleDropdown() {
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            dropdownMenu.classList.toggle('hidden');
+        }
+    </script>
 
     <!-- Main Content -->
     <!-- <div class="flex-1 bg-gray-100 ">

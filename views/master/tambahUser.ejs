@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah User</title>
+    <title>Dashboard Super Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<body class="flex bg-gray-100">
+<body class="flex">
     <!-- Sidebar -->
     <div class="w-72 text-white min-h-screen p-4 fixed" style="background-color: #5D8736;">
         <div class="flex items-center mb-8">
-            <img src="../../public/images/logo.png" alt="Logo" class="w-16 h-16 mr-7">
+            <img src="/public/images/logo.png" alt="Logo" class="w-16 h-16 mr-7">
             <div>
                 <h1 class="text-2xl font-bold">SIKOP</h1>
                 <p class="text-sm">Sistem Informasi Koperasi</p>
@@ -20,7 +20,7 @@
         <nav>
             <ul>
                 <li class="mb-4">
-                    <a href="../master/dashboardSuperadmin.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
+                    <a href="/views/master/dashboardSuperadmin.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
                         <img src="/public/images/vectordasbor.png" alt="lihat data icon" class="w=5 h-5 ">
                         <span class="ml-2 text-xl ml-5">Dashboard</span>
                     </a>
@@ -33,14 +33,14 @@
                                 <span class="ml-2 text-xl ml-5">Data Master</span>
                             </a>
                         </div>
-                        <img src="../../public/images/angle-small-down.png" alt="dropdown icon" class="w-6 h-6 transform transition-transform" id="dropdownIcon">
+                        <img src="/public/images/angle-small-down.png" alt="dropdown icon" class="w-6 h-6 transform transition-transform" id="dropdownIcon">
                     </button>
                     <ul id="dropdownMenu" class="pl-6 hidden">
                         <li class="mb-2">
-                            <a href="../master/anggotaKoperasi.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Anggota Koperasi</a>
+                            <a href="/views/master/anggotaKoperasi.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Anggota Koperasi</a>
                         </li>
                         <li class="mb-2">
-                            <a href="../master/userKoperasi.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">User</a>
+                            <a href="/views/master/userKoperasi.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">User</a>
                         </li>
                     </ul>
                 </li>

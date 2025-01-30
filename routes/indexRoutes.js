@@ -14,8 +14,10 @@ router.get('/', (req, res) => {
   res.redirect('/login');
 });
 router.get("/login", loginController.getLogin);
-
 router.post('/login', loginController.login);
+router.get('/changePassword', loginController.getChangePassword);
+router.post('/changePassword', loginController.changePassword);
+
 router.post('/logout', loginController.logout);
 
 // Route untuk Dashboard

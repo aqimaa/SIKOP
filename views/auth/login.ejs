@@ -10,7 +10,7 @@
             background-image: url('/images/backroundLldikti10.jpeg'); /* Local image path */
             background-size: cover;
             background-position: center;
-            filter: blur(8px); /* Increased blur for a more pronounced effect */
+            filter: blur(6px); /* Increased blur for a more pronounced effect */
             position: absolute; /* Positioning for full coverage */
             top: 0;
             left: 0;
@@ -28,12 +28,15 @@
         }
     </style>
 </head>
-<body class="flex min-h-screen relative">
+<body class="flex flex-col min-h-screen relative">
+    <!-- Header -->
+    <% include ../partials/layout/header %>  
+
     <!-- Background Image -->
     <div class="bg-blur"></div>
 
     <!-- Login Form -->
-    <div class="flex items-center justify-center w-full h-screen form-container">
+    <div class="flex items-center justify-center flex-grow w-full form-container">
         <div class="bg-white p-10 rounded-lg shadow-md w-full max-w-md"> <!-- Adjusted max-w-sm to max-w-md for a wider form -->
             <div class="flex items-center mb-6"> <!-- Flex container for logo and title -->
                 <img src="/images/logo.png" alt="Logo" class="logo mr-3"> <!-- Logo -->

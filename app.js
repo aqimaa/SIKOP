@@ -30,9 +30,6 @@ app.use(
 app.use(flash());
 
 // Default Home Route
-// app.get('/login', (req, res) => {
-//   res.render('auth/login'); // Ensure this matches the filename
-// });
 app.use(allRoutes);
 
 // Handle 404 errors

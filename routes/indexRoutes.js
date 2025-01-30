@@ -10,7 +10,9 @@ const loginController = require("../controllers/auth/loginController.js");
 // const masterController = require('../controllers/master/masterController');
 
 // Route untuk Login
-router.get('/', loginController.getLogin);
+router.get('/', (req, res) => {
+  res.redirect('/login');
+});
 router.get("/login", loginController.getLogin);
 
 router.post('/login', loginController.login);

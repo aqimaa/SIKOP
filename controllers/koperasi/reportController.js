@@ -64,7 +64,20 @@ class ReportController {
                             <td>${item.jumlah}</td>
                         `;
                         break;
-                    // Tambahkan case untuk jenis lainnya
+                        case 'pinjaman':
+                           rows = `
+                                <td>${item.jenis_pinjaman}</td>
+                                <td>${item.jatuh_tempo}</td>
+                                <td>${item.jumlah}</td>
+                            `;
+                            break; 
+                        case 'simpanan':
+                           rows = `
+                                <td>${item.jenis_simpanan}</td>
+                                <td>${item.jumlah}</td>
+                            `;
+                            break; 
+                    
                 }
                 return `
                     <tr>

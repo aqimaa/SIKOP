@@ -77,7 +77,7 @@ exports.changePassword = async (req, res) => {
 };
 
 exports.getChangePassword = (req, res) => {
-  res.render('auth/changePw');
+  res.render('auth/changePassword');
 };
 
 exports.logout = (req, res) => {

@@ -4,7 +4,6 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const flash = require('connect-flash');
-// const createError = require('http-errors');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const allRoutes = require('./routes/indexRoutes.js');
@@ -31,29 +30,10 @@ app.use(
 app.use(flash());
 
 // Default Home Route
-// Route to render the login page
-app.get('/login', (req, res) => {
-  res.render('auth/login'); // Ensure this matches the filename
-});
-
-// // Routes
-// app.use(allRoutes);
-
-// // Catch 404 and Forward to Error Handler
-// app.use((req, res, next) => {
-//   next(createError(404));
+// app.get('/login', (req, res) => {
+//   res.render('auth/login'); // Ensure this matches the filename
 // });
-
-// // Error Handler
-// app.use((err, req, res, next) => {
-//   // Set locals, only providing error in development
-//   res.locals.message = err.message;
-//   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-//   // Render the error page
-//   res.status(err.status || 500);
-//   res.render('error');
-// });
+app.use(allRoutes);
 
 // Handle 404 errors
 app.use('*', (req, res) => {
@@ -67,19 +47,3 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
-
-// // app.js
-// const express = require('express');
-// const path = require('path');
-// const app = express();
-
-// app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'ejs');
-
-// app.get('/login', (req, res) => {
-//   res.render('auth/login');
-// });
-
-// app.listen(3000, () => {
-//   console.log('Server running on port 3000');
-// });

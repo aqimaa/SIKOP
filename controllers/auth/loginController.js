@@ -1,7 +1,7 @@
 const db = require('../../config/database');
 
 exports.getLogin = (req, res) => {
-  res.render('login');
+  res.render('auth/login', { title: 'Login' });
 };
 
 exports.login = (req, res) => {
@@ -26,7 +26,16 @@ exports.login = (req, res) => {
     req.session.userId = user.id;
     req.session.role = user.role_user;
 
-    return res.redirect('/dashboard');
+    switch (user.role_user) {
+      case 'Super Admin':
+        return res.redirect('/dashboardSuperadmin');
+      case 'Pimpinan':
+        return res.redirect('/dashboardPimpinan');
+      case 'Admin Keuangan':
+        return res.redirect('/dashboardKeuangan');
+      default:
+        return res.status(401).json({ message: 'Invalid role' });
+    }
   });
 };
 

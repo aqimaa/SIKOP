@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Laporan <%= jenis %></title>
+    <style>
+        .header { text-align: center; margin-bottom: 20px; }
+        .logo { width: 100px; }
+        .title { font-size: 20px; font-weight: bold; }
+        .info { margin: 20px 0; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid black; padding: 8px; text-align: left; }
+        .footer { margin-top: 50px; text-align: right; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="/public/images/logo.png" class="logo">
+        <div class="title">SIKOP - Sistem Informasi Koperasi</div>
+        <h2>Laporan <%= jenis %></h2>
+    </div>
+
+    <div class="info">
+        <p>Periode: <%= bulan %> <%= tahun %></p>
+        <p>Jenis: <%= jenisDetail %></p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>NIP</th>
+                <th>Nama</th>
+                <% if(jenis === 'Kredit' || jenis === 'Pinjaman') { %>
+                    <th>Jangka Waktu</th>
+                    <th>Total Angsuran</th>
+                <% } %>
+                <th>Jumlah</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% data.forEach((item, index) => { %>
+                <tr>
+                    <td><%= index + 1 %></td>
+                    <td><%= item.nip %></td>
+                    <td><%= item.nama %></td>
+                    <% if(jenis === 'Kredit' || jenis === 'Pinjaman') { %>
+                        <td><%= item.jangka_waktu %></td>
+                        <td><%= item.total_angsuran %></td>
+                    <% } %>
+                    <td><%= item.jumlah %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <p>Dicetak pada: <%= new Date().toLocaleString('id-ID') %></p>
+    </div>
+</body>
+</html>

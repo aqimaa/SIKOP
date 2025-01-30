@@ -55,6 +55,33 @@
         const dropdownMenu = document.getElementById('dropdownMenu');
         dropdownMenu.classList.toggle('hidden');
     }
+    function cetakLaporan() {
+    const tahun = document.getElementById('tahun').value;
+    const bulan = document.getElementById('bulan').value;
+    const jenis = document.getElementById('jenis').value;
+    
+    fetch('/generate-report', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            tahun,
+            bulan,
+            jenis,
+            jenisDetail: jenis
+        })
+    })
+    .then(response => response.text())
+    .then(html => {
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(html);
+        printWindow.document.close();
+        printWindow.print();
+    })
+    .catch(error => console.error('Error:', error));
+}
+
     </script>
 
     <!-- Main Content -->

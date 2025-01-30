@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Kredit Barang</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="flex bg-gray-100">
+    <!-- Sidebar -->
+    <div class="w-72 text-white min-h-screen p-4 fixed" style="background-color: #5D8736;">
+        <div class="flex items-center mb-8">
+            <img src="/images/logo.png" alt="Logo" class="w-16 h-16 mr-7">
+            <div>
+                <h1 class="text-2xl font-bold">SIKOP</h1>
+                <p class="text-sm">Sistem Informasi Koperasi</p>
+            </div>
+        </div>
+        <nav>
+            <ul>
+                <li class="mb-4">
+                    <a href="/views/koperasi/dashboardKeuangan.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
+                        <img src="/images/vectordasbor.png" alt="lihat data icon" class="w=5 h-5 ">
+                        <span class="ml-2 text-xl ml-5">Dashboard</span>
+                    </a>
+                </li>
+                <li class="mb-4">
+                    <a href="/views/koperasi/simpananKeuangan/lihatSimpanan.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
+                    <span class="material-icons">account_balance_wallet</span>
+                    <span class="ml-2 text-xl ml-5">Simpanan</span>
+                    </a>
+                </li>
+                <li class="mb-4">
+                    <a href="/views/koperasi/pinjamankeuangan/lihatPinjaman.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
+                    <span class="material-icons">credit_card</span>
+                    <span class="ml-2 text-xl ml-5">Pinjaman</span>
+                    </a>
+                </li>
+                <li>
+                    <button onclick="toggleDropdown()" class="flex items-center justify-between w-full focus:outline-none">
+                        <div class="flex items-center">
+                            <a href="#" class="flex items-center block p-6 py-3">
+                                <span class="material-icons">attach_money</span>
+                                <span class="ml-2 text-xl ml-5">Kredit</span>
+                            </a>
+                        </div>
+                        <img src="/images/angle-small-down.png" alt="dropdown icon" class="w-6 h-6 transform transition-transform" id="dropdownIcon">
+                    </button>
+                    <ul id="dropdownMenu" class="pl-6 hidden">
+                        <li class="mb-2">
+                            <a href="/views/koperasi/kreditKeuangan/lihatKreditBarang.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Barang</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="#" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Elektronik</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="#" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Motor</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="#" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Umroh</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <script>
+        function toggleDropdown() {
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            dropdownMenu.classList.toggle('hidden');
+        }
+    </script>
+
+    <!-- Main Content -->
+     <div class="flex-1 p-6">
+        <header class="flex justify-between items-center mb-8">
+            <!-- Arrow Back Icon -->
+            <button class="text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                    <path d="M19 12H5" />
+                    <path d="M12 5l-7 7 7 7" />
+                </svg>
+            </button>
+            
+            <!-- Profile Section -->
+            <div class="flex items-center space-x-4">
+                <span>admin</span>
+                <img src="../../public/images/profile-user.png" alt="User" class="rounded-full w-10 h-10">
+            </div>
+        </header>
+        <div class="flex justify-between items-center mb-4">
+            <h1 class="text-2xl font-bold">Data Kredit Barang</h1>
+            <button style="background-color: #5D8736; color: white;" class="px-4 py-2 rounded hover:bg-[#4c6e2f]">+ Tambah Kredit Baru</button>
+        </div>
+
+        <div class="bg-white p-4 rounded shadow">
+            <div class="flex mb-4">
+                <input type="text" placeholder="Cari Anggota" class="border border-gray-300 p-2 rounded flex-1" />
+                <button style="background-color: #5D8736; color: white;" class="ml-2 px-4 py-2 rounded hover:bg-[#4c6e2f]">Cari</button>
+            </div>
+
+
+            <table class="table-auto w-full border-collapse">
+                <thead>
+                    <tr class="text-left bg-gray-100">
+                        <th class="p-4">No</th>
+                        <th class="p-4">No. Anggota</th>
+                        <th class="p-4">Nama</th>
+                        <th class="p-4">Harga Pokok</th>
+                        <th class="p-4">Jangka Waktu</th>
+                        <th class="p-4">Pokok DP</th>
+                        <th class="p-4">Total Angsuran</th>
+                        <th class="p-4">Pokok</th>
+                        <th class="p-4">Margin</th>
+                        <th class="p-4">Angsuran Ke</th>
+                        <th class="p-4">Sisa Piutang</th>
+                        <th class="p-4">Mulai Perjanjian</th>
+                        <th class="p-4">Ket</th>
+                        <th class="p-4">Bayar</th>
+                        <th class="p-4">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="text-left border-b">
+                        <td class="p-4">1</td>
+                        <td class="p-4">001</td>
+                        <td class="p-4">Adriani Adnani</td>
+                        <td class="p-4">262.500</td>
+                        <td class="p-4">9</td>
+                        <td class="p-4">26.250</td>
+                        <td class="p-4">246.458</td>
+                        <td class="p-4">26.250</td>
+                        <td class="p-4">1.750</td>
+                        <td class="p-4">5</td>
+                        <td class="p-4">105.000</td>
+                        <td class="p-4">2023-07-25</td>
+                        <td class="p-4">Belum Lunas</td>
+                        <td class="p-4">
+                            <button class="bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700">Bayar</button>
+                        </td>
+                        <td class="p-4 flex space-x-2">
+                            <button class="bg-blue-600 text-white p-2 rounded hover:bg-blue-700" title="Edit">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 20h9" />
+                                    <path d="M16.5 3.5a2.121 2.121 0 113 3L7 19l-4 1 1-4 12.5-12.5z" />
+                                </svg>
+                            </button>
+                            <button class="bg-red-600 text-white p-2 rounded hover:bg-red-700" title="Hapus">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                    <!-- Tambahkan baris data tambahan sesuai kebutuhan -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+</body>
+</html>

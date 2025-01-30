@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Input Kredit Barang</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="flex">
+    <!-- Sidebar -->
+    <div class="w-72 text-white min-h-screen" style="background-color: #5D8736;">
+        <div class="p-4 text-2xl font-bold flex items-center">
+            <img src="D:\KULIAH\Magang\SIKOP-2\public\images\logo.png" alt="SIKOP Logo" class="h-8 mr-2" />
+            SIKOP
+          </div>
+        
+        <nav class="mt-4">
+            <a href="/dashboard" class="block p-4 hover:bg-gray-700">Dashboard</a>
+            <div class="block">
+                <p class="p-4">Simpanan</p>
+                <p class="p-4">Pinjaman</p>
+                
+                <div class="block">
+                    <p class="p-4">Kredit</p>
+                    <a href="/kredit-barang" class="block pl-8 py-2 hover:bg-gray-700">Kredit Barang</a>
+                    <a href="/kredit-elektronik" class="block pl-8 py-2 hover:bg-gray-700">Kredit Elektronik</a>
+                    <a href="/kredit-motor" class="block pl-8 py-2 hover:bg-gray-700">Kredit Motor</a>
+                    <a href="/kredit-umroh" class="block pl-8 py-2 hover:bg-gray-700">Kredit Umroh</a>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div id="popup-bayar" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="flex-1 p-8">
+            <h1 class="text-2xl mb-6">Bayar Kredit Barang</h1>
+    
+            <!-- Pop-up Section -->
+            <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-2xl mx-auto">
+                <!-- Informasi Kredit -->
+                <div class="bg-blue-100 p-4 rounded-lg mb-6">
+                    <h2 class="text-lg font-semibold mb-2">Informasi Kredit</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <p><strong>No. Anggota:</strong> 001</p>
+                        <p><strong>Nama Anggota:</strong> Adriani Adnani</p>
+                        <p><strong>Harga Pokok:</strong> 262,500</p>
+                        <p><strong>Jangka Waktu:</strong> 9 Bulan</p>
+                        <p><strong>Angsuran Ke:</strong> 5 dari 9</p>
+                        <p><strong>Sisa Hutang:</strong> 105,000</p>
+                        <p><strong>Angsuran Per Bulan:</strong> 28,000</p>
+                    </div>
+                </div>
+    
+                <!-- Detail Pembayaran -->
+                <div class="bg-green-100 p-4 rounded-lg mb-6">
+                    <h2 class="text-lg font-semibold mb-2">Detail Pembayaran</h2>
+                    <form class="space-y-4">
+                        <div>
+                            <label for="tanggal" class="block mb-2">Tanggal Pembayaran</label>
+                            <input type="date" id="tanggal" class="w-full border p-2 rounded">
+                        </div>
+                        <div>
+                            <label for="jumlah" class="block mb-2">Jumlah Bayar</label>
+                            <input type="number" id="jumlah" class="w-full border p-2 rounded" placeholder="Masukkan jumlah bayar">
+                        </div>
+                        <div>
+                            <label for="keterangan" class="block mb-2">Keterangan</label>
+                            <textarea id="keterangan" class="w-full border p-2 rounded" placeholder="Masukkan keterangan"></textarea>
+                        </div>
+                    </form>
+                </div>
+    
+                <!-- Rincian Pembayaran -->
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <h2 class="text-lg font-semibold mb-2">Rincian Pembayaran</h2>
+                    <table class="w-full text-left border">
+                        <thead>
+                            <tr class="bg-gray-200">
+                                <th class="border px-4 py-2">Tanggal</th>
+                                <th class="border px-4 py-2">Angsuran Ke</th>
+                                <th class="border px-4 py-2">Jumlah</th>
+                                <th class="border px-4 py-2">Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="border px-4 py-2">2023-07-16</td>
+                                <td class="border px-4 py-2">4</td>
+                                <td class="border px-4 py-2">28,000</td>
+                                <td class="border px-4 py-2">- </td>
+                            </tr>
+                            <tr>
+                                <td class="border px-4 py-2">2023-06-16</td>
+                                <td class="border px-4 py-2">3</td>
+                                <td class="border px-4 py-2">28,000</td>
+                                <td class="border px-4 py-2">- </td>
+                            </tr>
+                            <tr>
+                                <td class="border px-4 py-2">2023-05-16</td>
+                                <td class="border px-4 py-2">2</td>
+                                <td class="border px-4 py-2">28,000</td>
+                                <td class="border px-4 py-2">-</td>
+                            </tr>
+                            <tr>
+                                <td class="border px-4 py-2">2023-04-16</td>
+                                <td class="border px-4 py-2">1</td>
+                                <td class="border px-4 py-2">28,000</td>
+                                <td class="border px-4 py-2">- </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+    
+                <!-- Action Buttons -->
+                <div class="flex justify-end space-x-4 mt-6">
+                    <button class="bg-gray-400 text-white px-4 py-2 rounded">Batal</button>
+                    <button class="bg-green-500 text-white px-4 py-2 rounded">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Ambil elemen tombol "Bayar" dan modal
+        const bayarButtons = document.querySelectorAll('.btn-bayar');
+        const popup = document.getElementById('popup-bayar');
+        const closePopup = document.getElementById('close-popup');
+    
+        // Tambahkan event listener pada tombol "Bayar"
+        bayarButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                popup.classList.remove('hidden'); // Tampilkan modal
+            });
+        });
+    
+        // Tambahkan event listener untuk menutup modal
+        closePopup.addEventListener('click', () => {
+            popup.classList.add('hidden'); // Sembunyikan modal
+        });
+    </script>
+    
+</body>
+</html>
+
+

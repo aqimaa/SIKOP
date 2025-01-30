@@ -39,6 +39,47 @@ exports.login = (req, res) => {
   });
 };
 
+exports.changePassword = async (req, res) => {
+  const { email, newPassword, oldPassword } = req.body;
+  
+  try {
+      // Cari user berdasarkan email
+      const query = 'SELECT * FROM users WHERE email = ?';
+      db.query(query, [email], (err, results) => {
+          if (err) {
+              return res.status(500).json({ message: 'Database error', error: err });
+          }
+
+          if (results.length === 0) {
+              return res.status(400).send("User  tidak ditemukan.");
+          }
+
+          const user = results[0];
+
+          // Periksa apakah password lama benar
+          if (user.password !== oldPassword) {
+              return res.status(400).send("Password lama tidak benar.");
+          }
+
+          // Update password di database
+          const queryUpdate = 'UPDATE users SET password = ? WHERE email = ?';
+          db.query(queryUpdate, [newPassword, email], (err, results) => {
+              if (err) {
+                  return res.status(500).json({ message: 'Database error', error: err });
+              }
+
+              res.send("Password berhasil diubah. Silakan login kembali.");
+          });
+      });
+  } catch (error) {
+      res.status(500).send("Terjadi kesalahan saat mengubah password.");
+  }
+};
+
+exports.getChangePassword = (req, res) => {
+  res.render('auth/changePw');
+};
+
 exports.logout = (req, res) => {
   req.session.destroy((err) => {
     if (err) {

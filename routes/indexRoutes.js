@@ -17,11 +17,15 @@ router.get("/login", loginController.getLogin);
 router.post("/login", loginController.login);
 
 // Route untuk Change Password
-router.get("/changePassword", loginController.getChangePassword);  // Correct route for showing change password page
-router.post("/changePassword", loginController.changePassword); // Correct route for handling password update
+router.get('/changePassword', (req, res) => {
+  console.log("Change Password Page Accessed");
+  res.render('auth/changePassword');
+});
+router.post('/changePassword', loginController.changePassword);
 
 // Route untuk Logout
 router.post("/logout", loginController.logout);
+
 
 // Route untuk Dashboard
 router.get("/dashboardSuperadmin", (req, res) => {
@@ -31,7 +35,11 @@ router.get("/dashboardPimpinan", (req, res) => {
   res.render("dashboardPimpinan");
 });
 router.get("/dashboardKeuangan", (req, res) => {
-  res.render("dashboardKeuangan");
+  if (req.session.role === 'Admin Keuangan') {
+    res.render("dashboardKeuangan");
+  } else {
+    res.redirect('/login');
+  }
 });
 
 

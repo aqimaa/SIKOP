@@ -7,8 +7,8 @@ exports.getLogin = (req, res) => {
 exports.login = (req, res) => {
   const { email, password } = req.body;
 
-  const query = 'SELECT * FROM users WHERE email = ?';
-  db.query(query, [email], (err, results) => {
+  const query = 'SELECT * FROM users WHERE email = ? AND password = ?';
+  db.query(query, [email, password], (err, results) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
@@ -18,10 +18,6 @@ exports.login = (req, res) => {
     }
 
     const user = results[0];
-
-    if (user.password !== password) {
-      return res.status(401).json({ message: 'Invalid email or password' });
-    }
 
     req.session.userId = user.id;
     req.session.role = user.role_user;
@@ -39,45 +35,51 @@ exports.login = (req, res) => {
   });
 };
 
+exports.getChangePassword = (req, res) => {
+  res.render('auth/changePassword');
+};
+
 exports.changePassword = async (req, res) => {
+  console.log("Change Password Request Received", req.body); // Debugging
   const { email, newPassword, oldPassword } = req.body;
   
+  if (!email || !newPassword || !oldPassword) {
+      return res.status(400).json({ message: "Semua field harus diisi" });
+  }
+
   try {
-      // Cari user berdasarkan email
       const query = 'SELECT * FROM users WHERE email = ?';
       db.query(query, [email], (err, results) => {
           if (err) {
+              console.error("Database Error:", err); // Debugging
               return res.status(500).json({ message: 'Database error', error: err });
           }
 
           if (results.length === 0) {
-              return res.status(400).send("User  tidak ditemukan.");
+              return res.status(400).send("User tidak ditemukan.");
           }
 
           const user = results[0];
 
-          // Periksa apakah password lama benar
           if (user.password !== oldPassword) {
               return res.status(400).send("Password lama tidak benar.");
           }
 
-          // Update password di database
           const queryUpdate = 'UPDATE users SET password = ? WHERE email = ?';
           db.query(queryUpdate, [newPassword, email], (err, results) => {
               if (err) {
+                  console.error("Database Update Error:", err); // Debugging
                   return res.status(500).json({ message: 'Database error', error: err });
               }
 
+              console.log("Password berhasil diubah untuk", email);
               res.send("Password berhasil diubah. Silakan login kembali.");
           });
       });
   } catch (error) {
+      console.error("Unexpected Error:", error); // Debugging
       res.status(500).send("Terjadi kesalahan saat mengubah password.");
   }
-};
-
-exports.getChangePassword = (req, res) => {
-  res.render('auth/changePassword');
 };
 
 exports.logout = (req, res) => {
@@ -85,6 +87,6 @@ exports.logout = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Could not log out', error: err });
     }
-    res.redirect('/auth/login');
+    res.redirect('auth/login');
   });
 };

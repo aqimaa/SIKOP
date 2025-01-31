@@ -1,0 +1,187 @@
+<!-- Modal Simpanan -->
+<div id="simpananModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
+    <!-- Mengubah lebar dari w-[800px] menjadi w-[1000px] -->
+    <div class="bg-white rounded-lg w-[1000px] max-h-[90vh] flex flex-col">
+        <!-- Header -->
+        <div class="p-6 border-b bg-[#5D8736] rounded-t-lg" style="background-color: #5D8736;">
+            <h2 class="text-xl font-semibold text-white">Tambah Simpanan Baru</h2>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6 overflow-y-auto">
+            <form id="simpananForm" class="space-y-6">
+                <!-- Member Selection -->
+                <div class="mb-6 w-full">
+                    <label class="block text-sm font-medium mb-2">Nama Anggota</label>
+                    <select id="anggotaSelect" name="anggota" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500">
+                        <option value="">Pilih Anggota...</option>
+                    </select>
+                </div>
+
+                <!-- Jenis Simpanan Selection -->
+                <div class="grid grid-cols-3 gap-6">
+                    <!-- Simpanan Wajib -->
+                    <div class="bg-white rounded-lg border p-6 hover:shadow-md transition-shadow">
+                        <label class="inline-flex items-center mb-3">
+                            <input type="checkbox" id="checkWajib" class="form-checkbox h-5 w-5 text-green-600" onchange="toggleSimpananForm('Wajib')">
+                            <span class="ml-2 text-gray-700 font-medium">Simpanan Wajib</span>
+                        </label>
+                        <div id="formWajib" class="hidden mt-4">
+                            <label class="block text-sm text-gray-600 mb-2">Jumlah (Rp)</label>
+                            <input type="number" name="simpanan_wajib" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500">
+                        </div>
+                    </div>
+
+                    <!-- Simpanan Pokok -->
+                    <div class="bg-white rounded-lg border p-6 hover:shadow-md transition-shadow">
+                        <label class="inline-flex items-center mb-3">
+                            <input type="checkbox" id="checkPokok" class="form-checkbox h-5 w-5 text-green-600" onchange="toggleSimpananForm('Pokok')">
+                            <span class="ml-2 text-gray-700 font-medium">Simpanan Pokok</span>
+                        </label>
+                        <div id="formPokok" class="hidden mt-4">
+                            <label class="block text-sm text-gray-600 mb-2">Jumlah (Rp)</label>
+                            <input type="number" name="simpanan_pokok" value="100000" class="w-full p-3 border rounded-lg bg-gray-100" readonly>
+                            <p class="text-sm text-gray-500 mt-2">*Simpanan pokok ditetapkan sebesar Rp 100.000</p>
+                        </div>
+                    </div>
+
+                    <!-- Simpanan Sukarela -->
+                    <div class="bg-white rounded-lg border p-6 hover:shadow-md transition-shadow">
+                        <label class="inline-flex items-center mb-3">
+                            <input type="checkbox" id="checkSukarela" class="form-checkbox h-5 w-5 text-green-600" onchange="toggleSimpananForm('Sukarela')">
+                            <span class="ml-2 text-gray-700 font-medium">Simpanan Sukarela</span>
+                        </label>
+                        <div id="formSukarela" class="hidden mt-4">
+                            <label class="block text-sm text-gray-600 mb-2">Jumlah (Rp)</label>
+                            <input type="number" name="simpanan_sukarela" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Metode Pembayaran -->
+                <div class="bg-white rounded-lg border p-6 mt-6">
+                    <label class="block text-sm font-medium mb-2">Metode Pembayaran</label>
+                    <select name="metode_bayar" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500">
+                        <option value="">Pilih Metode Bayar...</option>
+                        <option value="cash">Cash</option>
+                        <option value="transfer">Transfer</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+
+        <!-- Footer -->
+        <div class="px-6 py-4 border-t mt-auto bg-gray-50 rounded-b-lg">
+            <div class="flex justify-end gap-3">
+                <button onclick="closeSimpananModal()" class="px-6 py-2.5 border rounded-lg hover:bg-gray-100 transition-colors">
+                    Batal
+                </button>
+                <button onclick="submitSimpanan()" class="px-6 py-2.5 text-white rounded-lg bg-[#5D8736] hover:bg-[#4a6c2b] transition-colors" style="background-color: #5D8736;">
+                    Simpan
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Load anggota list when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    loadAnggotaList();
+});
+
+async function loadAnggotaList() {
+    try {
+        const response = await fetch('/api/anggota');
+        const anggotaList = await response.json();
+        
+        const anggotaSelect = document.getElementById('anggotaSelect');
+        anggotaList.forEach(anggota => {
+            const option = document.createElement('option');
+            option.value = anggota.id;
+            option.textContent = anggota.nama;
+            anggotaSelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error loading anggota:', error);
+    }
+}
+
+function toggleSimpananForm(type) {
+    const checkbox = document.getElementById(`check${type}`);
+    const form = document.getElementById(`form${type}`);
+    
+    if (checkbox.checked) {
+        form.classList.remove('hidden');
+    } else {
+        form.classList.add('hidden');
+    }
+}
+
+function openSimpananModal() {
+    document.getElementById('simpananModal').classList.remove('hidden');
+}
+
+function closeSimpananModal() {
+    document.getElementById('simpananModal').classList.add('hidden');
+    document.getElementById('simpananForm').reset();
+    // Hide all forms
+    ['Wajib', 'Pokok', 'Sukarela'].forEach(type => {
+        document.getElementById(`form${type}`).classList.add('hidden');
+    });
+}
+
+async function submitSimpanan() {
+    const form = document.getElementById('simpananForm');
+    if (!validateForm()) {
+        return;
+    }
+
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+        const response = await fetch('/api/simpanan', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) throw new Error('Network response was not ok');
+        
+        closeSimpananModal();
+        // Reload data or update UI as needed
+        handleFilter();
+    } catch (error) {
+        console.error('Error submitting simpanan:', error);
+        alert('Terjadi kesalahan saat menyimpan data');
+    }
+}
+
+function validateForm() {
+    const anggota = document.getElementById('anggotaSelect').value;
+    if (!anggota) {
+        alert('Silakan pilih anggota terlebih dahulu');
+        return false;
+    }
+
+    const checkWajib = document.getElementById('checkWajib').checked;
+    const checkPokok = document.getElementById('checkPokok').checked;
+    const checkSukarela = document.getElementById('checkSukarela').checked;
+
+    if (!checkWajib && !checkPokok && !checkSukarela) {
+        alert('Pilih minimal satu jenis simpanan');
+        return false;
+    }
+
+    const metodeBayar = document.querySelector('select[name="metode_bayar"]').value;
+    if (!metodeBayar) {
+        alert('Pilih metode pembayaran');
+        return false;
+    }
+
+    return true;
+}
+</script>

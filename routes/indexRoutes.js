@@ -5,7 +5,7 @@ const router = express.Router();
 const loginController = require("../controllers/auth/loginController.js");
 // const laporanController = require('../controllers/koperasi/laporanController');
 // const pinjamanController = require('../controllers/koperasi/pinjamanController');
-// const simpananController = require('../controllers/koperasi/simpananController');
+const simpananController = require('../controllers/koperasi/simpananController.js');
 // const kreditController = require('../controllers/koperasi/kreditController');
 // const masterController = require('../controllers/master/masterController');
 
@@ -53,8 +53,24 @@ router.get("/dashboardKeuangan", (req, res) => {
 // router.post('/pinjaman', pinjamanController.createPinjaman);
 
 // Route untuk Simpanan
-// router.get('/simpanan', simpananController.getSimpanan);
-// router.post('/simpanan', simpananController.createSimpanan);
+router.get('/simpanan', (req, res) => {
+  if (req.session.role === 'Admin Keuangan') {
+      res.render('koperasi/simpananKeuangan/lihatsimpanan');
+  } else {
+      res.redirect('/login');
+  }
+});
+
+// API Routes untuk Simpanan
+router.get('/api/simpanan', simpananController.getSimpananData);
+router.get('/koperasi/simpanan/lihatsimpanan', simpananController.lihatSimpanan);
+
+// API Routes untuk Simpanan
+router.get('/api/simpanan', simpananController.getSimpananData);
+router.get('/api/simpanan/filter', simpananController.filterSimpanan);
+router.get('/api/anggota', simpananController.getAnggotaList);
+router.post('/api/simpanan', simpananController.createSimpanan);
+router.delete('/api/simpanan/:id', simpananController.deleteSimpanan);
 
 // Route untuk Kredit
 // router.get('/kredit', kreditController.getKredit);

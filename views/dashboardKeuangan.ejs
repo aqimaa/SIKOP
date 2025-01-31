@@ -7,77 +7,71 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<body class="flex">
+<body class="flex bg-gray-100">
     <!-- Sidebar -->
-<div class="w-72 text-white min-h-screen p-4 fixed" style="background-color: #5D8736;">
-    <div class="flex items-center mb-8">
-        <img src="/images/logo.png" alt="Logo" class="w-16 h-16 mr-7">
-        <div>
-            <h1 class="text-2xl font-bold">SIKOP</h1>
-            <p class="text-sm">Sistem Informasi Koperasi</p>
+    <div class="w-72 text-white min-h-screen p-4 fixed" style="z-index: 10;background-color: #5D8736;">
+        <div class="flex items-center mb-8">
+            <img src="/public/images/logo.png" alt="Logo" class="w-16 h-16 mr-7">
+            <div>
+                <h1 class="text-2xl font-bold">SIKOP</h1>
+                <p class="text-sm">Sistem Informasi Koperasi</p>
+            </div>
         </div>
+        <nav>
+            <ul>
+                <li class="mb-4">
+                    <a href="/views/dashboardKeuangan.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
+                        <img src="/public/images/vectordasbor.png" alt="lihat data icon" class="w=5 h-5 ">
+                        <span class="ml-2 text-xl ml-5">Dashboard</span>
+                    </a>
+                </li>
+                <li class="mb-4">
+                    <a href="/views/koperasi/simpananKeuangan/lihatsimpanan.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
+                    <span class="material-icons">account_balance_wallet</span>
+                    <span class="ml-2 text-xl ml-5">Simpanan</span>
+                    </a>
+                </li>
+                <li class="mb-4">
+                    <a href="/views/koperasi/pinjamankeuangan/lihatPinjaman.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
+                    <span class="material-icons">credit_card</span>
+                    <span class="ml-2 text-xl ml-5">Pinjaman</span>
+                    </a>
+                </li>
+                <li>
+                    <button onclick="toggleDropdown()" class="flex items-center justify-between w-full focus:outline-none">
+                        <div class="flex items-center">
+                            <a href="#" class="flex items-center block p-6 py-3">
+                                <span class="material-icons">attach_money</span>
+                                <span class="ml-2 text-xl ml-5">Kredit</span>
+                            </a>
+                        </div>
+                        <img src="/public/images/angle-small-down.png" alt="dropdown icon" class="w-6 h-6 transform transition-transform" id="dropdownIcon">
+                    </button>
+                    <ul id="dropdownMenu" class="pl-6 hidden">
+                        <li class="mb-2">
+                            <a href="/views/koperasi/kreditKeuangan/kreditBarang/lihatKreditBarang.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Barang</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="/views/koperasi/kreditKeuangan/kreditElektronik/lihatKreditElektro.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Elektronik</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="/views/koperasi/kreditKeuangan/kreditMotor/lihatKreditMotor.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Motor</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="/views/koperasi/kreditKeuangan/kreditUmroh/lihatKreditUmroh.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Umroh</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
     </div>
-    <nav>
-        <ul>
-            <li class="mb-4">
-                <a href="../koperasi/dashboardPimpinan.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
-                    <img src="/images/vectordasbor.png" alt="lihat data icon" class="w=5 h-5 ">
-                    <span class="ml-2 text-xl ml-5">Dashboard</span>
-                </a>
-            </li>
-            <li>
-                <button onclick="toggleDropdown('mainDropdown', event)" class="flex items-center justify-between w-full focus:outline-none">
-                    <div class="flex items-center">
-                        <a href="#" class="flex items-center block p-6 py-3 hover:">
-                            <img src="/images/lihatdata.png" alt="lihat data icon" class="w=5 h-5 ">
-                            <span class="ml-2 text-xl ml-5">Lihat Data</span>
-                        </a>
-                    </div>
-                    <img src="/images/angle-small-down.png" alt="dropdown icon" class="w-6 h-6 transform transition-transform" id="mainDropdownIcon">
-                </button>
-                <ul id="mainDropdown" class="pl-6 hidden">
-                    <li class="mb-2">
-                        <a href="../koperasi/simpananPimpinan.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Data Simpanan</a>
-                    </li>
-                    <li class="mb-2">
-                        <a href="../koperasi/pinjamanPimpinan.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Data Pinjaman</a>
-                    </li>
-                    <li class="mb-3">
-                        <button onclick="toggleDropdown('kreditDropdown', event)" class="flex items-center justify-between w-full p-3 py-3 text-lg hover:bg-green-900 rounded">
-                            <span>Data Kredit</span>
-                            <img src="/images/angle-small-down.png" alt="dropdown icon" class="w-4 h-4 transform transition-transform" id="kreditDropdownIcon">
-                        </button>
-                        <ul id="kreditDropdown" class="pl-4 hidden">
-                            <li>
-                                <a href="../koperasi/kreditBarang.ejs" class="block p-2 py-2 text-lg hover:bg-green-900 rounded">Kredit Barang</a>
-                            </li>
-                            <li>
-                                <a href="../koperasi/kreditElektronik.ejs" class="block p-2 py-2 text-lg hover:bg-green-900 rounded">Kredit Elektronik</a>
-                            </li>
-                            <li>
-                                <a href="../koperasi/kreditMotor.ejs" class="block p-2 py-2 text-lg hover:bg-green-900 rounded">Kredit Motor</a>
-                            </li>
-                            <li>
-                                <a href="../koperasi/kreditUmroh.ejs" class="block p-2 py-2 text-lg hover:bg-green-900 rounded">Kredit Umroh</a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-    </nav>
-</div>
 
-<script>
-function toggleDropdown(dropdownId, event) {
-    event.stopPropagation(); // Menghentikan event bubbling
-    const dropdownMenu = document.getElementById(dropdownId);
-    const dropdownIcon = document.getElementById(dropdownId + 'Icon');
-    dropdownMenu.classList.toggle('hidden');
-    dropdownIcon.classList.toggle('rotate-180');
-}
-</script>
-
+    <script>
+        function toggleDropdown() {
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            dropdownMenu.classList.toggle('hidden');
+        }
+    </script>
 
     <!-- Main Content -->
     <!-- <div class="flex-1 bg-gray-100 ">
@@ -88,7 +82,7 @@ function toggleDropdown(dropdownId, event) {
                 <h1 class="text-2xl font-bold">Selamat Datang di Aplikasi Sistem Informasi Koperasi</h1>
                 <div class="flex items-center">
                     <span>Admin Keuangan</span>
-                    <img src="/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
+                    <img src="/public/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
                 </div>
             </div>
     
@@ -122,7 +116,7 @@ function toggleDropdown(dropdownId, event) {
                 <!-- LLDIKTI Section -->
                 <div class="bg-white p-6 rounded-lg shadow-sm">
                     <h2 class="text-xl font-semibold mb-4">LLDIKTI Wilayah X</h2>
-                    <img src="/images/dasbor.jpg" class="w-full object-contain rounded mb-4" alt="LLDIKTI Dashboard">
+                    <img src="/public/images/backroundLldikti10.jpeg" class="w-full object-contain rounded mb-4" alt="LLDIKTI Dashboard">
                     <p class="text-gray-600 mb-4">Lembaga Layanan Pendidikan Tinggi (LLDIKTI) merupakan satuan kerja di 
                         bawah Sekretariat Jenderal, Kementerian Pendidikan, Kebudayaan, Riset, dan Teknologi (Kemendikbudristek) 
                         yang mempunyai tugas dan fungsi di bidang fasilitasi peningkatan mutu penyelenggaraan pendidikan tinggi 

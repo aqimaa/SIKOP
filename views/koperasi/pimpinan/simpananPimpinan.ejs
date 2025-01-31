@@ -154,6 +154,25 @@
             <button style="background-color: #5D8736" class="text-white px-4 py-2 rounded">
                 Cetak Laporan
             </button>
+            <script>
+                function cetakLaporan() {
+                    const tahun = document.getElementById('tahun').value;
+                    const bulan = document.getElementById('bulan').value;
+                    const jenis = document.getElementById('jenis').value;
+                    
+                    if (!tahun || !bulan || !jenis) {
+                        alert('Mohon lengkapi semua filter terlebih dahulu');
+                        return;
+                    }
+                    
+                    const url = `/report/${window.location.pathname.includes('kredit') ? 'kredit' : 
+                                        window.location.pathname.includes('pinjaman') ? 'pinjaman' : 
+                                        'simpanan'}?tahun=${tahun}&bulan=${bulan}&jenis=${jenis}`;
+                    
+                    window.open(url, '_blank');
+                }
+    
+                </script>
         </div>
     </div>
 </body>

@@ -7,9 +7,9 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<body class="flex">
+<body class="flex bg-gray-100">
     <!-- Sidebar -->
-    <div class="w-72 text-white min-h-screen p-4 fixed" style="background-color: #5D8736;">
+    <div class="w-72 text-white min-h-screen p-4 fixed" style="z-index: 10;background-color: #5D8736;">
         <div class="flex items-center mb-8">
             <img src="/images/logo.png" alt="Logo" class="w-16 h-16 mr-7">
             <div>
@@ -20,13 +20,13 @@
         <nav>
             <ul>
                 <li class="mb-4">
-                    <a href="/views/koperasi/dashboardKeuangan.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
+                    <a href="/views/dashboardKeuangan.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
                         <img src="/images/vectordasbor.png" alt="lihat data icon" class="w=5 h-5 ">
                         <span class="ml-2 text-xl ml-5">Dashboard</span>
                     </a>
                 </li>
                 <li class="mb-4">
-                    <a href="/views/koperasi/simpananKeuangan/lihatSimpanan.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
+                    <a href="/views/koperasi/simpananKeuangan/lihatsimpanan.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
                     <span class="material-icons">account_balance_wallet</span>
                     <span class="ml-2 text-xl ml-5">Simpanan</span>
                     </a>
@@ -49,16 +49,16 @@
                     </button>
                     <ul id="dropdownMenu" class="pl-6 hidden">
                         <li class="mb-2">
-                            <a href="/views/koperasi/kreditKeuangan/lihatKreditBarang.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Barang</a>
+                            <a href="/views/koperasi/kreditKeuangan/kreditBarang/lihatKreditBarang.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Barang</a>
                         </li>
                         <li class="mb-2">
-                            <a href="#" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Elektronik</a>
+                            <a href="/views/koperasi/kreditKeuangan/kreditElektronik/lihatKreditElektro.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Elektronik</a>
                         </li>
                         <li class="mb-2">
-                            <a href="#" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Motor</a>
+                            <a href="/views/koperasi/kreditKeuangan/kreditMotor/lihatKreditMotor.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Motor</a>
                         </li>
                         <li class="mb-2">
-                            <a href="#" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Umroh</a>
+                            <a href="/views/koperasi/kreditKeuangan/kreditUmroh/lihatKreditUmroh.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Umroh</a>
                         </li>
                     </ul>
                 </li>
@@ -125,7 +125,7 @@
                 <!-- LLDIKTI Section -->
                 <div class="bg-white p-6 rounded-lg shadow-sm">
                     <h2 class="text-xl font-semibold mb-4">LLDIKTI Wilayah X</h2>
-                    <img src="/images/dasbor.jpg" class="w-full object-contain rounded mb-4" alt="LLDIKTI Dashboard">
+                    <img src="/images/backroundLldikti10.jpeg" class="w-full object-contain rounded mb-4" alt="LLDIKTI Dashboard">
                     <p class="text-gray-600 mb-4">Lembaga Layanan Pendidikan Tinggi (LLDIKTI) merupakan satuan kerja di 
                         bawah Sekretariat Jenderal, Kementerian Pendidikan, Kebudayaan, Riset, dan Teknologi (Kemendikbudristek) 
                         yang mempunyai tugas dan fungsi di bidang fasilitasi peningkatan mutu penyelenggaraan pendidikan tinggi 

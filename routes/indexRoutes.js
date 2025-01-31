@@ -10,26 +10,38 @@ const loginController = require("../controllers/auth/loginController.js");
 // const masterController = require('../controllers/master/masterController');
 
 // Route untuk Login
-router.get('/', (req, res) => {
-  res.redirect('/login');
+router.get("/", (req, res) => {
+  res.redirect("/login");
 });
 router.get("/login", loginController.getLogin);
+router.post("/login", loginController.login);
 
-router.post('/login', loginController.login);
-router.post('/logout', loginController.logout);
+// Route untuk Change Password
+router.get('/changePassword', (req, res) => {
+  console.log("Change Password Page Accessed");
+  res.render('auth/changePassword');
+});
+router.post('/changePassword', loginController.changePassword);
+
+// Route untuk Logout
+router.post("/logout", loginController.logout);
+
 
 // Route untuk Dashboard
-router.get('/dashboardSuperadmin', (req, res) => {
-  res.render('dashboardSuperadmin');
+router.get("/dashboardSuperadmin", (req, res) => {
+  res.render("dashboardSuperadmin");
+});
+router.get("/dashboardPimpinan", (req, res) => {
+  res.render("dashboardPimpinan");
+});
+router.get("/dashboardKeuangan", (req, res) => {
+  if (req.session.role === 'Admin Keuangan') {
+    res.render("dashboardKeuangan");
+  } else {
+    res.redirect('/login');
+  }
 });
 
-router.get('/dashboardPimpinan', (req, res) => {
-  res.render('dashboardPimpinan');
-});
-
-router.get('/dashboardKeuangan', (req, res) => {
-  res.render('dashboardKeuangan');
-});
 
 
 // Route untuk Laporan

@@ -41,10 +41,9 @@ router.get("/dashboardKeuangan", (req, res) => {
   }
 });
 
-// Route untuk Simpanan Pimpinan
+// Route untuk Simpanan Pimpinan,Filter Data Simpanan dengan Pagination
 router.get('/simpananPimpinan', simpananController.getSimpananPimpinan);
 
-// Route untuk Filter Data Simpanan dengan Pagination
 router.post('/simpanan/filter', async (req, res) => {
   const { tahun, bulan, jenis, page = 1, limit = 10 } = req.body;
 

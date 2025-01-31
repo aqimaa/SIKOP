@@ -24,7 +24,7 @@ router.get('/changePassword', (req, res) => {
 router.post('/changePassword', loginController.changePassword);
 
 // Route untuk Logout
-router.post("/logout", loginController.logout);
+router.get("/logout", loginController.logout);
 
 
 // Route untuk Dashboard

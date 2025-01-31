@@ -82,11 +82,13 @@ exports.changePassword = async (req, res) => {
   }
 };
 
+// loginController.js
 exports.logout = (req, res) => {
   req.session.destroy((err) => {
     if (err) {
-      return res.status(500).json({ message: 'Could not log out', error: err });
+      console.log(err);
+    } else {
+      res.redirect("/login");
     }
-    res.redirect('auth/login');
   });
 };

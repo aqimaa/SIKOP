@@ -240,13 +240,14 @@
             const tahun = document.getElementById('tahun').value;
             const bulan = document.getElementById('bulan').value;
             const jenis = document.getElementById('jenis').value;
-    
+            const tipe = 'simpanan'; // Ganti dengan 'pinjaman' atau 'kredit' sesuai kebutuhan
+
             if (!tahun || !bulan || !jenis) {
                 alert('Harap lengkapi semua filter terlebih dahulu');
                 return;
             }
-    
-            const url = `/report/simpanan?tahun=${tahun}&bulan=${bulan}&jenis=${jenis}`;
+
+            const url = `/cetak-laporan?tahun=${tahun}&bulan=${bulan}&jenis=${jenis}&tipe=${tipe}`;
             window.open(url, '_blank');
         }
     </script>

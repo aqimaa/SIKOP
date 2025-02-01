@@ -5,6 +5,7 @@ const db = require('../config/database');
 // Import Controllers
 const loginController = require("../controllers/auth/loginController.js");
 const simpananController = require('../controllers/koperasi/simpananController');
+const cetakLaporanController = require('../controllers/koperasi/cetakLaporan'); // Impor controller cetak laporan
 
 // Route untuk Login
 router.get("/", (req, res) => {
@@ -42,6 +43,7 @@ router.get("/dashboardKeuangan", (req, res) => {
 });
 
 // Route untuk Simpanan Pimpinan,Filter Data Simpanan dengan Pagination
+router.get('/cetak-laporan', cetakLaporanController.cetakLaporan); // Gunakan controller cetak laporan
 router.get('/simpananPimpinan', simpananController.getSimpananPimpinan);
 
 router.post('/simpanan/filter', async (req, res) => {

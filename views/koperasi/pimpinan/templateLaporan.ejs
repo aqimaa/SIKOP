@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan <%= tipe.toUpperCase() %></title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+        .header p {
+            font-size: 16px;
+            margin: 0;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .table th, .table td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+        }
+        .table th {
+            background-color: #f2f2f2;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Laporan <%= tipe.toUpperCase() %> Koperasi</h1>
+        <p>Periode: <%= bulan %> <%= tahun %></p>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>NIP</th>
+                <th>Nama</th>
+                <% if (tipe === 'simpanan') { %>
+                    <th>Jenis Simpanan</th>
+                <% } else if (tipe === 'pinjaman') { %>
+                    <th>Jenis Pinjaman</th>
+                    <th>Jatuh Tempo</th>
+                <% } else if (tipe === 'kredit') { %>
+                    <th>Jenis Kredit</th>
+                    <th>Jatuh Tempo</th>
+                <% } %>
+                <th>Jumlah</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% data.forEach((row, index) => { %>
+                <tr>
+                    <td><%= index + 1 %></td>
+                    <td><%= row.nip %></td>
+                    <td><%= row.nama %></td>
+                    <% if (tipe === 'simpanan') { %>
+                        <td><%= jenisSimpanan %></td>
+                    <% } else if (tipe === 'pinjaman' || tipe === 'kredit') { %>
+                        <td><%= row.jenis %></td>
+                        <td><%= row.jatuh_tempo.toLocaleDateString() %></td>
+                    <% } %>
+                    <td><%= Number(row.jumlah).toLocaleString('id-ID') %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+    <div class="footer">
+        <p>Dicetak pada: <%= new Date().toLocaleDateString() %></p>
+    </div>
+</body>
+</html>

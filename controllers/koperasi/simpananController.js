@@ -61,21 +61,22 @@ const getAnggotaList = (req, res) => {
 const filterSimpanan = (req, res) => {
     const { anggota, tahun, bulan } = req.query;
     let query = `
-        SELECT
-            s.id,
+        SELECT 
+            MIN(s.id) as id,  /* Tambahkan ini untuk mendapatkan ID */
+            id_anggota,
             p.nip,
             p.nama,
-            s.tanggal,
-            s.simpanan_wajib,
-            s.simpanan_pokok,
-            s.simpanan_sukarela,
+            MAX(s.tanggal) as tanggal,
+            SUM(s.simpanan_wajib) as simpanan_wajib,
+            SUM(s.simpanan_pokok) as simpanan_pokok,
+            SUM(s.simpanan_sukarela) as simpanan_sukarela,
             s.metode_bayar
         FROM simpanan s
         JOIN anggota a ON s.id_anggota = a.id
         JOIN pegawai p ON a.nip_anggota = p.nip
         WHERE 1=1
     `;
-   
+
     const params = [];
     if (anggota) {
         query += ` AND s.id_anggota = ?`;
@@ -89,8 +90,9 @@ const filterSimpanan = (req, res) => {
         query += ` AND MONTH(s.tanggal) = ?`;
         params.push(bulan);
     }
-   
-    query += ` ORDER BY s.tanggal DESC`;
+
+    query += ` GROUP BY id_anggota, p.nip, p.nama, s.metode_bayar
+              ORDER BY MAX(s.tanggal) DESC`;
 
     connection.query(query, params, (error, results) => {
         if (error) {
@@ -121,15 +123,19 @@ const getAvailableYears = (req, res) => {
 const createSimpanan = async (req, res) => {
     const { anggota, simpanan_wajib, simpanan_pokok, simpanan_sukarela, metode_bayar } = req.body;
     const tanggal = new Date().toISOString().slice(0, 10); // Get current date
+    const tahun = new Date().getFullYear();
+    const bulan = new Date().getMonth() + 1;
 
     try {
-        // Check if there's already an entry for this member on this date
+        // Check if there's already an entry for this member in this month and year
         const checkQuery = `
             SELECT s.id, s.simpanan_wajib, s.simpanan_pokok, s.simpanan_sukarela 
             FROM simpanan s 
-            WHERE s.id_anggota = ? AND DATE(s.tanggal) = ?`;
+            WHERE s.id_anggota = ? 
+            AND YEAR(s.tanggal) = ? 
+            AND MONTH(s.tanggal) = ?`;
         
-        connection.query(checkQuery, [anggota, tanggal], (checkError, checkResults) => {
+        connection.query(checkQuery, [anggota, tahun, bulan], (checkError, checkResults) => {
             if (checkError) {
                 console.error("Error checking existing simpanan:", checkError);
                 return res.status(500).json({ message: checkError.message });
@@ -144,7 +150,8 @@ const createSimpanan = async (req, res) => {
                         simpanan_wajib = simpanan_wajib + ?,
                         simpanan_pokok = simpanan_pokok + ?,
                         simpanan_sukarela = simpanan_sukarela + ?,
-                        metode_bayar = ?
+                        metode_bayar = ?,
+                        tanggal = ?
                     WHERE id = ?`;
 
                 const updateValues = [
@@ -152,6 +159,7 @@ const createSimpanan = async (req, res) => {
                     simpanan_pokok || 0,
                     simpanan_sukarela || 0,
                     metode_bayar,
+                    tanggal, // Update tanggal dengan tanggal terakhir perubahan
                     existingRecord.id
                 ];
 
@@ -197,7 +205,6 @@ const createSimpanan = async (req, res) => {
                 });
             }
         });
-
     } catch (error) {
         console.error("Error in createSimpanan:", error);
         res.status(500).json({ message: error.message });
@@ -208,14 +215,67 @@ const createSimpanan = async (req, res) => {
 const deleteSimpanan = (req, res) => {
     const { id } = req.params;
     
-    const query = 'DELETE FROM simpanan WHERE id = ?';
+    // Pertama ambil informasi dari simpanan yang akan dihapus
+    const getInfoQuery = 'SELECT id_anggota, tanggal FROM simpanan WHERE id = ?';
     
-    connection.query(query, [id], (error, results) => {
+    connection.query(getInfoQuery, [id], (error, results) => {
         if (error) {
             console.error("Error:", error);
             return res.status(500).json({ message: error.message });
         }
-        res.json({ message: 'Simpanan berhasil dihapus' });
+        
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'Simpanan tidak ditemukan' });
+        }
+
+        const { id_anggota, tanggal } = results[0];
+        const month = new Date(tanggal).getMonth() + 1;
+        const year = new Date(tanggal).getFullYear();
+
+        // Hapus semua simpanan dari anggota di bulan dan tahun yang sama
+        const deleteQuery = `
+            DELETE FROM simpanan 
+            WHERE id_anggota = ? 
+            AND MONTH(tanggal) = ? 
+            AND YEAR(tanggal) = ?`;
+
+        connection.query(deleteQuery, [id_anggota, month, year], (deleteError) => {
+            if (deleteError) {
+                console.error("Error:", deleteError);
+                return res.status(500).json({ message: deleteError.message });
+            }
+            res.json({ message: 'Simpanan berhasil dihapus' });
+        });
+    });
+};
+
+const getHistorySimpanan = (req, res) => {
+    const { id_anggota } = req.params;
+    
+    const query = `
+        SELECT 
+            s.id,
+            p.nip,
+            p.nama,
+            s.tanggal,
+            s.simpanan_wajib,
+            s.simpanan_pokok,
+            s.simpanan_sukarela,
+            s.metode_bayar,
+            'Tambah/Update' as action_type
+        FROM simpanan s
+        JOIN anggota a ON s.id_anggota = a.id
+        JOIN pegawai p ON a.nip_anggota = p.nip
+        WHERE s.id_anggota = ?
+        ORDER BY s.tanggal DESC
+    `;
+
+    connection.query(query, [id_anggota], (error, results) => {
+        if (error) {
+            console.error("Error:", error);
+            return res.status(500).json({ message: error.message });
+        }
+        res.json(results);
     });
 };
 
@@ -226,5 +286,6 @@ module.exports = {
     filterSimpanan,
     getAvailableYears,
     createSimpanan,
-    deleteSimpanan
+    deleteSimpanan,
+    getHistorySimpanan
 };

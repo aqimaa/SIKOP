@@ -25,7 +25,7 @@
                 
                 <!-- Navigation -->
                 <nav class="mt-8">
-                    <a href="/dashboard" class="flex items-center text-white mb-4 p-2 rounded hover:bg-green-700">
+                    <a href="/dashboardKeuangan" class="flex items-center text-white mb-4 p-2 rounded hover:bg-green-700">
                         <span class="material-icons">dashboard</span>
                         <span class="ml-3">Dashboard</span>
                     </a>
@@ -57,8 +57,8 @@
                 </div>
 
                 <!-- Filters -->
-                <div class="bg-white p-4 rounded-lg shadow mb-4">
-                    <div class="grid grid-cols-2 gap-4">
+                <div class="bg-white rounded-lg shadow mb-4">
+                    <div class="grid grid-cols-2 gap-4 p-4">
                         <div>
                             <label class="block mb-2">Cari Anggota</label>
                             <select id="filterAnggota" class="w-full p-2 border rounded">
@@ -68,8 +68,6 @@
                         <div>
                             <label class="block mb-2">Tahun</label>
                             <select id="filterTahun" class="w-full p-2 border rounded"></select>
-                        </div>
-                            </select>
                         </div>
                     </div>
                 </div>
@@ -86,6 +84,7 @@
     <%- include('simpananModal') %>
     <%- include('periodeModal') %>
     <%- include('deleteModal') %>
+    <%- include('historyModal') %>
     <%- include('../../partials/alerts/notification') %>
 
     <!-- Main Script -->
@@ -251,28 +250,29 @@
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-200">
-                                    ${monthData.items.map((item, idx) => `
-                                        <tr class="hover:bg-gray-50">
-                                            <td class="px-6 py-4">${idx + 1}</td>
-                                            <td class="px-6 py-4">${item.nip}</td>
-                                            <td class="px-6 py-4">${item.nama}</td>
-                                            <td class="px-6 py-4">${new Date(item.tanggal).toLocaleDateString('id-ID')}</td>
-                                            <td class="px-6 py-4 text-right">${item.simpanan_wajib.toLocaleString('id-ID')}</td>
-                                            <td class="px-6 py-4 text-right">${item.simpanan_pokok.toLocaleString('id-ID')}</td>
-                                            <td class="px-6 py-4 text-right">${item.simpanan_sukarela.toLocaleString('id-ID')}</td>
-                                            <td class="px-6 py-4">
-                                                <div class="flex justify-center space-x-2">
-                                                    <button class="text-blue-600 hover:text-blue-800" onclick="editSimpanan(${item.id})" title="Edit">
-                                                        <span class="material-icons">edit</span>
-                                                    </button>
-                                                    <button class="text-red-600 hover:text-red-800" onclick="deleteSimpanan(${item.id})" title="Hapus">
-                                                        <span class="material-icons">delete</span>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
+            ${monthData.items.map((item, idx) => `
+                <tr class="hover:bg-gray-50 cursor-pointer transition-colors" 
+                    onclick="showHistory('${item.id_anggota}', '${item.nama}')">
+                    <td class="px-6 py-4">${idx + 1}</td>
+                    <td class="px-6 py-4">${item.nip}</td>
+                    <td class="px-6 py-4">${item.nama}</td>
+                    <td class="px-6 py-4">${new Date(item.tanggal).toLocaleDateString('id-ID')}</td>
+                    <td class="px-6 py-4 text-right">${item.simpanan_wajib.toLocaleString('id-ID')}</td>
+                    <td class="px-6 py-4 text-right">${item.simpanan_pokok.toLocaleString('id-ID')}</td>
+                    <td class="px-6 py-4 text-right">${item.simpanan_sukarela.toLocaleString('id-ID')}</td>
+                    <td class="px-6 py-4">
+                        <div class="flex justify-center space-x-2">
+                            <button class="text-blue-600 hover:text-blue-800" onclick="editSimpanan(${item.id})" title="Edit">
+                                <span class="material-icons">edit</span>
+                            </button>
+                            <button class="text-red-600 hover:text-red-800" onclick="deleteSimpanan(${item.id})" title="Hapus">
+                                <span class="material-icons">delete</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('')}
+        </tbody>
                             </table>
                         </div>
                     </div>

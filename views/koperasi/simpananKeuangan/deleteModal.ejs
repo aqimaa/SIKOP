@@ -69,14 +69,21 @@ function closeDeleteConfirmModal() {
 async function confirmDelete() {
     try {
         const response = await fetch(`/api/simpanan/${deleteItemId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
         });
 
-        if (!response.ok) throw new Error('Network response was not ok');
+        const result = await response.json();
         
+        if (!response.ok) {
+            throw new Error(result.message || 'Failed to delete');
+        }
+
         closeDeleteConfirmModal();
         showNotification('Data simpanan berhasil dihapus', 'success');
-        handleFilter();
+        await handleFilter(); // Tunggu hingga data selesai di-refresh
     } catch (error) {
         console.error('Error deleting simpanan:', error);
         showNotification('Terjadi kesalahan saat menghapus data', 'error');

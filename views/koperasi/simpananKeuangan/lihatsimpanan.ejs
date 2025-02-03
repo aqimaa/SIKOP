@@ -251,15 +251,14 @@
                                 </thead>
                                 <tbody class="divide-y divide-gray-200">
             ${monthData.items.map((item, idx) => `
-                <tr class="hover:bg-gray-50 cursor-pointer transition-colors" 
-                    onclick="showHistory('${item.id_anggota}', '${item.nama}')">
-                    <td class="px-6 py-4">${idx + 1}</td>
-                    <td class="px-6 py-4">${item.nip}</td>
-                    <td class="px-6 py-4">${item.nama}</td>
-                    <td class="px-6 py-4">${new Date(item.tanggal).toLocaleDateString('id-ID')}</td>
-                    <td class="px-6 py-4 text-right">${item.simpanan_wajib.toLocaleString('id-ID')}</td>
-                    <td class="px-6 py-4 text-right">${item.simpanan_pokok.toLocaleString('id-ID')}</td>
-                    <td class="px-6 py-4 text-right">${item.simpanan_sukarela.toLocaleString('id-ID')}</td>
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-6 py-4 cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${idx + 1}</td>
+                    <td class="px-6 py-4 cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${item.nip}</td>
+                    <td class="px-6 py-4 cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${item.nama}</td>
+                    <td class="px-6 py-4 cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${new Date(item.tanggal).toLocaleDateString('id-ID')}</td>
+                    <td class="px-6 py-4 text-right cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${item.simpanan_wajib.toLocaleString('id-ID')}</td>
+                    <td class="px-6 py-4 text-right cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${item.simpanan_pokok.toLocaleString('id-ID')}</td>
+                    <td class="px-6 py-4 text-right cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${item.simpanan_sukarela.toLocaleString('id-ID')}</td>
                     <td class="px-6 py-4">
                         <div class="flex justify-center space-x-2">
                             <button class="text-blue-600 hover:text-blue-800" onclick="editSimpanan(${item.id})" title="Edit">

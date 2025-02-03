@@ -1,4 +1,4 @@
-const connection = require('../../config/database');
+const db = require('../../config/database');
 
 const lihatSimpanan = (req, res) => {
     try {
@@ -26,7 +26,7 @@ const getSimpananData = (req, res) => {
         ORDER BY s.tanggal DESC
     `;
 
-    connection.query(query, (error, results) => {
+    db.query(query, (error, results) => {
         if (error) {
             console.error("Error:", error);
             return res.status(500).json({ message: error.message });
@@ -48,7 +48,7 @@ const getAnggotaList = (req, res) => {
         ORDER BY p.nama ASC
     `;
     
-    connection.query(query, (error, results) => {
+    db.query(query, (error, results) => {
         if (error) {
             console.error("Error:", error);
             return res.status(500).json({ message: error.message });
@@ -94,7 +94,7 @@ const filterSimpanan = (req, res) => {
     query += ` GROUP BY id_anggota, p.nip, p.nama, s.metode_bayar
               ORDER BY MAX(s.tanggal) DESC`;
 
-    connection.query(query, params, (error, results) => {
+    db.query(query, params, (error, results) => {
         if (error) {
             console.error("Error:", error);
             return res.status(500).json({ message: error.message });
@@ -110,7 +110,7 @@ const getAvailableYears = (req, res) => {
         ORDER BY year ASC
     `;
     
-    connection.query(query, (error, results) => {
+    db.query(query, (error, results) => {
         if (error) {
             console.error("Error:", error);
             return res.status(500).json({ message: error.message });
@@ -135,7 +135,7 @@ const createSimpanan = async (req, res) => {
             AND YEAR(s.tanggal) = ? 
             AND MONTH(s.tanggal) = ?`;
         
-        connection.query(checkQuery, [anggota, tahun, bulan], (checkError, checkResults) => {
+        db.query(checkQuery, [anggota, tahun, bulan], (checkError, checkResults) => {
             if (checkError) {
                 console.error("Error checking existing simpanan:", checkError);
                 return res.status(500).json({ message: checkError.message });
@@ -163,7 +163,7 @@ const createSimpanan = async (req, res) => {
                     existingRecord.id
                 ];
 
-                connection.query(updateQuery, updateValues, (updateError, updateResults) => {
+                db.query(updateQuery, updateValues, (updateError, updateResults) => {
                     if (updateError) {
                         console.error("Error updating simpanan:", updateError);
                         return res.status(500).json({ message: updateError.message });
@@ -191,7 +191,7 @@ const createSimpanan = async (req, res) => {
                     metode_bayar
                 ];
 
-                connection.query(insertQuery, insertValues, (insertError, insertResults) => {
+                db.query(insertQuery, insertValues, (insertError, insertResults) => {
                     if (insertError) {
                         console.error("Error inserting simpanan:", insertError);
                         return res.status(500).json({ message: insertError.message });
@@ -218,7 +218,7 @@ const deleteSimpanan = (req, res) => {
     // Pertama ambil informasi dari simpanan yang akan dihapus
     const getInfoQuery = 'SELECT id_anggota, tanggal FROM simpanan WHERE id = ?';
     
-    connection.query(getInfoQuery, [id], (error, results) => {
+    db.query(getInfoQuery, [id], (error, results) => {
         if (error) {
             console.error("Error:", error);
             return res.status(500).json({ message: error.message });
@@ -239,7 +239,7 @@ const deleteSimpanan = (req, res) => {
             AND MONTH(tanggal) = ? 
             AND YEAR(tanggal) = ?`;
 
-        connection.query(deleteQuery, [id_anggota, month, year], (deleteError) => {
+        db.query(deleteQuery, [id_anggota, month, year], (deleteError) => {
             if (deleteError) {
                 console.error("Error:", deleteError);
                 return res.status(500).json({ message: deleteError.message });
@@ -248,7 +248,6 @@ const deleteSimpanan = (req, res) => {
         });
     });
 };
-
 const getHistorySimpanan = (req, res) => {
     const { id_anggota } = req.params;
     
@@ -270,7 +269,7 @@ const getHistorySimpanan = (req, res) => {
         ORDER BY s.tanggal DESC
     `;
 
-    connection.query(query, [id_anggota], (error, results) => {
+    db.query(query, [id_anggota], (error, results) => {
         if (error) {
             console.error("Error:", error);
             return res.status(500).json({ message: error.message });

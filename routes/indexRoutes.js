@@ -3,6 +3,13 @@ const router = express.Router();
 
 // Import Controllers
 const loginController = require("../controllers/auth/loginController.js");
+const simpananController = require('../controllers/koperasi/simpananController');
+const pinjamanController = require('../controllers/koperasi/pinjamanController');
+const kreditController = require('../controllers/koperasi/kreditController');
+const kreditPimpinanController = require('../controllers/pimpinan/kreditPimpinanController');
+const pinjamanPimpinanController = require('../controllers/pimpinan/pinjamanPimpinanController');
+const simpananPimpinanController = require('../controllers/pimpinan/simpananPimpinanController');
+const cetakLaporanPimpinanController = require('../controllers/pimpinan/cetakLaporanPimpinanController');
 // const laporanController = require('../controllers/koperasi/laporanController');
 // const pinjamanController = require('../controllers/koperasi/pinjamanController');
 const simpananController = require('../controllers/koperasi/simpananController.js');
@@ -40,6 +47,23 @@ router.get("/dashboardKeuangan", (req, res) => {
     res.redirect('/login');
   }
 });
+
+// Route untuk Kredit Pimpinan
+router.get('/kreditPimpinan', kreditPimpinanController.getKreditPimpinan);
+router.post('/kredit/filter', kreditPimpinanController.filterData);
+  
+
+
+// Route untuk Pinjaman Pimpinan
+router.get('/pinjamanPimpinan', pinjamanPimpinanController.getPinjamanPimpinan);
+router.post('/pinjaman/filter', pinjamanPimpinanController.filterData);
+
+
+// Route untuk Simpanan Pimpinan,Filter Data Simpanan dengan Pagination
+router.get('/cetak-laporan', cetakLaporanPimpinanController.cetakLaporan); 
+router.get('/simpananPimpinan', simpananPimpinanController.getSimpananPimpinan);
+
+router.post('/simpanan/filter', simpananPimpinanController.filterData);
 
 
 // Route untuk Laporan

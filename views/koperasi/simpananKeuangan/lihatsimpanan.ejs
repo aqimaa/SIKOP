@@ -67,11 +67,8 @@
                         </div>
                         <div>
                             <label class="block mb-2">Tahun</label>
-                            <select id="filterTahun" class="w-full p-2 border rounded">
-                                <% const currentYear = new Date().getFullYear() %>
-                                <% for(let year = currentYear - 2; year <= currentYear + 2; year++) { %>
-                                    <option value="<%= year %>" <%= year === currentYear ? 'selected' : '' %>><%= year %></option>
-                                <% } %>
+                            <select id="filterTahun" class="w-full p-2 border rounded"></select>
+                        </div>
                             </select>
                         </div>
                     </div>
@@ -88,6 +85,8 @@
     <!-- Include Modals -->
     <%- include('simpananModal') %>
     <%- include('periodeModal') %>
+    <%- include('deleteModal') %>
+    <%- include('../../partials/alerts/notification') %>
 
     <!-- Main Script -->
     <script>
@@ -99,7 +98,7 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             loadAnggotaFilter();
-            handleFilter();
+            loadYearFilter();
 
             // Add event listeners to filters
             document.getElementById('filterAnggota').addEventListener('change', handleFilter);
@@ -122,6 +121,40 @@
                 console.error('Error loading anggota list:', error);
             }
         }
+        async function loadYearFilter() {
+    try {
+        const response = await fetch('/api/simpanan/years');
+        const years = await response.json();
+        
+        const filterTahun = document.getElementById('filterTahun');
+        filterTahun.innerHTML = ''; // Clear existing options
+        
+        // Add default option if needed
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'Semua Tahun';
+        filterTahun.appendChild(defaultOption);
+        
+        // Add years with data
+        years.forEach(year => {
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year;
+            // Set current year as selected if it exists in the data
+            if (year === new Date().getFullYear()) {
+                option.selected = true;
+            }
+            filterTahun.appendChild(option);
+        });
+
+        // Trigger initial filter
+        handleFilter();
+    } catch (error) {
+        console.error('Error loading years:', error);
+        showNotification('Gagal memuat data tahun', 'error');
+    }
+}
+
 
         async function handleFilter() {
             const anggota = document.getElementById('filterAnggota').value;
@@ -131,6 +164,7 @@
                 const queryParams = new URLSearchParams({ anggota, tahun }).toString();
                 const response = await fetch(`/api/simpanan/filter?${queryParams}`);
                 const data = await response.json();
+                showNotification('Data berhasil dimuat', 'info');
 
                 // Organize data by month
                 monthlySummaries = data.reduce((acc, item) => {
@@ -153,6 +187,8 @@
                 renderData();
             } catch (error) {
                 console.error('Error filtering data:', error);
+                showNotification('Gagal memuat data', 'error');
+
             }
         }
 
@@ -259,21 +295,8 @@
         }
 
         async function deleteSimpanan(id) {
-            if (confirm('Apakah Anda yakin ingin menghapus data simpanan ini?')) {
-                try {
-                    const response = await fetch(`/api/simpanan/${id}`, {
-                        method: 'DELETE'
-                    });
-
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    
-                    handleFilter(); // Refresh data
-                } catch (error) {
-                    console.error('Error deleting simpanan:', error);
-                    alert('Terjadi kesalahan saat menghapus data');
-                }
-            }
-        }
+    showDeleteConfirmModal(id);
+}
 
         function editSimpanan(id) {
             // Implement edit functionality

@@ -1,0 +1,106 @@
+<!-- Modal Konfirmasi Delete -->
+<div id="deleteConfirmModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg max-w-md w-full mx-4 overflow-hidden transform transition-all">
+        <!-- Modal Header -->
+        <div class="bg-red-50 p-6 border-b border-red-100">
+            <div class="flex items-center">
+                <div class="bg-red-100 rounded-full p-2">
+                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                </div>
+                <h3 class="ml-3 text-lg font-medium text-red-800">Konfirmasi Hapus Data</h3>
+            </div>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="p-6">
+            <p class="text-gray-600">Apakah Anda yakin ingin menghapus data simpanan ini? Tindakan ini tidak dapat dibatalkan.</p>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="bg-gray-50 px-6 py-4 flex justify-end space-x-3">
+            <button 
+                onclick="closeDeleteConfirmModal()" 
+                class="px-4 py-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-colors"
+            >
+                Batal
+            </button>
+            <button 
+                id="confirmDeleteBtn"
+                class="px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors"
+            >
+                Hapus
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+let deleteItemId = null;
+
+function showDeleteConfirmModal(id) {
+    deleteItemId = id;
+    const modal = document.getElementById('deleteConfirmModal');
+    modal.classList.remove('hidden');
+    
+    // Add animation
+    const modalContent = modal.querySelector('div');
+    modalContent.classList.add('scale-100', 'opacity-100');
+    modalContent.classList.remove('scale-95', 'opacity-0');
+}
+
+function closeDeleteConfirmModal() {
+    const modal = document.getElementById('deleteConfirmModal');
+    const modalContent = modal.querySelector('div');
+    
+    // Add animation
+    modalContent.classList.add('scale-95', 'opacity-0');
+    modalContent.classList.remove('scale-100', 'opacity-100');
+    
+    // Hide modal after animation
+    setTimeout(() => {
+        modal.classList.add('hidden');
+        deleteItemId = null;
+    }, 200);
+}
+
+// Setup confirmation button
+async function confirmDelete() {
+    try {
+        const response = await fetch(`/api/simpanan/${deleteItemId}`, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) throw new Error('Network response was not ok');
+        
+        closeDeleteConfirmModal();
+        showNotification('Data simpanan berhasil dihapus', 'success');
+        handleFilter();
+    } catch (error) {
+        console.error('Error deleting simpanan:', error);
+        showNotification('Terjadi kesalahan saat menghapus data', 'error');
+        closeDeleteConfirmModal();
+    }
+}
+
+// Event Listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // Setup delete confirmation button
+    document.getElementById('confirmDeleteBtn').onclick = confirmDelete;
+
+    // Close modal when clicking outside
+    document.getElementById('deleteConfirmModal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) {
+            closeDeleteConfirmModal();
+        }
+    });
+
+    // Add keyboard support (Escape to close)
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !document.getElementById('deleteConfirmModal').classList.contains('hidden')) {
+            closeDeleteConfirmModal();
+        }
+    });
+});
+</script>

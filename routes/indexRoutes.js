@@ -68,9 +68,11 @@ router.get('/koperasi/simpanan/lihatsimpanan', simpananController.lihatSimpanan)
 // API Routes untuk Simpanan
 router.get('/api/simpanan', simpananController.getSimpananData);
 router.get('/api/simpanan/filter', simpananController.filterSimpanan);
+router.get('/api/simpanan/years', simpananController.getAvailableYears);
 router.get('/api/anggota', simpananController.getAnggotaList);
 router.post('/api/simpanan', simpananController.createSimpanan);
 router.delete('/api/simpanan/:id', simpananController.deleteSimpanan);
+
 
 // Route untuk Kredit
 // router.get('/kredit', kreditController.getKredit);

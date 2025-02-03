@@ -1,0 +1,92 @@
+<!-- Modal History -->
+<div id="historyModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg w-[1000px] max-h-[90vh] flex flex-col">
+        <!-- Header -->
+        <div class="p-6 border-b bg-[#5D8736] rounded-t-lg">
+            <div class="flex justify-between items-center">
+                <h2 class="text-xl font-semibold">Riwayat Transaksi</h2>
+                <button onclick="closeHistoryModal()" class="text-white hover:text-gray-200">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6 overflow-y-auto">
+            <div class="mb-4">
+                <h3 class="text-lg font-medium" id="historyTitle"></h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full" id="historyTable">
+                    <thead>
+                        <tr class="text-white" style="background-color: #5D8736">
+                            <th class="px-6 py-3 text-left">Tanggal</th>
+                            <th class="px-6 py-3 text-right">Simpanan Wajib</th>
+                            <th class="px-6 py-3 text-right">Simpanan Pokok</th>
+                            <th class="px-6 py-3 text-right">Simpanan Sukarela</th>
+                            <th class="px-6 py-3 text-left">Metode Bayar</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200" id="historyTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentHistoryAnggota = null;
+
+async function showHistory(idAnggota, nama) {
+    try {
+        currentHistoryAnggota = idAnggota;
+        const response = await fetch(`/api/simpanan/history/${idAnggota}`);
+        const historyData = await response.json();
+        
+        // Update modal title
+        document.getElementById('historyTitle').textContent = `Riwayat Transaksi - ${nama}`;
+        
+        // Render history table
+        const tableBody = document.getElementById('historyTableBody');
+        tableBody.innerHTML = historyData.map(item => `
+            <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4">${new Date(item.tanggal).toLocaleDateString('id-ID')}</td>
+                <td class="px-6 py-4 text-right">${item.simpanan_wajib.toLocaleString('id-ID')}</td>
+                <td class="px-6 py-4 text-right">${item.simpanan_pokok.toLocaleString('id-ID')}</td>
+                <td class="px-6 py-4 text-right">${item.simpanan_sukarela.toLocaleString('id-ID')}</td>
+                <td class="px-6 py-4">${item.metode_bayar}</td>
+            </tr>
+        `).join('');
+        
+        // Show modal
+        document.getElementById('historyModal').classList.remove('hidden');
+        
+    } catch (error) {
+        console.error('Error loading history:', error);
+        showNotification('Gagal memuat riwayat transaksi', 'error');
+    }
+}
+
+function closeHistoryModal() {
+    document.getElementById('historyModal').classList.add('hidden');
+    currentHistoryAnggota = null;
+}
+
+// Event Listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // Add keyboard support (Escape to close)
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !document.getElementById('historyModal').classList.contains('hidden')) {
+            closeHistoryModal();
+        }
+    });
+
+    // Close modal when clicking outside
+    document.getElementById('historyModal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) {
+            closeHistoryModal();
+        }
+    });
+});
+</script>

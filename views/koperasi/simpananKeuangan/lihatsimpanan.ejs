@@ -3,69 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin Keuangan</title>
+    <title>SIKOP - Data Simpanan</title>
+    <!-- Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<body class="flex bg-gray-100">
-    <!-- Sidebar -->
-    <div class="w-72 text-white min-h-screen p-4 fixed" style="z-index: 10;background-color: #5D8736;">
-        <div class="flex items-center mb-8">
-            <img src="/public/images/logo.png" alt="Logo" class="w-16 h-16 mr-7">
-            <div>
-                <h1 class="text-2xl font-bold">SIKOP</h1>
-                <p class="text-sm">Sistem Informasi Koperasi</p>
+<body class="bg-gray-100">
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 min-h-screen fixed" style="background-color: #5D8736">
+            <div class="p-4">
+                <div class="flex items-center">
+                    <div class="bg-white p-2 rounded-md">
+                        <img src="/images/logo.png" alt="SIKOP" class="w-8 h-8">
+                    </div>
+                    <div class="ml-3 text-white">
+                        <h1 class="text-xl font-bold">SIKOP</h1>
+                    </div>
+                </div>
+                
+                <!-- Navigation -->
+                <nav class="mt-8">
+                    <a href="/dashboardKeuangan" class="flex items-center text-white mb-4 p-2 rounded hover:bg-green-700">
+                        <span class="material-icons">dashboard</span>
+                        <span class="ml-3">Dashboard</span>
+                    </a>
+                    <a href="/simpanan" class="flex items-center text-white mb-4 p-2 rounded bg-green-700">
+                        <span class="material-icons">account_balance_wallet</span>
+                        <span class="ml-3">Simpanan</span>
+                    </a>
+                    <a href="/pinjaman" class="flex items-center text-white mb-4 p-2 rounded hover:bg-green-700">
+                        <span class="material-icons">credit_card</span>
+                        <span class="ml-3">Pinjaman</span>
+                    </a>
+                </nav>
             </div>
         </div>
-        <nav>
-            <ul>
-                <li class="mb-4">
-                    <a href="/views/dashboardKeuangan.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
-                        <img src="/public/images/vectordasbor.png" alt="lihat data icon" class="w=5 h-5 ">
-                        <span class="ml-2 text-xl ml-5">Dashboard</span>
-                    </a>
-                </li>
-                <li class="mb-4">
-                    <a href="/views/koperasi/simpananKeuangan/lihatsimpanan.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
-                    <span class="material-icons">account_balance_wallet</span>
-                    <span class="ml-2 text-xl ml-5">Simpanan</span>
-                    </a>
-                </li>
-                <li class="mb-4">
-                    <a href="/views/koperasi/pinjamankeuangan/lihatPinjaman.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
-                    <span class="material-icons">credit_card</span>
-                    <span class="ml-2 text-xl ml-5">Pinjaman</span>
-                    </a>
-                </li>
-                <li>
-                    <button onclick="toggleDropdown()" class="flex items-center justify-between w-full focus:outline-none">
-                        <div class="flex items-center">
-                            <a href="#" class="flex items-center block p-6 py-3">
-                                <span class="material-icons">attach_money</span>
-                                <span class="ml-2 text-xl ml-5">Kredit</span>
-                            </a>
-                        </div>
-                        <img src="/public/images/angle-small-down.png" alt="dropdown icon" class="w-6 h-6 transform transition-transform" id="dropdownIcon">
+
+        <!-- Main Content -->
+        <div class="ml-64 flex-1">
+            <div class="p-4">
+                <!-- Header -->
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h1 class="text-2xl font-bold">Data Simpanan Koperasi</h1>
+                        <p class="text-gray-600">Kelola data simpanan anggota koperasi</p>
+                    </div>
+                    <button onclick="openSimpananModal()" class="px-4 py-2 rounded flex items-center gap-1 text-white hover:opacity-90" style="background-color: #5D8736">
+                        <span class="material-icons">add</span>
+                        <span>Tambah Simpanan Baru</span>
                     </button>
-                    <ul id="dropdownMenu" class="pl-6 hidden">
-                        <li class="mb-2">
-                            <a href="/views/koperasi/kreditKeuangan/kreditBarang/lihatKreditBarang.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Barang</a>
-                        </li>
-                        <li class="mb-2">
-                            <a href="/views/koperasi/kreditKeuangan/kreditElektronik/lihatKreditElektro.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Elektronik</a>
-                        </li>
-                        <li class="mb-2">
-                            <a href="/views/koperasi/kreditKeuangan/kreditMotor/lihatKreditMotor.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Motor</a>
-                        </li>
-                        <li class="mb-2">
-                            <a href="/views/koperasi/kreditKeuangan/kreditUmroh/lihatKreditUmroh.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Umroh</a>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </nav>
+                </div>
+
+                <!-- Filters -->
+                <div class="bg-white rounded-lg shadow mb-4">
+                    <div class="grid grid-cols-2 gap-4 p-4">
+                        <div>
+                            <label class="block mb-2">Cari Anggota</label>
+                            <select id="filterAnggota" class="w-full p-2 border rounded">
+                                <option value="">Semua Anggota</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block mb-2">Tahun</label>
+                            <select id="filterTahun" class="w-full p-2 border rounded"></select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Container -->
+                <div id="dataContainer" class="space-y-4">
+                    <!-- Data will be loaded here -->
+                </div>
+            </div>
+        </div>
     </div>
 
+    <!-- Include Modals -->
+    <%- include('simpananModal') %>
+    <%- include('periodeModal') %>
+    <%- include('deleteModal') %>
+    <%- include('historyModal') %>
+    <%- include('../../partials/alerts/notification') %>
+
+    <!-- Main Script -->
     <script>
         let monthlySummaries = {};
         const months = [
@@ -280,3 +302,5 @@
             console.log('Edit simpanan:', id);
         }
     </script>
+</body>
+</html>

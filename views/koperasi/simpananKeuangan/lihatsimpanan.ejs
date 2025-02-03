@@ -3,72 +3,305 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin Keuangan</title>
+    <title>SIKOP - Data Simpanan</title>
+    <!-- Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<body class="flex bg-gray-100">
-    <!-- Sidebar -->
-    <div class="w-72 text-white min-h-screen p-4 fixed" style="z-index: 10;background-color: #5D8736;">
-        <div class="flex items-center mb-8">
-            <img src="/public/images/logo.png" alt="Logo" class="w-16 h-16 mr-7">
-            <div>
-                <h1 class="text-2xl font-bold">SIKOP</h1>
-                <p class="text-sm">Sistem Informasi Koperasi</p>
+<body class="bg-gray-100">
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 min-h-screen fixed" style="background-color: #5D8736">
+            <div class="p-4">
+                <div class="flex items-center">
+                    <div class="bg-white p-2 rounded-md">
+                        <img src="/images/logo.png" alt="SIKOP" class="w-8 h-8">
+                    </div>
+                    <div class="ml-3 text-white">
+                        <h1 class="text-xl font-bold">SIKOP</h1>
+                    </div>
+                </div>
+                
+                <!-- Navigation -->
+                <nav class="mt-8">
+                    <a href="/dashboardKeuangan" class="flex items-center text-white mb-4 p-2 rounded hover:bg-green-700">
+                        <span class="material-icons">dashboard</span>
+                        <span class="ml-3">Dashboard</span>
+                    </a>
+                    <a href="/simpanan" class="flex items-center text-white mb-4 p-2 rounded bg-green-700">
+                        <span class="material-icons">account_balance_wallet</span>
+                        <span class="ml-3">Simpanan</span>
+                    </a>
+                    <a href="/pinjaman" class="flex items-center text-white mb-4 p-2 rounded hover:bg-green-700">
+                        <span class="material-icons">credit_card</span>
+                        <span class="ml-3">Pinjaman</span>
+                    </a>
+                </nav>
             </div>
         </div>
-        <nav>
-            <ul>
-                <li class="mb-4">
-                    <a href="/views/dashboardKeuangan.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
-                        <img src="/public/images/vectordasbor.png" alt="lihat data icon" class="w=5 h-5 ">
-                        <span class="ml-2 text-xl ml-5">Dashboard</span>
-                    </a>
-                </li>
-                <li class="mb-4">
-                    <a href="/views/koperasi/simpananKeuangan/lihatsimpanan.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
-                    <span class="material-icons">account_balance_wallet</span>
-                    <span class="ml-2 text-xl ml-5">Simpanan</span>
-                    </a>
-                </li>
-                <li class="mb-4">
-                    <a href="/views/koperasi/pinjamankeuangan/lihatPinjaman.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
-                    <span class="material-icons">credit_card</span>
-                    <span class="ml-2 text-xl ml-5">Pinjaman</span>
-                    </a>
-                </li>
-                <li>
-                    <button onclick="toggleDropdown()" class="flex items-center justify-between w-full focus:outline-none">
-                        <div class="flex items-center">
-                            <a href="#" class="flex items-center block p-6 py-3">
-                                <span class="material-icons">attach_money</span>
-                                <span class="ml-2 text-xl ml-5">Kredit</span>
-                            </a>
-                        </div>
-                        <img src="/public/images/angle-small-down.png" alt="dropdown icon" class="w-6 h-6 transform transition-transform" id="dropdownIcon">
+
+        <!-- Main Content -->
+        <div class="ml-64 flex-1">
+            <div class="p-4">
+                <!-- Header -->
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h1 class="text-2xl font-bold">Data Simpanan Koperasi</h1>
+                        <p class="text-gray-600">Kelola data simpanan anggota koperasi</p>
+                    </div>
+                    <button onclick="openSimpananModal()" class="px-4 py-2 rounded flex items-center gap-1 text-white hover:opacity-90" style="background-color: #5D8736">
+                        <span class="material-icons">add</span>
+                        <span>Tambah Simpanan Baru</span>
                     </button>
-                    <ul id="dropdownMenu" class="pl-6 hidden">
-                        <li class="mb-2">
-                            <a href="/views/koperasi/kreditKeuangan/kreditBarang/lihatKreditBarang.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Barang</a>
-                        </li>
-                        <li class="mb-2">
-                            <a href="/views/koperasi/kreditKeuangan/kreditElektronik/lihatKreditElektro.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Elektronik</a>
-                        </li>
-                        <li class="mb-2">
-                            <a href="/views/koperasi/kreditKeuangan/kreditMotor/lihatKreditMotor.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Motor</a>
-                        </li>
-                        <li class="mb-2">
-                            <a href="/views/koperasi/kreditKeuangan/kreditUmroh/lihatKreditUmroh.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Umroh</a>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </nav>
+                </div>
+
+                <!-- Filters -->
+                <div class="bg-white rounded-lg shadow mb-4">
+                    <div class="grid grid-cols-2 gap-4 p-4">
+                        <div>
+                            <label class="block mb-2">Cari Anggota</label>
+                            <select id="filterAnggota" class="w-full p-2 border rounded">
+                                <option value="">Semua Anggota</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block mb-2">Tahun</label>
+                            <select id="filterTahun" class="w-full p-2 border rounded"></select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Container -->
+                <div id="dataContainer" class="space-y-4">
+                    <!-- Data will be loaded here -->
+                </div>
+            </div>
+        </div>
     </div>
 
+    <!-- Include Modals -->
+    <%- include('simpananModal') %>
+    <%- include('periodeModal') %>
+    <%- include('deleteModal') %>
+    <%- include('historyModal') %>
+    <%- include('../../partials/alerts/notification') %>
+
+    <!-- Main Script -->
     <script>
-        function toggleDropdown() {
-            const dropdownMenu = document.getElementById('dropdownMenu');
-            dropdownMenu.classList.toggle('hidden');
+        let monthlySummaries = {};
+        const months = [
+            "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+            "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAnggotaFilter();
+            loadYearFilter();
+
+            // Add event listeners to filters
+            document.getElementById('filterAnggota').addEventListener('change', handleFilter);
+            document.getElementById('filterTahun').addEventListener('change', handleFilter);
+        });
+
+        async function loadAnggotaFilter() {
+            try {
+                const response = await fetch('/api/anggota');
+                const anggotaList = await response.json();
+                
+                const filterAnggota = document.getElementById('filterAnggota');
+                anggotaList.forEach(anggota => {
+                    const option = document.createElement('option');
+                    option.value = anggota.id;
+                    option.textContent = anggota.nama;
+                    filterAnggota.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading anggota list:', error);
+            }
+        }
+        async function loadYearFilter() {
+    try {
+        const response = await fetch('/api/simpanan/years');
+        const years = await response.json();
+        
+        const filterTahun = document.getElementById('filterTahun');
+        filterTahun.innerHTML = ''; // Clear existing options
+        
+        // Add default option if needed
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'Semua Tahun';
+        filterTahun.appendChild(defaultOption);
+        
+        // Add years with data
+        years.forEach(year => {
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year;
+            // Set current year as selected if it exists in the data
+            if (year === new Date().getFullYear()) {
+                option.selected = true;
+            }
+            filterTahun.appendChild(option);
+        });
+
+        // Trigger initial filter
+        handleFilter();
+    } catch (error) {
+        console.error('Error loading years:', error);
+        showNotification('Gagal memuat data tahun', 'error');
+    }
+}
+
+
+        async function handleFilter() {
+            const anggota = document.getElementById('filterAnggota').value;
+            const tahun = document.getElementById('filterTahun').value;
+
+            try {
+                const queryParams = new URLSearchParams({ anggota, tahun }).toString();
+                const response = await fetch(`/api/simpanan/filter?${queryParams}`);
+                const data = await response.json();
+                showNotification('Data berhasil dimuat', 'info');
+
+                // Organize data by month
+                monthlySummaries = data.reduce((acc, item) => {
+                    const month = new Date(item.tanggal).getMonth();
+                    if (!acc[month]) {
+                        acc[month] = {
+                            items: [],
+                            total_wajib: 0,
+                            total_pokok: 0,
+                            total_sukarela: 0
+                        };
+                    }
+                    acc[month].items.push(item);
+                    acc[month].total_wajib += parseFloat(item.simpanan_wajib);
+                    acc[month].total_pokok += parseFloat(item.simpanan_pokok);
+                    acc[month].total_sukarela += parseFloat(item.simpanan_sukarela);
+                    return acc;
+                }, {});
+
+                renderData();
+            } catch (error) {
+                console.error('Error filtering data:', error);
+                showNotification('Gagal memuat data', 'error');
+
+            }
+        }
+
+        function renderData() {
+            const container = document.getElementById('dataContainer');
+            container.innerHTML = '';
+
+            months.forEach((month, index) => {
+                const monthData = monthlySummaries[index] || {
+                    items: [],
+                    total_wajib: 0,
+                    total_pokok: 0,
+                    total_sukarela: 0
+                };
+
+                if (monthData.items.length === 0) return;
+
+                const monthElement = document.createElement('div');
+                monthElement.className = 'bg-white rounded-lg shadow overflow-hidden';
+                monthElement.innerHTML = `
+                    <button 
+                        class="w-full p-4 flex justify-between items-center hover:bg-gray-50"
+                        onclick="toggleMonth(${index})"
+                    >
+                        <div class="flex items-center gap-4">
+                            <span class="material-icons" id="icon-${index}">expand_more</span>
+                            <h3 class="font-semibold text-lg">${month}</h3>
+                            <span class="text-sm text-gray-500">${monthData.items.length} transaksi</span>
+                        </div>
+                        <div class="flex items-center gap-6">
+                            <div class="grid grid-cols-3 gap-6 text-sm">
+                                <div class="text-right">
+                                    <p class="text-gray-600">Simpanan Wajib</p>
+                                    <p class="font-semibold">Rp ${monthData.total_wajib.toLocaleString('id-ID')}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-gray-600">Simpanan Pokok</p>
+                                    <p class="font-semibold">Rp ${monthData.total_pokok.toLocaleString('id-ID')}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-gray-600">Simpanan Sukarela</p>
+                                    <p class="font-semibold">Rp ${monthData.total_sukarela.toLocaleString('id-ID')}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </button>
+                    <div id="content-${index}" class="hidden border-t">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="text-white" style="background-color: #5D8736">
+                                        <th class="px-6 py-3 text-left">No</th>
+                                        <th class="px-6 py-3 text-left">NIP</th>
+                                        <th class="px-6 py-3 text-left">Nama</th>
+                                        <th class="px-6 py-3 text-left">Tanggal</th>
+                                        <th class="px-6 py-3 text-right">Simpanan Wajib</th>
+                                        <th class="px-6 py-3 text-right">Simpanan Pokok</th>
+                                        <th class="px-6 py-3 text-right">Simpanan Sukarela</th>
+                                        <th class="px-6 py-3 text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+            ${monthData.items.map((item, idx) => `
+                <tr class="hover:bg-gray-50 cursor-pointer transition-colors" 
+                    onclick="showHistory('${item.id_anggota}', '${item.nama}')">
+                    <td class="px-6 py-4">${idx + 1}</td>
+                    <td class="px-6 py-4">${item.nip}</td>
+                    <td class="px-6 py-4">${item.nama}</td>
+                    <td class="px-6 py-4">${new Date(item.tanggal).toLocaleDateString('id-ID')}</td>
+                    <td class="px-6 py-4 text-right">${item.simpanan_wajib.toLocaleString('id-ID')}</td>
+                    <td class="px-6 py-4 text-right">${item.simpanan_pokok.toLocaleString('id-ID')}</td>
+                    <td class="px-6 py-4 text-right">${item.simpanan_sukarela.toLocaleString('id-ID')}</td>
+                    <td class="px-6 py-4">
+                        <div class="flex justify-center space-x-2">
+                            <button class="text-blue-600 hover:text-blue-800" onclick="editSimpanan(${item.id})" title="Edit">
+                                <span class="material-icons">edit</span>
+                            </button>
+                            <button class="text-red-600 hover:text-red-800" onclick="deleteSimpanan(${item.id})" title="Hapus">
+                                <span class="material-icons">delete</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('')}
+        </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(monthElement);
+            });
+        }
+
+        function toggleMonth(index) {
+            const content = document.getElementById(`content-${index}`);
+            const icon = document.getElementById(`icon-${index}`);
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.textContent = 'expand_less';
+            } else {
+                content.classList.add('hidden');
+                icon.textContent = 'expand_more';
+            }
+        }
+
+        async function deleteSimpanan(id) {
+    showDeleteConfirmModal(id);
+}
+
+        function editSimpanan(id) {
+            // Implement edit functionality
+            console.log('Edit simpanan:', id);
         }
     </script>
+</body>
+</html>

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Pimpinan</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="flex">
     <!-- Sidebar -->
@@ -152,25 +153,30 @@
             const tahun = document.getElementById('tahun').value;
             const bulan = document.getElementById('bulan').value;
             const jenis = document.getElementById('jenis').value;
-    
+
             if (!tahun || !bulan || !jenis) {
-                alert('Harap lengkapi semua filter!');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Harap lengkapi semua filter!',
+                    confirmButtonColor: '#5D8736',
+                });
                 return;
             }
-    
+
             try {
                 const response = await fetch('/simpanan/filter', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ tahun, bulan, jenis, page }),
                 });
-    
+
                 if (!response.ok) {
                     throw new Error(`Gagal memuat data: ${response.status}`);
                 }
-    
+
                 const result = await response.json();
-    
+
                 // Handle data kosong
                 if (!result.data || result.data.length === 0) {
                     document.getElementById('dataTable').innerHTML = `
@@ -181,7 +187,7 @@
                     document.getElementById('dataCount').textContent = 0;
                     return;
                 }
-    
+
                 // Update tabel
                 const tbody = document.getElementById('dataTable');
                 tbody.innerHTML = result.data.map((row, index) => `
@@ -193,23 +199,28 @@
                         <td class="px-6 py-4">${Number(row.jumlah).toLocaleString('id-ID')}</td>
                     </tr>
                 `).join('');
-    
+
                 // Update jumlah data
                 document.getElementById('dataCount').textContent = result.data.length;
                 document.getElementById('totalData').textContent = result.total;
-    
+
                 // Update pagination
                 currentPage = result.page;
                 totalPages = result.totalPages;
                 document.getElementById('pageInfo').textContent = `Halaman ${currentPage} dari ${totalPages}`;
-    
+
                 // Enable/disable tombol
                 document.getElementById('previousButton').disabled = currentPage === 1;
                 document.getElementById('nextButton').disabled = currentPage === totalPages;
-    
+
             } catch (error) {
                 console.error('Error:', error);
-                alert(error.message || 'Terjadi kesalahan saat memuat data.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: error.message || 'Terjadi kesalahan saat memuat data.',
+                    confirmButtonColor: '#5D8736',
+                });
             }
         }
     

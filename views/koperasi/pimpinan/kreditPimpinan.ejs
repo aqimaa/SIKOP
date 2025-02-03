@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Pimpinan</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="flex">
     <!-- Sidebar -->
@@ -154,7 +155,12 @@
             const jenis = document.getElementById('jenis').value;
 
             if (!tahun || !bulan || !jenis) {
-                alert('Harap lengkapi semua filter!');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Harap lengkapi semua filter!',
+                    confirmButtonColor: '#5D8736',
+                });
                 return;
             }
 
@@ -210,9 +216,14 @@
 
             } catch (error) {
                 console.error('Error:', error);
-                alert(error.message || 'Terjadi kesalahan saat memuat data.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: error.message || 'Terjadi kesalahan saat memuat data.',
+                    confirmButtonColor: '#5D8736',
+                });
             }
-        }
+        }   
 
         // Event listener untuk tombol tampilkan data
         document.getElementById('tampilkanData').addEventListener('click', () => {

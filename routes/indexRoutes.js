@@ -12,7 +12,6 @@ const simpananPimpinanController = require('../controllers/pimpinan/simpananPimp
 const cetakLaporanPimpinanController = require('../controllers/pimpinan/cetakLaporanPimpinanController');
 // const laporanController = require('../controllers/koperasi/laporanController');
 // const pinjamanController = require('../controllers/koperasi/pinjamanController');
-const simpananController = require('../controllers/koperasi/simpananController.js');
 // const kreditController = require('../controllers/koperasi/kreditController');
 // const masterController = require('../controllers/master/masterController');
 

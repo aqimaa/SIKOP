@@ -19,7 +19,7 @@
         <nav>
             <ul>
                 <li class="mb-4">
-                    <a href="../koperasi/dashboardPimpinan.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
+                    <a href="/dashboardPimpinan" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
                         <img src="/images/vectordasbor.png" alt="lihat data icon" class="w=5 h-5 ">
                         <span class="ml-2 text-xl ml-5">Dashboard</span>
                     </a>
@@ -36,13 +36,13 @@
                     </button>
                     <ul id="dropdownMenu" class="pl-6 hidden">
                         <li class="mb-2">
-                            <a href="../koperasi/simpananPimpinan.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Data Simpanan</a>
+                            <a href="/simpananPimpinan" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Data Simpanan</a>
                         </li>
                         <li class="mb-2">
-                            <a href="../koperasi/pinjamanPimpinan.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Data Pinjaman</a>
+                            <a href="/pinjamanPimpinan" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Data Pinjaman</a>
                         </li>
                         <li class="mb-3">
-                            <a href="../koperasi/kreditPimpinan.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Data Kredit</a>
+                            <a href="/kreditPimpinan" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Data Kredit</a>
                         </li>
                     </ul>
                 </li>
@@ -57,8 +57,8 @@
     }
     </script>
 
-    <!-- Main Content -->
-    <div class="flex-1 bg-gray-100 ml-72">
+     <!-- Main Content -->
+     <div class="flex-1 bg-gray-100 ml-72">
         <div class="flex justify-between shadow-md p-4 bg-white">
             <h1 class="text-2xl"></h1>
             <div class="flex items-center">
@@ -66,120 +66,189 @@
                 <img src="/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
             </div>
         </div>
+        <div class="flex-1 p-8">
+            <h1 class="text-4xl font-bold text-center mb-10">Data Kredit Koperasi</h1>
 
-    <div class="flex-1 p-8">
-        <h1 class="text-4xl font-bold text-center mb-10">Data Kredit Koperasi</h1>
-        
-        <!-- Filter Section -->
-        <div class="bg-white rounded-lg shadow p-10 mb-10" style="background: linear-gradient(to right, rgb(93, 135, 54) 10%, rgba(93, 135, 54, 0.8) 50%, rgba(93, 135, 54, 0.4) 70%), url('//images/backroundLldikti10.jpeg'); background-size:cover; background-position: right 20%;">
-            <div class="flex gap-9">
-                <div>
-                    <label class="block mb-2 text-xl font-semibold text-white">Tahun</label>
-                    <select class="border rounded-lg px-5 py-3 w-60 bg-white">
-                        <option>Pilih Tahun</option>
-                    </select>
+            <!-- Filter Section -->
+            <div class="bg-white rounded-lg shadow p-10 mb-10" style="background: linear-gradient(to right, rgb(93, 135, 54) 10%, rgba(93, 135, 54, 0.8) 50%, rgba(93, 135, 54, 0.4) 70%), url('/images/backroundLldikti10.jpeg'); background-size:cover; background-position: right 20%;">
+                <div class="flex gap-9">
+                    <div>
+                        <label class="block mb-2 text-xl font-semibold text-white">Tahun</label>
+                        <select id="tahun" name="tahun" class="border rounded-lg px-5 py-3 w-60 bg-white" required>
+                            <option value="">Pilih Tahun</option>
+                            <% tahunList.forEach(tahun => { %>
+                                <option value="<%= tahun %>"><%= tahun %></option>
+                            <% }); %>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-xl font-semibold text-white">Bulan</label>
+                        <select id="bulan" name="bulan" class="border rounded-lg px-5 py-3 w-60 bg-white" required>
+                            <option value="">Pilih Bulan</option>
+                            <% bulanList.forEach(bulan => { %>
+                                <option value="<%= bulan %>"><%= ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'][bulan - 1] %></option>
+                            <% }); %>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-xl font-semibold text-white">Jenis Kredit</label>
+                        <select id="jenis" name="jenis" class="border rounded-lg px-5 py-3 w-60 bg-white" required>
+                            <option value="">Pilih Kredit</option>
+                            <% jenisKredit.forEach(jenis => { %>
+                                <option value="<%= jenis %>"><%= jenis.replace('kredit_', '').toUpperCase() %></option>
+                            <% }); %>
+                        </select>
+                    </div>
                 </div>
-                <div>
-                    <label class="block mb-2 text-xl font-semibold text-white">Bulan</label>
-                    <select class="border rounded-lg px-5 py-3 w-60 bg-white">
-                        <option>Pilih Bulan</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block mb-2 text-xl font-semibold text-white">Jenis Kredit</label>
-                    <select class="border rounded-lg px-5 py-3 w-60 bg-white">
-                        <option>Pilih Kredit</option>
-                    </select>
-                </div>
-            </div>
-            <button style="background-color: #fff" class="text-base  text-black font-base px-3 py-3 rounded mt-9">Tampilkan Data</button>
-        </div>
-        
-
-        <!-- Table -->
-        <div class="bg-white rounded-lg shadow overflow-x-auto">
-            <table class="w-full">
-                <thead style="background-color: #5D8736;">
-                    <tr>
-                    <th class="px-6 py-3 text-left text-white">No</th>
-                    <th class="px-6 py-3 text-left text-white">NIP</th>
-                    <th class="px-6 py-3 text-left text-white">Nama</th>
-                    <th class="px-6 py-3 text-left text-white">Jenis Kredit</th>
-                    <th class="px-6 py-3 text-left text-white">Jatuh Tempo</th>
-                    <th class="px-6 py-3 text-left text-white">Jumlah</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="border-b border-gray-200">
-                        <td class="px-6 py-4">1</td>
-                        <td class="px-6 py-4">197810092005011002</td>
-                        <td class="px-6 py-4">AHMAD HIDAYAT S.Psi</td>
-                        <td class="px-6 py-4">ABCD</td>
-                        <td class="px-6 py-4">15</td>
-                        <td class="px-6 py-4">150.000</td>
-                    </tr>
-                    <tr class="border-b border-gray-200">
-                        <td class="px-6 py-4">2</td>
-                        <td class="px-6 py-4">198505122010012015</td>
-                        <td class="px-6 py-4">SITI NURHALIZA M.Pd</td>
-                        <td class="px-6 py-4">EFGH</td>
-                        <td class="px-6 py-4">20</td>
-                        <td class="px-6 py-4">200.000</td>
-                    </tr>
-                    <tr> 
-                        <td class="px-6 py-4">3</td>
-                        <td class="px-6 py-4">198505122010012016</td>
-                        <td class="px-6 py-4">BUDI SANTOSO M.Kom</td>
-                        <td class="px-6 py-4">IJKL</td>
-                        <td class="px-6 py-4">25</td>
-                        <td class="px-6 py-4">250.000</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Pagination -->
-        <div class="mt-4 flex items-center justify-between">
-            <div class="text-sm text-gray-600">
-                Menampilkan 1-10 dari 100 data
-            </div>
-            
-            <div class="flex gap-2">
-                <button class="px-3 py-1 border rounded" disabled>Previous</button>
-                <button class="px-3 py-1 border text-white rounded" style="background-color: #5D8736">1</button>
-                <button class="px-3 py-1 border rounded">2</button>
-                <button class="px-3 py-1 border rounded">3</button>
-                <button class="px-3 py-1 border rounded">4</button>
-                <span class="px-3 py-1">...</span>
-                <button class="px-3 py-1 border rounded">11</button>
-                <button class="px-3 py-1 border rounded">Next</button>
+                <button id="tampilkanData" style="background-color: #fff" class="text-base text-black font-base px-3 py-3 rounded mt-9">Tampilkan Data</button>
             </div>
 
-            <button onclick="cetakLaporan()" style="background-color: #5D8736" class="text-white px-4 py-2 rounded">
-                Cetak Laporan
-            </button>
-            
-            <script>
-            function cetakLaporan() {
-                const tahun = document.getElementById('tahun').value;
-                const bulan = document.getElementById('bulan').value;
-                const jenis = document.getElementById('jenis').value;
-                
-                if (!tahun || !bulan || !jenis) {
-                    alert('Mohon lengkapi semua filter terlebih dahulu');
-                    return;
-                }
-                
-                const url = `/report/${window.location.pathname.includes('kredit') ? 'kredit' : 
-                                    window.location.pathname.includes('pinjaman') ? 'pinjaman' : 
-                                    'simpanan'}?tahun=${tahun}&bulan=${bulan}&jenis=${jenis}`;
-                
-                window.open(url, '_blank');
-            }
+            <!-- Table -->
+            <div class="bg-white rounded-lg shadow overflow-x-auto">
+                <table class="w-full">
+                    <thead style="background-color: #5D8736;">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-white">No</th>
+                            <th class="px-6 py-3 text-left text-white">NIP</th>
+                            <th class="px-6 py-3 text-left text-white">Nama</th>
+                            <th class="px-6 py-3 text-left text-white">Jenis Kredit</th>
+                            <th class="px-6 py-3 text-left text-white">Jangka Waktu</th>
+                            <th class="px-6 py-3 text-left text-white">Jumlah</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTable">
+                        <!-- Data akan diisi secara dinamis -->
+                    </tbody>
+                </table>
+            </div>
 
-            </script>
-            
+            <!-- Pagination -->
+            <div class="mt-4 flex items-center justify-between">
+                <div class="text-sm text-gray-600">
+                    Menampilkan <span id="dataCount">0</span> data dari <span id="totalData">0</span> data
+                </div>
+                <div class="flex items-center gap-4">
+                    <!-- Tombol Previous dan Next -->
+                    <div class="flex gap-2">
+                        <button id="previousButton" class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200" disabled>Previous</button>
+                        <span id="pageInfo" class="px-3 py-1">Halaman 1</span>
+                        <button id="nextButton" class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200" disabled>Next</button>
+                    </div>
+                    <!-- Tombol Cetak Laporan -->
+                    <button onclick="cetakLaporan()" style="background-color: #5D8736" class="text-white px-4 py-2 rounded">
+                        Cetak Laporan
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
+
+    <script>
+        let currentPage = 1;
+        let totalPages = 1;
+
+        // Fungsi untuk menampilkan data
+        async function loadData(page = 1) {
+            const tahun = document.getElementById('tahun').value;
+            const bulan = document.getElementById('bulan').value;
+            const jenis = document.getElementById('jenis').value;
+
+            if (!tahun || !bulan || !jenis) {
+                alert('Harap lengkapi semua filter!');
+                return;
+            }
+
+            try {
+                const response = await fetch('/kredit/filter', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tahun, bulan, jenis, page }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Gagal memuat data: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                // Handle data kosong
+                if (!result.data || result.data.length === 0) {
+                    document.getElementById('dataTable').innerHTML = `
+                        <tr>
+                            <td colspan="6" class="px-6 py-4 text-center">Tidak ada data ditemukan.</td>
+                        </tr>
+                    `;
+                    document.getElementById('dataCount').textContent = 0;
+                    return;
+                }
+
+                // Update tabel
+                const tbody = document.getElementById('dataTable');
+                tbody.innerHTML = result.data.map((row, index) => `
+                    <tr class="border-b border-gray-200">
+                        <td class="px-6 py-4">${index + 1}</td>
+                        <td class="px-6 py-4">${row.nip}</td>
+                        <td class="px-6 py-4">${row.nama}</td>
+                        <td class="px-6 py-4">${row.jenis.replace('kredit_', '').toUpperCase()}</td>
+                        <td class="px-6 py-4">${row.jangka_waktu} Bulan</td>
+                        <td class="px-6 py-4">${Number(row.jumlah).toLocaleString('id-ID')}</td>
+                    </tr>
+                `).join('');
+
+                // Update jumlah data
+                document.getElementById('dataCount').textContent = result.data.length;
+                document.getElementById('totalData').textContent = result.total;
+
+                // Update pagination
+                currentPage = result.page;
+                totalPages = result.totalPages;
+                document.getElementById('pageInfo').textContent = `Halaman ${currentPage} dari ${totalPages}`;
+
+                // Enable/disable tombol
+                document.getElementById('previousButton').disabled = currentPage === 1;
+                document.getElementById('nextButton').disabled = currentPage === totalPages;
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert(error.message || 'Terjadi kesalahan saat memuat data.');
+            }
+        }
+
+        // Event listener untuk tombol tampilkan data
+        document.getElementById('tampilkanData').addEventListener('click', () => {
+            currentPage = 1;
+            loadData(currentPage);
+        });
+
+        // Event listener untuk tombol previous
+        document.getElementById('previousButton').addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                loadData(currentPage);
+            }
+        });
+
+        // Event listener untuk tombol next
+        document.getElementById('nextButton').addEventListener('click', () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                loadData(currentPage);
+            }
+        });
+
+        // Fungsi cetak laporan
+        function cetakLaporan() {
+            const tahun = document.getElementById('tahun').value;
+            const bulan = document.getElementById('bulan').value;
+            const jenis = document.getElementById('jenis').value;
+            const tipe = 'kredit'; // Ganti dengan 'kredit' sesuai kebutuhan
+            if (!tahun || !bulan || !jenis) {
+                alert('Harap lengkapi semua filter terlebih dahulu');
+                return;
+            }
+            const url = `/cetak-laporan?tahun=${tahun}&bulan=${bulan}&jenis=${jenis}&tipe=${tipe}`;
+            window.open(url, '_blank');
+        }
+    </script>
 </body>
 </html>

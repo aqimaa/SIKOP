@@ -68,12 +68,18 @@ exports.changePassword = async (req, res) => {
           const queryUpdate = 'UPDATE users SET password = ? WHERE email = ?';
           db.query(queryUpdate, [newPassword, email], (err, results) => {
               if (err) {
-                  console.error("Database Update Error:", err); // Debugging
+                  console.error("Database Update Error:", err);
                   return res.status(500).json({ message: 'Database error', error: err });
               }
 
               console.log("Password berhasil diubah untuk", email);
-              res.send("Password berhasil diubah. Silakan login kembali.");
+              
+              res.send(`
+                  <script>
+                      alert("Password berhasil diubah. Silakan login kembali.");
+                      window.location.href = "/login";
+                  </script>
+              `);
           });
       });
   } catch (error) {

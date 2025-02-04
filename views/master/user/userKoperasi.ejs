@@ -3,80 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Super Admin</title>
+    <title>Data User</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<body class="flex">
-    
+<body class="flex bg-gray-100">
+
     <!-- Sidebar -->
     <% include ./partials/layout/sidebarS %>
 
     <!-- Main Content -->
-    <div class="flex-1 ml-72">
-        <div class="flex justify-between shadow-md p-4 bg-white">
-            <h1 class="text-2xl"></h1>
-            <div class="flex items-center">
+     <div class="flex-1 p-6">
+        <header class="flex justify-between items-center mb-8">
+            <!-- Arrow Back Icon -->
+            <button class="text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                    <path d="M19 12H5" />
+                    <path d="M12 5l-7 7 7 7" />
+                </svg>
+            </button>
+            
+            <!-- Profile Section -->
+            <div class="flex items-center space-x-4">
                 <span>Super Admin</span>
-                <img src="/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
+                <img src="../../images/profile-user.png" alt="User" class="rounded-full w-10 h-10">
             </div>
+        </header>
+        <div class="flex justify-between items-center mb-4">
+            <h1 class="text-2xl font-bold">Data User</h1>
+            <button style="background-color: #5D8736; color: white;" class="px-4 py-2 rounded hover:bg-[#4c6e2f]">+ Tambah User Baru</button>
         </div>
 
-        <div class="flex-1 p-8">
-            <div class="text-center mb-4">
-                <h2 class="text-2xl font-bold">Data User</h2>
+        <div class="bg-white p-4 rounded shadow">
+            <div class="flex mb-4">
+                <input type="text" placeholder="Cari User" class="border border-gray-300 p-2 rounded flex-1" />
+                <button style="background-color: #5D8736; color: white;" class="ml-2 px-4 py-2 rounded hover:bg-[#4c6e2f]">Cari</button>
             </div>
-            <div class="flex justify-end mb-4">
-                <button class="text-white px-4 py-2 rounded flex items-center space-x-2" style="background-color: #5D8736;">
-                    <span class="material-icons">add</span>
-                    <span>Tambah User</span>
-                </button>
-            </div>        
 
-            <!-- Table -->
-            <div class="bg-white rounded-lg shadow overflow-x-auto">
-                <table class="w-full">
-                    <thead style="background-color: #5D8736;">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-white">No.</th>
-                            <th class="px-6 py-3 text-left text-white">Nama</th>
-                            <th class="px-6 py-3 text-left text-white">Email</th>
-                            <th class="px-6 py-3 text-left text-white">Password</th>
-                            <th class="px-6 py-3 text-left text-white">Role</th>
-                            <th class="px-6 py-3 text-left text-white">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="border-b border-gray-200">
-                            <td class="px-6 py-4">1</td>
-                            <td class="px-6 py-4">Pimpinan</td>
-                            <td class="px-6 py-4">pimpinan@gmail.com</td>
-                            <td class="px-6 py-4">pimpinan123</td>
-                            <td class="px-6 py-4">Pimpinan</td>
-                            <td class="px-6 py-4">
-                                <div class="flex space-x-2">
-                                    <button class="border border-gray-300 rounded p-1"><span class="material-icons">edit</span></button>
-                                    <button class="border border-gray-300 rounded p-1"><span class="material-icons">delete</span></button>
-                                </div>
+
+            <table class="table-auto w-full border-collapse">
+                <thead>
+                    <tr class="text-left bg-gray-100">
+                        <th class="p-4 w-1/12">Id</th>
+                        <th class="p-4">Nama</th>
+                        <th class="p-4">Email</th>
+                        <th class="p-4">Password</th>
+                        <th class="p-4">Role</th>
+                        <th class="p-4 w-2/12">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% User.forEach(function(user) { %>
+                        <tr class="border-b">
+                            <td class="p-4 w-1/12"><%= user.id %></td>
+                            <td class="p-4"><%= user.nama %></td>
+                            <td class="p-4"><%= user.email %></td>
+                            <td class="p-4"><%= user.password %></td>
+                            <td class="p-4"><%= user.role_user %></td>
+                            <td class="p-4 w-2/12">
+                                <form action="/master/user/<%= user.id %>" method="GET" class="inline">
+                                    <button type="submit" class="bg-blue-600 text-white p-2 rounded hover:bg-blue-700" title="Edit">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M12 20h9" />
+                                            <path d="M16.5 3.5a2.121 2.121 0 113 3L7 19l-4 1 1-4 12.5-12.5z" />
+                                        </svg>
+                                    </button>
+                                </form>
+                                <form action="/master/user/<%= user.id %>?_method=DELETE" method="POST" class="inline">
+                                    <button type="submit" class="bg-red-600 text-white p-2 rounded hover:bg-red-700" title="Hapus" onclick="return confirm('Apakah Anda yakin ingin menghapus?');">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </form>
                             </td>
                         </tr>
-                        <tr class="border-b border-gray-200">
-                            <td class="px-6 py-4">2</td>
-                            <td class="px-6 py-4">Admin Keuangan</td>
-                            <td class="px-6 py-4">keuangan@gmail.com</td>
-                            <td class="px-6 py-4">adminkeuangan123</td>
-                            <td class="px-6 py-4">Admin Keuangan</td>
-                            <td class="px-6 py-4">
-                                <div class="flex space-x-2">
-                                    <button class="border border-gray-300 rounded p-1"><span class="material-icons">edit</span></button>
-                                    <button class="border border-gray-300 rounded p-1"><span class="material-icons">delete</span></button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                    <% }); %>
+                </tbody>
+            </table>
+            
         </div>
     </div>
+
+
 </body>
 </html>

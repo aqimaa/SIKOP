@@ -3,11 +3,11 @@ const router = express.Router();
 
 // Import Controllers
 const loginController = require("../controllers/auth/loginController.js");
+const masterController = require('../controllers/master/masterController');
 // const laporanController = require('../controllers/koperasi/laporanController');
 // const pinjamanController = require('../controllers/koperasi/pinjamanController');
 // const simpananController = require('../controllers/koperasi/simpananController');
 // const kreditController = require('../controllers/koperasi/kreditController');
-const masterController = require('../controllers/master/masterController');
 
 // Route untuk Login
 router.get("/", (req, res) => {
@@ -26,7 +26,6 @@ router.post('/changePassword', loginController.changePassword);
 // Route untuk Logout
 router.get("/logout", loginController.logout);
 
-
 // Route untuk Dashboard
 router.get("/dashboardSuperadmin", (req, res) => {
   res.render("dashboardSuperadmin");
@@ -42,7 +41,20 @@ router.get("/dashboardKeuangan", (req, res) => {
   }
 });
 
+// Route untuk Master
+router.get('/master/pegawai', masterController.getPegawai);
+router.post('/master/pegawai', masterController.createPegawai);
+router.put('/master/pegawai/:nip', masterController.updatePegawai);
+router.delete('/master/pegawai/:nip', masterController.deletePegawai);
 
+router.get('/master/anggota', masterController.getAnggota);
+router.post('/master/anggota', masterController.createAnggota);
+router.put('/master/anggota/:id', masterController.updateAnggota);
+router.delete('/master/anggota/:id', masterController.deleteAnggota);
+
+router.get('/master/user', masterController.getUser);
+router.put('/master/user/:id', masterController.updateUser  );
+router.delete('/master/user/:id', masterController.deleteUser  );
 
 // Route untuk Laporan
 // router.get('/laporan', laporanController.getLaporan);
@@ -59,22 +71,6 @@ router.get("/dashboardKeuangan", (req, res) => {
 // Route untuk Kredit
 // router.get('/kredit', kreditController.getKredit);
 // router.post('/kredit', kreditController.createKredit);
-
-// Route untuk Master
-router.get('/master/pegawai', masterController.getPegawai);
-router.post('/master/pegawai', masterController.createPegawai);
-router.put('/master/pegawai/:nip', masterController.updatePegawai);
-router.delete('/master/pegawai/:nip', masterController.deletePegawai);
-
-router.get('/master/anggota', masterController.getAnggota);
-router.post('/master/anggota', masterController.createAnggota);
-router.put('/master/anggota/:id', masterController.updateAnggota);
-router.delete('/master/anggota/:id', masterController.deleteAnggota);
-
-router.get('/master/user', masterController.getUser);
-router.post('/master/user', masterController.createUser);
-router.put('/master/user/:id', masterController.updateUser );
-router.delete('/master/user/:id', masterController.deleteUser );
 
 // Export Router
 module.exports = router;

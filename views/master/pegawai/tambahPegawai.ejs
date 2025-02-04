@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tambah Pegawai</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body class="flex">
+    
+    <!-- Sidebar -->
+    <% include ./partials/layout/sidebarS %>
+    
+    <!-- Main Content -->
+    <div class="flex-1 ml-72">
+        <div class="flex justify-between shadow-md p-4 bg-white">
+            <h1 class="text-2xl"></h1>
+            <div class="flex items-center">
+                <span>Super Admin</span>
+                <img src="/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
+            </div>
+        </div>
+            
+        <div class="flex-1 p-8">
+            <!-- Content Container -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <!-- Centered Title -->
+                <div class="text-center mb-4">
+                    <h2 class="text-2xl font-bold mb-8">Tambah Pegawai</h2>
+                </div>
+
+                <!-- Form -->
+                <form class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 mb-1">NIP</label>
+                        <input type="number" class="w-full p-2 border border-gray-300 rounded" name="nip" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-1">Nama</label>
+                        <input type="text" class="w-full p-2 border border-gray-300 rounded" name="nama" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-1">Wilayah</label>
+                        <select class="w-full p-2 border border-gray-300 rounded mb-4">
+                            <option>Jambi</option>
+                            <option>Kep. Riau</option>
+                            <option>Riau</option>
+                            <option>Sumatra Barat</option>
+                        </select>
+                    </div>
+                    <div class="text-center mt-12">
+                        <button type="submit" class="bg-green-700 text-white px-4 py-2 rounded w-full" style="background-color: #5D8736;">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- <script>
+        function toggleMenu() {
+            const menu = document.getElementById('dataMasterMenu');
+            menu.classList.toggle('hidden');
+        }
+    </script> -->
+
+</body>
+</html>

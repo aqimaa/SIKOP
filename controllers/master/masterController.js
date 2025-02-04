@@ -9,7 +9,7 @@ exports.getPegawai = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
-    res.json(results);
+    res.render('master/pegawai', { pegawai: results });
   });
 };
 
@@ -20,7 +20,7 @@ exports.createPegawai = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
-    res.json({ message: 'Pegawai berhasil ditambahkan' });
+    res.redirect('/master/pegawai');
   });
 };
 
@@ -31,7 +31,7 @@ exports.updatePegawai = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
-    res.json({ message: 'Pegawai berhasil diupdate' });
+    res.redirect('/master/pegawai');
   });
 };
 
@@ -42,7 +42,7 @@ exports.deletePegawai = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
-    res.json({ message: 'Pegawai berhasil dihapus' });
+    res.redirect('/master/pegawai');
   });
 };
 
@@ -53,20 +53,36 @@ exports.getAnggota = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
-    res.json(results);
+    res.render('master/anggotaKoperasi', { anggota: results });
   });
 };
 
-exports.createAnggota = (req, res) => {
+exports.createAnggota = (req, res) => { 
   const { id, nip_anggota, status } = req.body;
-  const query = 'INSERT INTO anggota (id, nip_anggota, status) VALUES (?, ?, ?)';
-  db.query(query, [id, nip_anggota, status], (err, results) => {
+
+  // Cek apakah nip_anggota ada di tabel pegawai
+  const checkQuery = 'SELECT nip FROM pegawai WHERE nip = ?';
+  db.query(checkQuery, [nip_anggota], (err, results) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
-    res.json({ message: 'Anggota berhasil ditambahkan' });
+
+    // Jika tidak ditemukan, kirim pesan error
+    if (results.length === 0) {
+      return res.status(400).json({ message: 'NIP tidak ditemukan di tabel pegawai' });
+    }
+
+    // Jika ditemukan, lanjutkan proses insert ke tabel anggota
+    const insertQuery = 'INSERT INTO anggota (id, nip_anggota, status) VALUES (?, ?, ?)';
+    db.query(insertQuery, [id, nip_anggota, status], (err, results) => {
+      if (err) {
+        return res.status(500).json({ message: 'Database error', error: err });
+      }
+      res.redirect('/master/anggota');
+    });
   });
 };
+
 
 exports.updateAnggota = (req, res) => {
   const { id, nip_anggota, status } = req.body;
@@ -75,7 +91,7 @@ exports.updateAnggota = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
-    res.json({ message: 'Anggota berhasil diupdate' });
+    res.redirect('/master/anggota');
   });
 };
 
@@ -86,7 +102,7 @@ exports.deleteAnggota = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
-    res.json({ message: 'Anggota berhasil dihapus' });
+    res.redirect('/master/anggota');
   });
 };
 
@@ -97,39 +113,28 @@ exports.getUser = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
-    res.json(results);
+    res.render('master/userKoperasi', { user: results });
   });
 };
 
-exports.createUser = (req, res) => {
-  const { nama, email, password, role_user } = req.body;
-  const query = 'INSERT INTO users (nama, email, password, role_user) VALUES (?, ?, ?, ?)';
-  db.query(query, [nama, email, password, role_user], (err, results) => {
-    if (err) {
-      return res.status(500).json({ message: 'Database error', error: err });
-    }
-    res.json({ message: 'User  berhasil ditambahkan' });
-  });
-};
-
-exports.updateUser  = (req, res) => {
+exports.updateUser   = (req, res) => {
   const { id, nama, email, password, role_user } = req.body;
   const query = 'UPDATE users SET nama = ?, email = ?, password = ?, role_user = ? WHERE id = ?';
   db.query(query, [nama, email, password, role_user, id], (err, results) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
-    res.json({ message: 'User  berhasil diupdate' });
+    res.redirect('/master/user');
   });
 };
 
-exports.deleteUser  = (req, res) => {
+exports.deleteUser   = (req, res) => {
   const { id } = req.params;
   const query = 'DELETE FROM users WHERE id = ?';
   db.query(query, [id], (err, results) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
-    res.json({ message: 'User  berhasil dihapus' });
+    res.redirect('/master/user');
   });
 };

@@ -10,37 +10,101 @@
 <body class="flex bg-gray-100">
 
     <!-- Sidebar -->
-    <% include ./partials/layout/sidebarS %>
-
-    <!-- Main Content -->
-     <div class="flex-1 p-6">
-        <header class="flex justify-between items-center mb-8">
-            <!-- Arrow Back Icon -->
-            <button class="text-gray-600">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                    <path d="M19 12H5" />
-                    <path d="M12 5l-7 7 7 7" />
-                </svg>
-            </button>
-            
-            <!-- Profile Section -->
-            <div class="flex items-center space-x-4">
-                <span>admin</span>
-                <img src="../../images/profile-user.png" alt="User" class="rounded-full w-10 h-10">
+    <div id="sidebar" class="w-72 text-white min-h-screen p-4 fixed left-0 top-0 transform transition-transform bg-green-800" style="background-color: #5D8736; z-index: 999;">
+        <div class="flex items-center mb-8">
+            <img src="/images/logo.png" alt="Logo" class="w-16 h-16 mr-7 cursor-pointer" id="logo">
+            <div id="sidebarContent">
+                <h1 class="text-2xl font-bold">SIKOP</h1>
+                <p class="text-sm">Sistem Informasi Koperasi</p>
             </div>
-        </header>
-        <div class="flex justify-between items-center mb-4">
-            <h1 class="text-2xl font-bold">Data Pegawai</h1>
-            <button style="background-color: #5D8736; color: white;" class="px-4 py-2 rounded hover:bg-[#4c6e2f]">+ Tambah Pegawai Baru</button>
+        </div>
+        <nav>
+            <ul>
+                <li class="mb-4">
+                    <a href="/dashboardSuperadmin" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
+                        <img src="/images/vectordasbor.png" alt="lihat data icon" class="w=5 h-5 ">
+                        <span class="ml-2 text-xl ml-5">Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <button onclick="toggleDropdown()" class="flex items-center justify-between w-full focus:outline-none">
+                        <div class="flex items-center">
+                            <a href="#" class="flex items-center block p-6 py-3 hover:">
+                                <img src="/images/lihatdata.png" alt="lihat data icon" class="w=5 h-5 ">
+                                <span class="ml-2 text-xl ml-5">Data Master</span>
+                            </a>
+                        </div>
+                        <img src="/images/angle-small-down.png" alt="dropdown icon" class="w-6 h-6 transform transition-transform" id="dropdownIcon">
+                    </button>
+                    <ul id="dropdownMenu" class="pl-6 hidden">
+                        <li class="mb-2">
+                            <a href="/master/pegawai" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">o Pegawai</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="/master/anggota" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">o Anggota Koperasi</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="/master/user" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">o Admin Area</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Log Out Button di Bawah -->
+        <div class="absolute bottom-0 left-0 w-full p-4">
+            <button onclick="logout()" class="flex items-center w-full p-6 py-3 hover:bg-green-900 rounded transition duration-300">
+                <span class="material-icons">logout</span>
+                <span class="ml-5 text-xl">Log Out</span>
+            </button>
         </div>
 
-        <div class="bg-white p-4 rounded shadow">
-            <div class="flex mb-4">
-                <input type="text" placeholder="Cari Pegawai" class="border border-gray-300 p-2 rounded flex-1" />
-                <button style="background-color: #5D8736; color: white;" class="ml-2 px-4 py-2 rounded hover:bg-[#4c6e2f]">Cari</button>
+        <script>
+        function logout() {
+            if (confirm("Yakin ingin keluar?")) {
+                fetch('/logout', { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert("Anda berhasil logout");
+                            window.location.href = "/login";
+                        } else {
+                            alert("Gagal logout, coba lagi.");
+                        }
+                    })
+                    .catch(error => console.error('Logout error:', error));
+            }
+        }
+
+        // Dropdown toggle
+        function toggleDropdown() {
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            dropdownMenu.classList.toggle('hidden');
+        }
+        </script>
+    </div>
+
+    <!-- Main Content -->
+     <div class="flex-1 p-6 ml-72"> <!-- Added ml-72 to give space next to sidebar -->
+        <header class="flex justify-between items-center mb-8 bg-white p-4 shadow-md">
+            <div class="flex-1">
+                <h1 class="text-2xl font-bold text-center">Data Pegawai</h1>
             </div>
+            <div class="flex items-center">
+                <span class="mr-2">Super Admin</span>
+                <img src="../../images/profile-user.png" alt="User " class="rounded-full w-10 h-10">
+            </div>
+        </header>
 
-
+        <div class="bg-white p-4 rounded shadow">
+            <div class="flex justify-between mb-4">
+                <div class="flex flex-1">
+                    <input type="text" placeholder="Cari Pegawai" class="border border-gray-300 p-2 rounded flex-1" />
+                    <button style="background-color: #5D8736; color: white;" class="ml-2 px-4 py-2 rounded hover:bg-[#4c6e2f]">Cari</button>
+                </div>
+                <button style="background-color: #5D8736; color: white;" class="ml-4 px-4 py-2 rounded hover:bg-[#4c6e2f]">+ Tambah Pegawai Baru</button>
+            </div>
+       
             <table class="table-auto w-full border-collapse">
                 <thead>
                     <tr class="text-left bg-gray-100">

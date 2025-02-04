@@ -99,7 +99,6 @@ router.delete('/api/simpanan/:id', simpananController.deleteSimpanan);
 // router.post('/kredit', kreditController.createKredit);
 
 // Route untuk Master
-// Route untuk Master
 router.get('/master/pegawai', masterController.getPegawai);
 router.get('/master/pegawai/tambahPegawai', (req, res) => {
   res.render('master/pegawai/tambahPegawai');
@@ -152,7 +151,6 @@ router.get('/master/user/editUser /:id', (req, res) => {
   });
 });
 router.post('/master/user/editUser /:id', masterController.updateUser );
-
 
 // Export Router
 module.exports = router;

@@ -68,14 +68,15 @@ exports.deletePegawai = (req, res) => {
 
 // Anggota
 exports.getAnggota = (req, res) => {
-  const query = 'SELECT * FROM anggota';
-  db.query(query, (err, results) => {
+  const queryAnggota = 'SELECT * FROM anggota';
+  db.query(queryAnggota, (err, anggotaResults) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
-    res.render('master/anggotaKoperasi', { anggota: results });
+
+    res.render('master/anggota/anggotaKoperasi', { anggota: anggotaResults });
   });
-};
+}; 
 
 exports.createAnggota = (req, res) => { 
   const { id, nip_anggota, status } = req.body;
@@ -133,7 +134,7 @@ exports.getUser = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
-    res.render('master/user/userKoperasi', { user: results });
+    res.render('master/user/userKoperasi', { users: results }); // Update this line
   });
 };
 

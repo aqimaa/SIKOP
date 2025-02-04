@@ -3,11 +3,17 @@ const router = express.Router();
 
 // Import Controllers
 const loginController = require("../controllers/auth/loginController.js");
-const masterController = require('../controllers/master/masterController');
+const simpananController = require('../controllers/koperasi/simpananController');
+const pinjamanController = require('../controllers/koperasi/pinjamanController');
+const kreditController = require('../controllers/koperasi/kreditController');
+const kreditPimpinanController = require('../controllers/pimpinan/kreditPimpinanController');
+const pinjamanPimpinanController = require('../controllers/pimpinan/pinjamanPimpinanController');
+const simpananPimpinanController = require('../controllers/pimpinan/simpananPimpinanController');
+const cetakLaporanPimpinanController = require('../controllers/pimpinan/cetakLaporanPimpinanController');
 // const laporanController = require('../controllers/koperasi/laporanController');
 // const pinjamanController = require('../controllers/koperasi/pinjamanController');
-// const simpananController = require('../controllers/koperasi/simpananController');
 // const kreditController = require('../controllers/koperasi/kreditController');
+// const masterController = require('../controllers/master/masterController');
 
 // Route untuk Login
 router.get("/", (req, res) => {
@@ -24,7 +30,7 @@ router.get('/changePassword', (req, res) => {
 router.post('/changePassword', loginController.changePassword);
 
 // Route untuk Logout
-router.get("/logout", loginController.logout);
+router.post("/logout", loginController.logout);
 
 // Route untuk Dashboard
 router.get("/dashboardSuperadmin", (req, res) => {
@@ -41,20 +47,23 @@ router.get("/dashboardKeuangan", (req, res) => {
   }
 });
 
-// Route untuk Master
-router.get('/master/pegawai', masterController.getPegawai);
-router.post('/master/pegawai', masterController.createPegawai);
-router.put('/master/pegawai/:nip', masterController.updatePegawai);
-router.delete('/master/pegawai/:nip', masterController.deletePegawai);
+// Route untuk Kredit Pimpinan
+router.get('/kreditPimpinan', kreditPimpinanController.getKreditPimpinan);
+router.post('/kredit/filter', kreditPimpinanController.filterData);
+  
 
-router.get('/master/anggota', masterController.getAnggota);
-router.post('/master/anggota', masterController.createAnggota);
-router.put('/master/anggota/:id', masterController.updateAnggota);
-router.delete('/master/anggota/:id', masterController.deleteAnggota);
 
-router.get('/master/user', masterController.getUser);
-router.put('/master/user/:id', masterController.updateUser  );
-router.delete('/master/user/:id', masterController.deleteUser  );
+// Route untuk Pinjaman Pimpinan
+router.get('/pinjamanPimpinan', pinjamanPimpinanController.getPinjamanPimpinan);
+router.post('/pinjaman/filter', pinjamanPimpinanController.filterData);
+
+
+// Route untuk Simpanan Pimpinan,Filter Data Simpanan dengan Pagination
+router.get('/cetak-laporan', cetakLaporanPimpinanController.cetakLaporan); 
+router.get('/simpananPimpinan', simpananPimpinanController.getSimpananPimpinan);
+
+router.post('/simpanan/filter', simpananPimpinanController.filterData);
+
 
 // Route untuk Laporan
 // router.get('/laporan', laporanController.getLaporan);
@@ -65,12 +74,36 @@ router.delete('/master/user/:id', masterController.deleteUser  );
 // router.post('/pinjaman', pinjamanController.createPinjaman);
 
 // Route untuk Simpanan
-// router.get('/simpanan', simpananController.getSimpanan);
-// router.post('/simpanan', simpananController.createSimpanan);
+router.get('/simpanan', (req, res) => {
+  if (req.session.role === 'Admin Keuangan') {
+      res.render('koperasi/simpananKeuangan/lihatsimpanan');
+  } else {
+      res.redirect('/login');
+  }
+});
+
+// API Routes untuk Simpanan
+router.get('/api/simpanan', simpananController.getSimpananData);
+router.get('/koperasi/simpanan/lihatsimpanan', simpananController.lihatSimpanan);
+
+// API Routes untuk Simpanan
+router.get('/api/simpanan', simpananController.getSimpananData);
+
+router.get('/api/simpanan/filter', simpananController.filterSimpanan);
+router.get('/api/simpanan/years', simpananController.getAvailableYears);
+router.get('/api/anggota', simpananController.getAnggotaList);
+router.get('/api/simpanan/history/:id_anggota', simpananController.getHistorySimpanan);
+
+router.post('/api/simpanan', simpananController.createSimpanan);
+router.delete('/api/simpanan/:id', simpananController.deleteSimpanan);
 
 // Route untuk Kredit
 // router.get('/kredit', kreditController.getKredit);
 // router.post('/kredit', kreditController.createKredit);
+
+// Route untuk Master
+// router.get('/master/anggota', masterController.getAnggota);
+// router.get('/master/user', masterController.getUser);
 
 // Export Router
 module.exports = router;

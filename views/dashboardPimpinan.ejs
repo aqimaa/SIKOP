@@ -7,11 +7,64 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="flex">
-
     <!-- Sidebar -->
-    <% include ./partials/layout/sidebarP %>
+<div class="w-72 text-white min-h-screen p-4 fixed" style="background-color: #5D8736;">
+    <div class="flex items-center mb-8">
+        <img src="/images/logo.png" alt="Logo" class="w-16 h-16 mr-7">
+        <div>
+            <h1 class="text-2xl font-bold">SIKOP</h1>
+            <p class="text-sm">Sistem Informasi Koperasi</p>
+        </div>
+    </div>
+    <nav>
+        <ul>
+            <li class="mb-4">
+                <a href="/dashboardPimpinan" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
+                    <img src="/images/vectordasbor.png" alt="lihat data icon" class="w=5 h-5 ">
+                    <span class="ml-2 text-xl ml-5">Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <button onclick="toggleDropdown('mainDropdown', event)" class="flex items-center justify-between w-full focus:outline-none">
+                    <div class="flex items-center">
+                        <a href="#" class="flex items-center block p-6 py-3 hover:">
+                            <img src="/images/lihatdata.png" alt="lihat data icon" class="w=5 h-5 ">
+                            <span class="ml-2 text-xl ml-5">Lihat Data</span>
+                        </a>
+                    </div>
+                    <img src="/images/angle-small-down.png" alt="dropdown icon" class="w-6 h-6 transform transition-transform" id="mainDropdownIcon">
+                </button>
+                <ul id="mainDropdown" class="pl-6 hidden">
+                    <li class="mb-2">
+                        <a href="/simpananPimpinan" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Data Simpanan</a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="/pinjamanPimpinan" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Data Pinjaman</a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="/kreditPimpinan" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Data Kredit</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<script>
+function toggleDropdown(dropdownId, event) {
+    event.stopPropagation(); // Menghentikan event bubbling
+    const dropdownMenu = document.getElementById(dropdownId);
+    const dropdownIcon = document.getElementById(dropdownId + 'Icon');
+    dropdownMenu.classList.toggle('hidden');
+    dropdownIcon.classList.toggle('rotate-180');
+}
+</script>
+
 
     <!-- Main Content -->
+    <!-- <div class="flex-1 bg-gray-100 ">
+        <h1 class="text-2xl mb-6">Selamat Datang di Aplikasi Sistem Informasi Koperasi</h1> -->
+        
     <div class="flex-1 bg-gray-100 ml-72">
             <div class="flex justify-between shadow-md p-4 bg-white">
                 <h1 class="text-2xl font-bold">Selamat Datang di Aplikasi Sistem Informasi Koperasi</h1>

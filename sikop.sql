@@ -374,6 +374,30 @@ INSERT INTO `simpanan` (`id`, `id_anggota`, `tanggal`, `simpanan_wajib`, `simpan
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `simpanan_history`
+--
+
+CREATE TABLE `simpanan_history` (
+  `id` int(11) NOT NULL,
+  `simpanan_id` int(11) NOT NULL,
+  `id_anggota` int(11) NOT NULL,
+  `action_type` enum('buat','edit','tambah','delete') NOT NULL,
+  `old_data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`old_data`)),
+  `new_data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`new_data`)),
+  `changed_by` varchar(100) DEFAULT NULL,
+  `action_date` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `simpanan_history`
+--
+
+INSERT INTO `simpanan_history` (`id`, `simpanan_id`, `id_anggota`, `action_type`, `old_data`, `new_data`, `changed_by`, `action_date`) VALUES
+(43, 20, 1, 'buat', NULL, '{\"id\":20,\"id_anggota\":\"1\",\"tanggal\":\"2025-02-04\",\"simpanan_wajib\":100000,\"simpanan_pokok\":100000,\"simpanan_sukarela\":0,\"metode_bayar\":\"cash\"}', 'system', '2025-02-04 04:30:58');
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `users`
 --
 

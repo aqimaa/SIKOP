@@ -6,6 +6,7 @@
     <title>Data Pinjaman</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="flex bg-gray-100">
      <!-- Sidebar -->
@@ -146,7 +147,7 @@
                               <td class="px-6 py-4">
                                 <div class="flex space-x-2">
                                   <button class="border border-gray-300 rounded p-1"><span class="material-icons">edit</span></button>
-                                  <button class="border border-gray-300 rounded p-1"><span class="material-icons">delete</span></button>
+                                  <button onclick="hapusPinjaman('<%= item.id %>')" class="border border-gray-300 rounded p-1"><span class="material-icons">delete</span></button>
                                 </div>
                               </td>
                             </tr>
@@ -161,5 +162,97 @@
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function hapusPinjaman(id) {
+            Swal.fire({
+                title: 'Konfirmasi Hapus Data',
+                html: 'Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d9534f', // Warna merah untuk tombol "Hapus"
+                cancelButtonColor: '#f0f0f0', // Warna abu-abu untuk tombol "Batal"
+                confirmButtonText: 'Hapus',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    popup: 'custom-swal',
+                    title: 'custom-title',
+                    icon: 'custom-icon',
+                    confirmButton: 'custom-confirm-button',
+                    cancelButton: 'custom-cancel-button',
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/pinjaman/hapus/${id}`, {
+                        method: 'DELETE',
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire(
+                                'Dihapus!',
+                                'Data berhasil dihapus.',
+                                'success'
+                            ).then(() => {
+                                window.location.reload(); // Reload halaman untuk memperbarui data
+                            });
+                        } else {
+                            Swal.fire(
+                                'Gagal!',
+                                'Gagal menghapus data.',
+                                'error'
+                            );
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire(
+                            'Error!',
+                            'Terjadi kesalahan saat menghapus data.',
+                            'error'
+                        );
+                    });
+                }
+            });
+        }
+    </script>
+    
+    <style>
+        .custom-swal {
+            border-radius: 10px;
+            padding: 20px;
+        }
+    
+        .custom-title {
+            color: #b22222; /* Warna merah */
+            font-weight: bold;
+            font-size: 18px;
+        }
+    
+        .custom-icon {
+            color: #b22222; /* Warna ikon */
+        }
+    
+        .swal2-html-container {
+            font-size: 16px;
+            color: #4a4a4a;
+        }
+    
+        .custom-confirm-button {
+            background-color: #d9534f;
+            color: white;
+            border-radius: 5px;
+            padding: 10px 20px;
+        }
+    
+        .custom-cancel-button {
+            background-color: #f0f0f0;
+            color: #4a4a4a;
+            border-radius: 5px;
+            padding: 10px 20px;
+            border: 1px solid #ccc;
+        }
+    </style>
 </body>
 </html>

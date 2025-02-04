@@ -6,6 +6,8 @@ const loginController = require("../controllers/auth/loginController.js");
 const simpananController = require('../controllers/koperasi/simpananController');
 // const pinjamanController = require('../controllers/koperasi/pinjamanController');
 // const kreditController = require('../controllers/koperasi/kreditController');
+const pinjamanController = require('../controllers/koperasi/lihatPinjaman.js');
+const kreditController = require('../controllers/koperasi/kreditController');
 const kreditPimpinanController = require('../controllers/pimpinan/kreditPimpinanController');
 const pinjamanPimpinanController = require('../controllers/pimpinan/pinjamanPimpinanController');
 const simpananPimpinanController = require('../controllers/pimpinan/simpananPimpinanController');
@@ -94,6 +96,9 @@ router.delete('/api/simpanan/:id', simpananController.deleteSimpanan);
 
 // Route untuk Pinjaman
 router.get('/lihatPinjaman', lihatPinjamanController.lihatPinjaman);
+
+// Route untuk menghapus pinjaman
+router.delete('/pinjaman/hapus/:id', lihatPinjamanController.hapusPinjaman);
 
 // Route untuk Kredit
 // router.get('/kredit', kreditController.getKredit);

@@ -9,7 +9,79 @@
 </head>
 <body class="flex">
     <!-- Sidebar -->
-    <% include ../partials/layout/sidebarS %>
+    <div id="sidebar" class="w-72 text-white min-h-screen p-4 fixed left-0 top-0 transform transition-transform bg-green-800" style="background-color: #5D8736; z-index: 999;">
+        <div class="flex items-center mb-8">
+            <img src="/images/logo.png" alt="Logo" class="w-16 h-16 mr-7 cursor-pointer" id="logo">
+            <div id="sidebarContent">
+                <h1 class="text-2xl font-bold">SIKOP</h1>
+                <p class="text-sm">Sistem Informasi Koperasi</p>
+            </div>
+        </div>
+        <nav>
+            <ul>
+                <li class="mb-4">
+                    <a href="/dashboardSuperadmin" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
+                        <img src="/images/vectordasbor.png" alt="lihat data icon" class="w=5 h-5 ">
+                        <span class="ml-2 text-xl ml-5">Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <button onclick="toggleDropdown()" class="flex items-center justify-between w-full focus:outline-none">
+                        <div class="flex items-center">
+                            <a href="#" class="flex items-center block p-6 py-3 hover:">
+                                <img src="/images/lihatdata.png" alt="lihat data icon" class="w=5 h-5 ">
+                                <span class="ml-2 text-xl ml-5">Data Master</span>
+                            </a>
+                        </div>
+                        <img src="/images/angle-small-down.png" alt="dropdown icon" class="w-6 h-6 transform transition-transform" id="dropdownIcon">
+                    </button>
+                    <ul id="dropdownMenu" class="pl-6 hidden">
+                        <li class="mb-2">
+                            <a href="/master/pegawai" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">o Pegawai</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="/master/anggota" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">o Anggota Koperasi</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="/master/user" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">o Admin Area</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Log Out Button di Bawah -->
+        <div class="absolute bottom-0 left-0 w-full p-4">
+            <button onclick="logout()" class="flex items-center w-full p-6 py-3 hover:bg-green-900 rounded transition duration-300">
+                <span class="material-icons">logout</span>
+                <span class="ml-5 text-xl">Log Out</span>
+            </button>
+        </div>
+
+        <script>
+        function logout() {
+            if (confirm("Yakin ingin keluar?")) {
+                fetch('/logout', { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert("Anda berhasil logout");
+                            window.location.href = "/login";
+                        } else {
+                            alert("Gagal logout, coba lagi.");
+                        }
+                    })
+                    .catch(error => console.error('Logout error:', error));
+            }
+        }
+
+        // Dropdown toggle
+        function toggleDropdown() {
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            dropdownMenu.classList.toggle('hidden');
+        }
+        </script>
+    </div>
     
     <!-- Main Content -->
     <div class="flex-1 ml-72">
@@ -17,7 +89,7 @@
             <h1 class="text-2xl"></h1>
             <div class="flex items-center">
                 <span>Super Admin</span>
-                <img src="/public/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
+                <img src="/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
             </div>
         </div>
             

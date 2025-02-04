@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
+
 // Import Controllers
 const loginController = require("../controllers/auth/loginController.js");
 const simpananController = require('../controllers/koperasi/simpananController');
@@ -103,6 +104,7 @@ router.get('/lihatPinjaman', lihatPinjamanController.lihatPinjaman);
 // router.post('/kredit', kreditController.createKredit);
 
 // Route untuk Master
+//Route Pegawai
 router.get('/master/pegawai', masterController.getPegawai);
 router.get('/master/pegawai/tambahPegawai', (req, res) => {
   res.render('master/pegawai/tambahPegawai');
@@ -123,6 +125,7 @@ router.post('/master/pegawai/ubahPegawai/:nip', masterController.updatePegawai);
 
 router.get('/master/pegawai/delete/:nip', masterController.deletePegawai);
 
+// Route Anggota
 router.get('/master/anggota', masterController.getAnggota);
 router.get('/master/anggota/tambahAnggota', (req, res) => {
   res.render('master/anggota/tambahAnggota');
@@ -143,18 +146,15 @@ router.post('/master/anggota/ubahAnggota/:id', masterController.updateAnggota);
 
 router.get('/master/anggota/delete/:id', masterController.deleteAnggota);
 
+//Route user
+// Menampilkan daftar user
 router.get('/master/user', masterController.getUser);
-router.get('/master/user/editUser /:id', (req, res) => {
-  const { id } = req.params;
-  const query = 'SELECT * FROM users WHERE id = ?';
-  db.query(query, [id], (err, results) => {
-    if (err) {
-      return res.status(500).json({ message: 'Database error', error: err });
-    }
-    res.render('master/user/editUser ', { user: results[0] });
-  });
-});
-router.post('/master/user/editUser /:id', masterController.updateUser );
+
+// Menampilkan halaman edit user berdasarkan ID
+router.get('/master/user/editUser/:id', masterController.getUserById);
+
+// Menangani update user
+router.post('/master/user/editUser/:id', masterController.updateUser);
 
 // Export Router
 module.exports = router;

@@ -92,7 +92,7 @@
             </div>
             <div class="flex items-center">
                 <span class="mr-2">Super Admin</span>
-                <img src="../../images/profile-user.png" alt="User " class="rounded-full w-10 h-10">
+                <img src="/images/profile-user.png" alt="User " class="rounded-full w-10 h-10">
             </div>
         </header>
 
@@ -104,7 +104,7 @@
                 </div>
             </div>
 
-            <table class="table-auto w-full border-collapse">
+            <table class="table-auto w-full border-collapse"> 
                 <thead>
                     <tr class="text-left bg-gray-100">
                         <th class="p-4 w-1/12">Id</th>
@@ -121,26 +121,50 @@
                             <td class="p-4 w-1/12"><%= users.id %></td>
                             <td class="p-4"><%= users.nama %></td>
                             <td class="p-4"><%= users.email %></td>
-                            <td class="p-4"><%= users.password %></td>
-                            <td class="p-4"><%= users.role_user %></td>
-                            <td class="p-4 w-2/12">
-                                <form action="/master/user/editUser/<%= users.id %>" method="GET" class="inline">
-                                    <button type="submit" class="bg-blue-600 text-white p-2 rounded hover:bg-blue-700" title="Edit">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M12 20h9" />
-                                            <path d="M16.5 3.5a2.121 2.121 0 113 3L7 19l-4 1 1-4 12.5-12.5z" />
-                                        </svg>
-                                    </button>
-                                </form>
+                            <td class="p-4">
+                                <input type="password" id="password-<%= users.id %>" class="border p-2 rounded w-full" value="<%= users.password %>" readonly />
                             </td>
+                            <td class="p-4"><%= users.role_user %></td>
+                            <td class="p-4 w-2/12 flex space-x-2 items-center">
+                                <!-- Padlock Button -->
+                                <button type="button" class="flex items-center justify-center p-2 rounded-full bg-gray-200 hover:bg-gray-300" onclick="togglePasswordVisibility('<%= users.id %>')">
+                                    <!-- Use Key Image -->
+                                    <img src="/images/padlock.png" alt="Key Icon" class="h-6 w-6 object-contain">
+                                </button>
+                                
+                            
+                                <!-- Edit Button -->
+                                <a href="/master/user/editUser/<%= users.id %>" 
+                                    class="inline-flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200"
+                                    title="Edit">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 20h9" />
+                                        <path d="M16.5 3.5a2.121 2.121 0 113 3L7 19l-4 1 1-4 12.5-12.5z" />
+                                    </svg>
+                                    Edit
+                                </a>
+                            </td>
+                            
+                            
                         </tr>
                     <% }); %>
                 </tbody>
             </table>
             
+            <script>
+                function togglePasswordVisibility(id) {
+                // Get the password field using the user id
+                var passwordField = document.getElementById('password-' + id);
+                if (passwordField) {
+                    // Toggle the type of the password field
+                    var type = passwordField.type === 'password' ? 'text' : 'password';
+                    passwordField.type = type;
+                }
+            }
+            </script>
+            
         </div>
     </div>
-
-
 </body>
 </html>
+

@@ -42,11 +42,29 @@
 
     <!-- Log Out Button di Bawah -->
     <div class="absolute bottom-0 left-0 w-full p-4">
-        <a href="/logout" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
+        <button onclick="logout()" class="flex items-center w-full p-6 py-3 hover:bg-green-900 rounded transition duration-300">
             <span class="material-icons">logout</span>
-            <span class="ml-2 text-xl ml-5">Log Out</span>
-        </a>
+            <span class="ml-5 text-xl">Log Out</span>
+        </button>
     </div>
+
+    <script>
+    function logout() {
+        if (confirm("Yakin ingin keluar?")) {
+            fetch('/logout', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Anda berhasil logout");
+                        window.location.href = "/login";
+                    } else {
+                        alert("Gagal logout, coba lagi.");
+                    }
+                })
+                .catch(error => console.error('Logout error:', error));
+        }
+    }
+    </script>
     
 </div>
 

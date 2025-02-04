@@ -4,8 +4,8 @@ const router = express.Router();
 // Import Controllers
 const loginController = require("../controllers/auth/loginController.js");
 const simpananController = require('../controllers/koperasi/simpananController');
-const pinjamanController = require('../controllers/koperasi/pinjamanController');
-const kreditController = require('../controllers/koperasi/kreditController');
+// const pinjamanController = require('../controllers/koperasi/pinjamanController');
+// const kreditController = require('../controllers/koperasi/kreditController');
 const kreditPimpinanController = require('../controllers/pimpinan/kreditPimpinanController');
 const pinjamanPimpinanController = require('../controllers/pimpinan/pinjamanPimpinanController');
 const simpananPimpinanController = require('../controllers/pimpinan/simpananPimpinanController');
@@ -13,7 +13,7 @@ const cetakLaporanPimpinanController = require('../controllers/pimpinan/cetakLap
 // const laporanController = require('../controllers/koperasi/laporanController');
 // const pinjamanController = require('../controllers/koperasi/pinjamanController');
 // const kreditController = require('../controllers/koperasi/kreditController');
-// const masterController = require('../controllers/master/masterController');
+const masterController = require('../controllers/master/masterController');
 
 // Route untuk Login
 router.get("/", (req, res) => {
@@ -30,6 +30,7 @@ router.get('/changePassword', (req, res) => {
 router.post('/changePassword', loginController.changePassword);
 
 // Route untuk Logout
+router.get("/logout", loginController.logout);
 router.post("/logout", loginController.logout);
 
 // Route untuk Dashboard
@@ -40,11 +41,7 @@ router.get("/dashboardPimpinan", (req, res) => {
   res.render("dashboardPimpinan");
 });
 router.get("/dashboardKeuangan", (req, res) => {
-  if (req.session.role === 'Admin Keuangan') {
-    res.render("dashboardKeuangan");
-  } else {
-    res.redirect('/login');
-  }
+  res.render("dashboardKeuangan");
 });
 
 // Route untuk Kredit Pimpinan
@@ -102,8 +99,60 @@ router.delete('/api/simpanan/:id', simpananController.deleteSimpanan);
 // router.post('/kredit', kreditController.createKredit);
 
 // Route untuk Master
-// router.get('/master/anggota', masterController.getAnggota);
-// router.get('/master/user', masterController.getUser);
+// Route untuk Master
+router.get('/master/pegawai', masterController.getPegawai);
+router.get('/master/pegawai/tambahPegawai', (req, res) => {
+  res.render('master/pegawai/tambahPegawai');
+});
+router.post('/master/pegawai/tambahPegawai', masterController.createPegawai);
+
+router.get('/master/pegawai/ubahPegawai/:nip', (req, res) => {
+  const { nip } = req.params;
+  const query = 'SELECT * FROM pegawai WHERE nip = ?';
+  db.query(query, [nip], (err, results) => {
+    if (err) {
+      return res.status(500).json({ message: 'Database error', error: err });
+    }
+    res.render('master/pegawai/ubahPegawai', { pegawai: results[0] });
+  });
+});
+router.post('/master/pegawai/ubahPegawai/:nip', masterController.updatePegawai);
+
+router.get('/master/pegawai/delete/:nip', masterController.deletePegawai);
+
+router.get('/master/anggota', masterController.getAnggota);
+router.get('/master/anggota/tambahAnggota', (req, res) => {
+  res.render('master/anggota/tambahAnggota');
+});
+router.post('/master/anggota/tambahAnggota', masterController.createAnggota);
+
+router.get('/master/anggota/ubahAnggota/:id', (req, res) => {
+  const { id } = req.params;
+  const query = 'SELECT * FROM anggota WHERE id = ?';
+  db.query(query, [id], (err, results) => {
+    if (err) {
+      return res.status(500).json({ message: 'Database error', error: err });
+    }
+    res.render('master/anggota/ubahAnggota', { anggota: results[0] });
+  });
+});
+router.post('/master/anggota/ubahAnggota/:id', masterController.updateAnggota);
+
+router.get('/master/anggota/delete/:id', masterController.deleteAnggota);
+
+router.get('/master/user', masterController.getUser);
+router.get('/master/user/editUser /:id', (req, res) => {
+  const { id } = req.params;
+  const query = 'SELECT * FROM users WHERE id = ?';
+  db.query(query, [id], (err, results) => {
+    if (err) {
+      return res.status(500).json({ message: 'Database error', error: err });
+    }
+    res.render('master/user/editUser ', { user: results[0] });
+  });
+});
+router.post('/master/user/editUser /:id', masterController.updateUser );
+
 
 // Export Router
 module.exports = router;

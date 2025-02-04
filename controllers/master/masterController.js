@@ -9,7 +9,7 @@ exports.getPegawai = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
-    res.render('master/pegawai', { pegawai: results });
+    res.render('master/pegawai/pegawai', { pegawai: results });
   });
 };
 
@@ -20,7 +20,7 @@ exports.createPegawai = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
-    res.redirect('/master/pegawai');
+    res.redirect('/master/pegawai/tambahPegawai');
   });
 };
 
@@ -31,20 +31,40 @@ exports.updatePegawai = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
-    res.redirect('/master/pegawai');
+    res.redirect('/master/pegawai/ubahPegawai');
   });
 };
 
 exports.deletePegawai = (req, res) => {
   const { nip } = req.params;
+  const { confirm } = req.query; // Bisa juga menggunakan req.body tergantung metode yang digunakan
+
+  if (confirm !== 'yes') {
+    return res.send(`
+      <script>
+        if (confirm("Lanjutkan menghapus?")) {
+          window.location.href = "/master/pegawai/delete/${nip}?confirm=yes";
+        } else {
+          window.location.href = "/master/pegawai/pegawai";
+        }
+      </script>
+    `);
+  }
+
   const query = 'DELETE FROM pegawai WHERE nip = ?';
   db.query(query, [nip], (err, results) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
-    res.redirect('/master/pegawai');
+    res.send(`
+      <script>
+        alert("Pegawai berhasil dihapus");
+        window.location.href = "/master/pegawai/pegawai";
+      </script>
+    `);
   });
 };
+
 
 // Anggota
 exports.getAnggota = (req, res) => {
@@ -78,7 +98,7 @@ exports.createAnggota = (req, res) => {
       if (err) {
         return res.status(500).json({ message: 'Database error', error: err });
       }
-      res.redirect('/master/anggota');
+      res.redirect('/master/anggota/anggotaKoperasi');
     });
   });
 };
@@ -91,7 +111,7 @@ exports.updateAnggota = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
-    res.redirect('/master/anggota');
+    res.redirect('/master/anggota/ubahAnggota');
   });
 };
 
@@ -102,7 +122,7 @@ exports.deleteAnggota = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
-    res.redirect('/master/anggota');
+    res.redirect('/master/anggota/tambahAnggota');
   });
 };
 
@@ -113,7 +133,7 @@ exports.getUser = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
-    res.render('master/userKoperasi', { user: results });
+    res.render('master/user/userKoperasi', { user: results });
   });
 };
 
@@ -124,17 +144,6 @@ exports.updateUser   = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
-    res.redirect('/master/user');
-  });
-};
-
-exports.deleteUser   = (req, res) => {
-  const { id } = req.params;
-  const query = 'DELETE FROM users WHERE id = ?';
-  db.query(query, [id], (err, results) => {
-    if (err) {
-      return res.status(500).json({ message: 'Database error', error: err });
-    }
-    res.redirect('/master/user');
+    res.redirect('/master/user/editUser');
   });
 };

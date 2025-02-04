@@ -91,8 +91,8 @@ exports.changePassword = async (req, res) => {
 exports.logout = (req, res) => {
   req.session.destroy((err) => {
     if (err) {
-      return res.status(500).json({ message: 'Could not log out', error: err });
+      return res.status(500).json({ success: false, message: 'Could not log out', error: err });
     }
-    res.redirect('auth/login');
+    return res.json({ success: true, message: 'Anda berhasil logout' });
   });
 };

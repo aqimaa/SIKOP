@@ -37,3 +37,20 @@ exports.lihatPinjaman = async (req, res) => {
     res.status(500).send("Terjadi kesalahan saat mengambil data pinjaman.");
   }
 };
+
+// Fungsi untuk menghapus pinjaman
+exports.hapusPinjaman = async (req, res) => {
+    const id = req.params.id;
+    const query = 'DELETE FROM pinjaman WHERE id = ?';
+  
+    db.query(query, [id], (error, results) => {
+      if (error) {
+        console.error('Error saat menghapus data pinjaman:', error);
+        return res.status(500).json({ success: false, message: 'Terjadi kesalahan saat menghapus data pinjaman.' });
+      }
+      if (results.affectedRows === 0) {
+        return res.status(404).json({ success: false, message: 'Data pinjaman tidak ditemukan.' });
+      }
+      res.json({ success: true, message: 'Data pinjaman berhasil dihapus.' });
+    });
+  };

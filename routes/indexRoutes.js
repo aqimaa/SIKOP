@@ -129,21 +129,13 @@ router.get('/master/pegawai/delete/:nip', masterController.deletePegawai);
 
 // Route Anggota
 router.get('/master/anggota', masterController.getAnggota);
-router.get('/master/anggota/tambahAnggota', (req, res) => {
-  res.render('master/anggota/tambahAnggota');
-});
+router.get('/master/anggota/tambahAnggota', masterController.getPegawaiForAnggota);
 router.post('/master/anggota/tambahAnggota', masterController.createAnggota);
 
+
 router.get('/master/anggota/ubahAnggota/:id', (req, res) => {
-  const { id } = req.params;
-  const query = 'SELECT * FROM anggota WHERE id = ?';
-  db.query(query, [id], (err, results) => {
-    if (err) {
-      return res.status(500).json({ message: 'Database error', error: err });
-    }
     res.render('master/anggota/ubahAnggota', { anggota: results[0] });
   });
-});
 router.post('/master/anggota/ubahAnggota/:id', masterController.updateAnggota);
 
 router.get('/master/anggota/delete/:id', masterController.deleteAnggota);

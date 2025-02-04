@@ -78,31 +78,54 @@ exports.getAnggota = (req, res) => {
   });
 }; 
 
-exports.createAnggota = (req, res) => { 
-  const { id, nip_anggota, status } = req.body;
-
-  // Cek apakah nip_anggota ada di tabel pegawai
-  const checkQuery = 'SELECT nip FROM pegawai WHERE nip = ?';
-  db.query(checkQuery, [nip_anggota], (err, results) => {
+// Mengambil data pegawai untuk ditampilkan pada tambah anggota
+exports.getPegawaiForAnggota = (req, res) => {
+  const query = 'SELECT * FROM pegawai';
+  db.query(query, (err, results) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
-
-    // Jika tidak ditemukan, kirim pesan error
-    if (results.length === 0) {
-      return res.status(400).json({ message: 'NIP tidak ditemukan di tabel pegawai' });
-    }
-
-    // Jika ditemukan, lanjutkan proses insert ke tabel anggota
-    const insertQuery = 'INSERT INTO anggota (id, nip_anggota, status) VALUES (?, ?, ?)';
-    db.query(insertQuery, [id, nip_anggota, status], (err, results) => {
-      if (err) {
-        return res.status(500).json({ message: 'Database error', error: err });
-      }
-      res.redirect('/master/anggota/anggotaKoperasi');
-    });
+    res.render('master/anggota/tambahAnggota', { pegawai: results, title: 'Tambah Anggota' });
   });
 };
+
+// Menambahkan anggota
+exports.createAnggota = (req, res) => {
+  const { nip_anggota, status } = req.body;
+  const query = 'INSERT INTO anggota (nip_anggota, status) VALUES (?, ?)';
+  db.query(query, [nip_anggota, status], (err, results) => {
+    if (err) {
+      return res.status(500).json({ message: 'Database error', error: err });
+    }
+    res.redirect('/master/anggota');
+  });
+};
+
+// exports.createAnggota = (req, res) => { 
+//   const { id, nip_anggota, status } = req.body;
+
+//   // Cek apakah nip_anggota ada di tabel pegawai
+//   const checkQuery = 'SELECT nip FROM pegawai WHERE nip = ?';
+//   db.query(checkQuery, [nip_anggota], (err, results) => {
+//     if (err) {
+//       return res.status(500).json({ message: 'Database error', error: err });
+//     }
+
+//     // Jika tidak ditemukan, kirim pesan error
+//     if (results.length === 0) {
+//       return res.status(400).json({ message: 'NIP tidak ditemukan di tabel pegawai' });
+//     }
+
+//     // Jika ditemukan, lanjutkan proses insert ke tabel anggota
+//     const insertQuery = 'INSERT INTO anggota (id, nip_anggota, status) VALUES (?, ?, ?)';
+//     db.query(insertQuery, [id, nip_anggota, status], (err, results) => {
+//       if (err) {
+//         return res.status(500).json({ message: 'Database error', error: err });
+//       }
+//       res.redirect('/master/anggota/anggotaKoperasi');
+//     });
+//   });
+// };
 
 
 exports.updateAnggota = (req, res) => {

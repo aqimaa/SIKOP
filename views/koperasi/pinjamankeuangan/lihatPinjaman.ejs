@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin Keuangan</title>
+    <title>Data Pinjaman</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body class="flex bg-gray-100">
-    <!-- Sidebar -->
-    <div class="w-72 text-white min-h-screen p-4 fixed" style="z-index: 10;background-color: #5D8736;">
+     <!-- Sidebar -->
+     <div class="w-72 text-white min-h-screen p-4 fixed" style="z-index: 10;background-color: #5D8736;">
         <div class="flex items-center mb-8">
-            <img src="/public/images/logo.png" alt="Logo" class="w-16 h-16 mr-7">
+            <img src="/images/logo.png" alt="Logo" class="w-16 h-16 mr-7">
             <div>
                 <h1 class="text-2xl font-bold">SIKOP</h1>
                 <p class="text-sm">Sistem Informasi Koperasi</p>
@@ -20,8 +20,8 @@
         <nav>
             <ul>
                 <li class="mb-4">
-                    <a href="/views/dashboardKeuangan.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
-                        <img src="/public/images/vectordasbor.png" alt="lihat data icon" class="w=5 h-5 ">
+                    <a href="/dashboardKeuangan" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
+                        <img src="/images/vectordasbor.png" alt="lihat data icon" class="w=5 h-5 ">
                         <span class="ml-2 text-xl ml-5">Dashboard</span>
                     </a>
                 </li>
@@ -32,7 +32,7 @@
                     </a>
                 </li>
                 <li class="mb-4">
-                    <a href="/views/koperasi/pinjamankeuangan/lihatPinjaman.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
+                    <a href="/lihatPinjaman" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
                     <span class="material-icons">credit_card</span>
                     <span class="ml-2 text-xl ml-5">Pinjaman</span>
                     </a>
@@ -45,7 +45,7 @@
                                 <span class="ml-2 text-xl ml-5">Kredit</span>
                             </a>
                         </div>
-                        <img src="/public/images/angle-small-down.png" alt="dropdown icon" class="w-6 h-6 transform transition-transform" id="dropdownIcon">
+                        <img src="/images/angle-small-down.png" alt="dropdown icon" class="w-6 h-6 transform transition-transform" id="dropdownIcon">
                     </button>
                     <ul id="dropdownMenu" class="pl-6 hidden">
                         <li class="mb-2">
@@ -100,7 +100,7 @@
                             <span class="material-icons">filter_list</span>
                         </button>
                     </div>
-                    <a href="/views/koperasi/pinjamanKeuangan/tambahPinjaman.ejs" class="text-white px-3 py-1 rounded flex items-center space-x-1" style="background-color: #5D8736;">
+                    <a href="/pinjamanKeuangan/tambahPinjaman" class="text-white px-3 py-1 rounded flex items-center space-x-1" style="background-color: #5D8736;">
                         <span class="material-icons">add</span>
                         <span>Pinjaman Baru</span>
                     </a>
@@ -110,171 +110,53 @@
             <!-- Scrollable Table -->
             <div class="bg-white rounded-lg shadow overflow-x-auto mt-36" style="max-height: calc(100vh - 280px); overflow-y: auto;">
                 <table class="w-full">
-                    <thead style="position: sticky; top: 0; z-index: 5; background-color: #5D8736; ">
+                    <thead style="position: sticky; top: 0; z-index: 5; background-color: #5D8736;">
                         <tr>
                             <th class="px-6 py-3 text-left text-white">No.</th>
-                            <th class="px-6 py-3 text-left text-white">Nomor Anggota</th>
-                            <th class="px-6 py-3 text-left text-white">Nama</th>
+                            <th class="px-6 py-3 text-left text-white">Nama Anggota</th>
                             <th class="px-6 py-3 text-left text-white">Kategori</th>
-                            <th class="px-6 py-3 text-left text-white">Pinjaman</th>
+                            <th class="px-6 py-3 text-left text-white">Jumlah Pinjaman</th>
                             <th class="px-6 py-3 text-left text-white">Jangka Waktu</th>
+                            <th class="px-6 py-3 text-left text-white">Margin Persen</th>
+                            <th class="px-6 py-3 text-left text-white">Angsuran Pokok</th>
+                            <th class="px-6 py-3 text-left text-white">Margin per Bulan</th>
                             <th class="px-6 py-3 text-left text-white">Total Angsuran</th>
-                            <th class="px-6 py-3 text-left text-white">Pokok</th>
-                            <th class="px-6 py-3 text-left text-white">Margin</th>
-                            <th class="px-6 py-3 text-left text-white">Angsuran Ke-</th>
                             <th class="px-6 py-3 text-left text-white">Sisa Piutang</th>
-                            <th class="px-6 py-3 text-left text-white">Mulai Perjanjian</th>
-                            <th class="px-6 py-3 text-left text-white">Keterangan</th>
-                            <th class="px-6 py-3 text-left text-white">Bayar</th>
+                            <th class="px-6 py-3 text-left text-white">Tanggal Perjanjian</th>
+                            <th class="px-6 py-3 text-left text-white">Status</th>
                             <th class="px-6 py-3 text-left text-white">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="border-b border-gray-200">
-                            <td class="px-6 py-4">1</td>
-                            <td class="px-6 py-4">001</td>
-                            <td class="px-6 py-4">Adriani Adnani</td>
-                            <td class="px-6 py-4">Jangka Panjang</td>
-                            <td class="px-6 py-4">30.000.000</td>
-                            <td class="px-6 py-4">36</td>
-                            <td class="px-6 py-4">26.250</td>
-                            <td class="px-6 py-4">26.250</td>
-                            <td class="px-6 py-4">1.750</td>
-                            <td class="px-6 py-4">5</td>
-                            <td class="px-6 py-4">105.000</td>
-                            <td class="px-6 py-4">2023-07-25</td>
-                            <td class="px-6 py-4">Belum Lunas</td>
-                            <td class="px-6 py-4">
-                                <button class="border border-green-600 text-green-600 px-3 py-1 rounded">Bayar</button>
-                            </td>
-                            <td class="px-6 py-4">
+                        <% if (pinjaman && pinjaman.length > 0) { %>
+                          <% pinjaman.forEach((item, index) => { %>
+                            <tr class="border-b border-gray-200">
+                              <td class="px-6 py-4"><%= index + 1 %></td>
+                              <td class="px-6 py-4"><%= item.nama_anggota %></td>
+                              <td class="px-6 py-4"><%= item.kategori %></td>
+                              <td class="px-6 py-4"><%= item.jumlah_pinjaman.toLocaleString() %></td>
+                              <td class="px-6 py-4"><%= item.jangka_waktu %> Bulan</td>
+                              <td class="px-6 py-4"><%= item.margin_persen %>%</td>
+                              <td class="px-6 py-4"><%= item.angsuran_pokok.toLocaleString() %></td>
+                              <td class="px-6 py-4"><%= item.margin_per_bulan.toLocaleString() %></td>
+                              <td class="px-6 py-4"><%= item.total_angsuran.toLocaleString() %></td>
+                              <td class="px-6 py-4"><%= item.sisa_piutang.toLocaleString() %></td>
+                              <td class="px-6 py-4"><%= item.tanggal_perjanjian.toISOString().split('T')[0] %></td>
+                              <td class="px-6 py-4"><%= item.ket_status %></td>
+                              <td class="px-6 py-4">
                                 <div class="flex space-x-2">
-                                    <button class="border border-gray-300 rounded p-1"><span class="material-icons">edit</span></button>
-                                    <button class="border border-gray-300 rounded p-1"><span class="material-icons">delete</span></button>
+                                  <button class="border border-gray-300 rounded p-1"><span class="material-icons">edit</span></button>
+                                  <button class="border border-gray-300 rounded p-1"><span class="material-icons">delete</span></button>
                                 </div>
-                            </td>
-                        </tr>
-                        <tr class="border-b border-gray-200">
-                            <td class="px-6 py-4">2</td>
-                            <td class="px-6 py-4">002</td>
-                            <td class="px-6 py-4">Aimi Frina</td>
-                            <td class="px-6 py-4">Jangka Pendek</td>
-                            <td class="px-6 py-4">260.000</td>
-                            <td class="px-6 py-4">9</td>
-                            <td class="px-6 py-4">26.000</td>
-                            <td class="px-6 py-4">26.000</td>
-                            <td class="px-6 py-4">15.000</td>
-                            <td class="px-6 py-4">4</td>
-                            <td class="px-6 py-4">130.000</td>
-                            <td class="px-6 py-4">2023-09-06</td>
-                            <td class="px-6 py-4">Belum Lunas</td>
-                            <td class="px-6 py-4">
-                                <button class="border border-green-600 text-green-600 px-3 py-1 rounded">Bayar</button>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="flex space-x-2">
-                                    <button class="border border-gray-300 rounded p-1"><span class="material-icons">edit</span></button>
-                                    <button class="border border-gray-300 rounded p-1"><span class="material-icons">delete</span></button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="border-b border-gray-200">
-                            <td class="px-6 py-4">2</td>
-                            <td class="px-6 py-4">002</td>
-                            <td class="px-6 py-4">Aimi Frina</td>
-                            <td class="px-6 py-4">Jangka Pendek</td>
-                            <td class="px-6 py-4">260.000</td>
-                            <td class="px-6 py-4">9</td>
-                            <td class="px-6 py-4">26.000</td>
-                            <td class="px-6 py-4">26.000</td>
-                            <td class="px-6 py-4">15.000</td>
-                            <td class="px-6 py-4">4</td>
-                            <td class="px-6 py-4">130.000</td>
-                            <td class="px-6 py-4">2023-09-06</td>
-                            <td class="px-6 py-4">Belum Lunas</td>
-                            <td class="px-6 py-4">
-                                <button class="border border-green-600 text-green-600 px-3 py-1 rounded">Bayar</button>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="flex space-x-2">
-                                    <button class="border border-gray-300 rounded p-1"><span class="material-icons">edit</span></button>
-                                    <button class="border border-gray-300 rounded p-1"><span class="material-icons">delete</span></button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="border-b border-gray-200">
-                            <td class="px-6 py-4">2</td>
-                            <td class="px-6 py-4">002</td>
-                            <td class="px-6 py-4">Aimi Frina</td>
-                            <td class="px-6 py-4">Jangka Pendek</td>
-                            <td class="px-6 py-4">260.000</td>
-                            <td class="px-6 py-4">9</td>
-                            <td class="px-6 py-4">26.000</td>
-                            <td class="px-6 py-4">26.000</td>
-                            <td class="px-6 py-4">15.000</td>
-                            <td class="px-6 py-4">4</td>
-                            <td class="px-6 py-4">130.000</td>
-                            <td class="px-6 py-4">2023-09-06</td>
-                            <td class="px-6 py-4">Belum Lunas</td>
-                            <td class="px-6 py-4">
-                                <button class="border border-green-600 text-green-600 px-3 py-1 rounded">Bayar</button>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="flex space-x-2">
-                                    <button class="border border-gray-300 rounded p-1"><span class="material-icons">edit</span></button>
-                                    <button class="border border-gray-300 rounded p-1"><span class="material-icons">delete</span></button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="border-b border-gray-200">
-                            <td class="px-6 py-4">2</td>
-                            <td class="px-6 py-4">002</td>
-                            <td class="px-6 py-4">Aimi Frina</td>
-                            <td class="px-6 py-4">Jangka Pendek</td>
-                            <td class="px-6 py-4">260.000</td>
-                            <td class="px-6 py-4">9</td>
-                            <td class="px-6 py-4">26.000</td>
-                            <td class="px-6 py-4">26.000</td>
-                            <td class="px-6 py-4">15.000</td>
-                            <td class="px-6 py-4">4</td>
-                            <td class="px-6 py-4">130.000</td>
-                            <td class="px-6 py-4">2023-09-06</td>
-                            <td class="px-6 py-4">Belum Lunas</td>
-                            <td class="px-6 py-4">
-                                <button class="border border-green-600 text-green-600 px-3 py-1 rounded">Bayar</button>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="flex space-x-2">
-                                    <button class="border border-gray-300 rounded p-1"><span class="material-icons">edit</span></button>
-                                    <button class="border border-gray-300 rounded p-1"><span class="material-icons">delete</span></button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="border-b border-gray-200">
-                            <td class="px-6 py-4">2</td>
-                            <td class="px-6 py-4">002</td>
-                            <td class="px-6 py-4">Aimi Frina</td>
-                            <td class="px-6 py-4">Jangka Pendek</td>
-                            <td class="px-6 py-4">260.000</td>
-                            <td class="px-6 py-4">9</td>
-                            <td class="px-6 py-4">26.000</td>
-                            <td class="px-6 py-4">26.000</td>
-                            <td class="px-6 py-4">15.000</td>
-                            <td class="px-6 py-4">4</td>
-                            <td class="px-6 py-4">130.000</td>
-                            <td class="px-6 py-4">2023-09-06</td>
-                            <td class="px-6 py-4">Belum Lunas</td>
-                            <td class="px-6 py-4">
-                                <button class="border border-green-600 text-green-600 px-3 py-1 rounded">Bayar</button>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="flex space-x-2">
-                                    <button class="border border-gray-300 rounded p-1"><span class="material-icons">edit</span></button>
-                                    <button class="border border-gray-300 rounded p-1"><span class="material-icons">delete</span></button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
+                              </td>
+                            </tr>
+                          <% }) %>
+                        <% } else { %>
+                          <tr>
+                            <td colspan="12" class="px-6 py-4 text-center">Tidak ada data pinjaman.</td>
+                          </tr>
+                        <% } %>
+                      </tbody>
                 </table>
             </div>
         </div>

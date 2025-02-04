@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Pimpinan</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body class="flex">
     <!-- Sidebar -->
@@ -48,23 +49,43 @@
             </li>
         </ul>
     </nav>
-</div>
+    <!-- Log Out Button di Bawah -->
+    <div class="absolute bottom-0 left-0 w-full p-4">
+        <button onclick="logout()" class="flex items-center w-full p-6 py-3 hover:bg-green-900 rounded transition duration-300">
+            <span class="material-icons">logout</span>
+            <span class="ml-5 text-xl">Log Out</span>
+        </button>
+    </div>
 
-<script>
-function toggleDropdown(dropdownId, event) {
+    <script>
+    function logout() {
+        if (confirm("Yakin ingin keluar?")) {
+            fetch('/logout', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Anda berhasil logout");
+                        window.location.href = "/login";
+                    } else {
+                        alert("Gagal logout, coba lagi.");
+                    }
+                })
+                .catch(error => console.error('Logout error:', error));
+        }
+    }
+
+    // Dropdown toggle
+    function toggleDropdown(dropdownId, event) {
     event.stopPropagation(); // Menghentikan event bubbling
     const dropdownMenu = document.getElementById(dropdownId);
     const dropdownIcon = document.getElementById(dropdownId + 'Icon');
     dropdownMenu.classList.toggle('hidden');
-    dropdownIcon.classList.toggle('rotate-180');
-}
-</script>
-
+    dropdownIcon.classList.toggle('rotate-180'); }
+    </script>
+</div>
 
     <!-- Main Content -->
-    <!-- <div class="flex-1 bg-gray-100 ">
-        <h1 class="text-2xl mb-6">Selamat Datang di Aplikasi Sistem Informasi Koperasi</h1> -->
-        
+            
     <div class="flex-1 bg-gray-100 ml-72">
             <div class="flex justify-between shadow-md p-4 bg-white">
                 <h1 class="text-2xl font-bold">Selamat Datang di Aplikasi Sistem Informasi Koperasi</h1>

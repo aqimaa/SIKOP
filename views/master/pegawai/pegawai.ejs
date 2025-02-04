@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Anggota</title>
+    <title>Data Pegawai</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
@@ -85,10 +85,10 @@
     </div>
 
     <!-- Main Content -->
-    <div class="flex-1 p-6 ml-72"> <!-- Added ml-72 to give space next to sidebar -->
+     <div class="flex-1 p-6 ml-72"> <!-- Added ml-72 to give space next to sidebar -->
         <header class="flex justify-between items-center mb-8 bg-white p-4 shadow-md">
             <div class="flex-1">
-                <h1 class="text-2xl font-bold text-center">Data Anggota</h1>
+                <h1 class="text-2xl font-bold text-center">Data Pegawai</h1>
             </div>
             <div class="flex items-center">
                 <span class="mr-2">Super Admin</span>
@@ -98,54 +98,52 @@
 
         <div class="bg-white p-4 rounded shadow">
             <div class="flex justify-between mb-4">
-                <!-- Kolom kiri: Input Pencarian -->
-                <div class="flex items-center">
-                    <input type="text" placeholder="Cari Anggota" class="border border-gray-300 p-2 rounded w-1-1/2" />
+                <div class="flex flex-1">
+                    <input type="text" placeholder="Cari Pegawai" class="border border-gray-300 p-2 rounded flex-1" />
                     <button style="background-color: #5D8736; color: white;" class="ml-2 px-4 py-2 rounded hover:bg-[#4c6e2f]">Cari</button>
                 </div>
-                <!-- Kolom kanan: Tambah Anggota Baru -->
-                <div class="flex items-center">
-                    <button style="background-color: #5D8736; color: white;" class="px-4 py-2 rounded hover:bg-[#4c6e2f]">+ Tambah Anggota Baru</button>
-                </div>
+                <button style="background-color: #5D8736; color: white;" class="ml-4 px-4 py-2 rounded hover:bg-[#4c6e2f]">+ Tambah Pegawai Baru</button>
             </div>
-
+       
             <table class="table-auto w-full border-collapse">
                 <thead>
                     <tr class="text-left bg-gray-100">
-                        <th class="p-4">Id</th>
-                        <th class="p-4">NIP</th>
-                        <th class="p-4">Status</th>
+                        <th class="p-4">Nip</th>
+                        <th class="p-4">Nama</th>
+                        <th class="p-4">Wilayah</th>
                         <th class="p-4">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <% anggota.forEach(function(anggota) { %>
-                    <tr class="border-b">
-                        <td class="p-4"><%= anggota.id %></td>
-                        <td class="p-4"><%= anggota.nip_anggota %></td>
-                        <td class="p-4"><%= anggota.status %></td>
-                        <td class="p-4">
-                            <form action="/master/anggota/<%= anggota.id %>" method="GET" class="inline">
-                                <button type="submit" class="bg-blue-600 text-white p-1 rounded hover:bg-blue-700" title="Edit">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M12 20h9" />
-                                        <path d="M16.5 3.5a2.121 2.121 0 113 3L7 19l-4 1 1-4 12.5-12.5z" />
-                                    </svg>
-                                </button>
-                            </form>
-                            <form action="/master/anggota/<%= anggota.id %>?_method=DELETE" method="POST" class="inline">
-                                <button type="submit" class="bg-red-600 text-white p-1 rounded hover:bg-red-700" title="Hapus" onclick="return confirm('Apakah Anda yakin ingin menghapus?');">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
+                    <% pegawai.forEach(function(pegawai) { %>
+                        <tr class="border-b">
+                            <td class="p-4"><%= pegawai.nip %></td>
+                            <td class="p-4"><%= pegawai.nama %></td>
+                            <td class="p-4"><%= pegawai.wilayah %></td>
+                            <td class="p-4">
+                                <form action="/master/pegawai/<%= pegawai.nip %>" method="GET" class="inline">
+                                    <button type="submit" class="bg-blue-600 text-white p-2 rounded hover:bg-blue-700" title="Edit">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M12 20h9" />
+                                            <path d="M16.5 3.5a2.121 2.121 0 113 3L7 19l-4 1 1-4 12.5-12.5z" />
+                                        </svg>
+                                    </button>
+                                </form>
+                                <form action="/master/pegawai/<%= pegawai.nip %>?_method=DELETE" method="POST" class="inline">
+                                    <button type="submit" class="bg-red-600 text-white p-2 rounded hover:bg-red-700" title="Hapus" onclick="return confirm('Apakah Anda yakin ingin menghapus?');">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
                     <% }); %>
                 </tbody>
-              </table>
+            </table>
         </div>
     </div>
+
+
 </body>
 </html>

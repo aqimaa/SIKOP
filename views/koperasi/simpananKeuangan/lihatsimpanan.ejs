@@ -82,9 +82,9 @@
 
     <!-- Include Modals -->
     <%- include('simpananModal') %>
-    <%- include('periodeModal') %>
     <%- include('deleteModal') %>
     <%- include('historyModal') %>
+    <%- include('editModal') %>
     <%- include('../../partials/alerts/notification') %>
 
     <!-- Main Script -->
@@ -192,93 +192,98 @@
         }
 
         function renderData() {
-            const container = document.getElementById('dataContainer');
-            container.innerHTML = '';
+    const container = document.getElementById('dataContainer');
+    container.innerHTML = '';
 
-            months.forEach((month, index) => {
-                const monthData = monthlySummaries[index] || {
-                    items: [],
-                    total_wajib: 0,
-                    total_pokok: 0,
-                    total_sukarela: 0
-                };
+    // Sort the items by name within each month
+    months.forEach((month, index) => {
+        const monthData = monthlySummaries[index] || {
+            items: [],
+            total_wajib: 0,
+            total_pokok: 0,
+            total_sukarela: 0
+        };
 
-                if (monthData.items.length === 0) return;
+        if (monthData.items.length === 0) return;
 
-                const monthElement = document.createElement('div');
-                monthElement.className = 'bg-white rounded-lg shadow overflow-hidden';
-                monthElement.innerHTML = `
-                    <button 
-                        class="w-full p-4 flex justify-between items-center hover:bg-gray-50"
-                        onclick="toggleMonth(${index})"
-                    >
-                        <div class="flex items-center gap-4">
-                            <span class="material-icons" id="icon-${index}">expand_more</span>
-                            <h3 class="font-semibold text-lg">${month}</h3>
-                            <span class="text-sm text-gray-500">${monthData.items.length} transaksi</span>
+        // Sort items by name
+        monthData.items.sort((a, b) => a.nama.localeCompare(b.nama));
+
+        const monthElement = document.createElement('div');
+        monthElement.className = 'bg-white rounded-lg shadow overflow-hidden';
+        monthElement.innerHTML = `
+            <button
+                class="w-full p-4 flex justify-between items-center hover:bg-gray-50"
+                onclick="toggleMonth(${index})"
+            >
+                <div class="flex items-center gap-4">
+                    <span class="material-icons" id="icon-${index}">expand_more</span>
+                    <h3 class="font-semibold text-lg">${month}</h3>
+                    <span class="text-sm text-gray-500">${monthData.items.length} transaksi</span>
+                </div>
+                <div class="flex items-center gap-6">
+                    <div class="grid grid-cols-3 gap-6 text-sm">
+                        <div class="text-right">
+                            <p class="text-gray-600">Simpanan Wajib</p>
+                            <p class="font-semibold">Rp ${monthData.total_wajib.toLocaleString('id-ID')}</p>
                         </div>
-                        <div class="flex items-center gap-6">
-                            <div class="grid grid-cols-3 gap-6 text-sm">
-                                <div class="text-right">
-                                    <p class="text-gray-600">Simpanan Wajib</p>
-                                    <p class="font-semibold">Rp ${monthData.total_wajib.toLocaleString('id-ID')}</p>
-                                </div>
-                                <div class="text-right">
-                                    <p class="text-gray-600">Simpanan Pokok</p>
-                                    <p class="font-semibold">Rp ${monthData.total_pokok.toLocaleString('id-ID')}</p>
-                                </div>
-                                <div class="text-right">
-                                    <p class="text-gray-600">Simpanan Sukarela</p>
-                                    <p class="font-semibold">Rp ${monthData.total_sukarela.toLocaleString('id-ID')}</p>
-                                </div>
-                            </div>
+                        <div class="text-right">
+                            <p class="text-gray-600">Simpanan Pokok</p>
+                            <p class="font-semibold">Rp ${monthData.total_pokok.toLocaleString('id-ID')}</p>
                         </div>
-                    </button>
-                    <div id="content-${index}" class="hidden border-t">
-                        <div class="overflow-x-auto">
-                            <table class="w-full">
-                                <thead>
-                                    <tr class="text-white" style="background-color: #5D8736">
-                                        <th class="px-6 py-3 text-left">No</th>
-                                        <th class="px-6 py-3 text-left">NIP</th>
-                                        <th class="px-6 py-3 text-left">Nama</th>
-                                        <th class="px-6 py-3 text-left">Tanggal</th>
-                                        <th class="px-6 py-3 text-right">Simpanan Wajib</th>
-                                        <th class="px-6 py-3 text-right">Simpanan Pokok</th>
-                                        <th class="px-6 py-3 text-right">Simpanan Sukarela</th>
-                                        <th class="px-6 py-3 text-center">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200">
-            ${monthData.items.map((item, idx) => `
-                <tr class="hover:bg-gray-50 transition-colors">
-                    <td class="px-6 py-4 cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${idx + 1}</td>
-                    <td class="px-6 py-4 cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${item.nip}</td>
-                    <td class="px-6 py-4 cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${item.nama}</td>
-                    <td class="px-6 py-4 cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${new Date(item.tanggal).toLocaleDateString('id-ID')}</td>
-                    <td class="px-6 py-4 text-right cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${item.simpanan_wajib.toLocaleString('id-ID')}</td>
-                    <td class="px-6 py-4 text-right cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${item.simpanan_pokok.toLocaleString('id-ID')}</td>
-                    <td class="px-6 py-4 text-right cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${item.simpanan_sukarela.toLocaleString('id-ID')}</td>
-                    <td class="px-6 py-4">
-                        <div class="flex justify-center space-x-2">
-                            <button class="text-blue-600 hover:text-blue-800" onclick="editSimpanan(${item.id})" title="Edit">
-                                <span class="material-icons">edit</span>
-                            </button>
-                            <button class="text-red-600 hover:text-red-800" onclick="deleteSimpanan(${item.id})" title="Hapus">
-                                <span class="material-icons">delete</span>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `).join('')}
-        </tbody>
-                            </table>
+                        <div class="text-right">
+                            <p class="text-gray-600">Simpanan Sukarela</p>
+                            <p class="font-semibold">Rp ${monthData.total_sukarela.toLocaleString('id-ID')}</p>
                         </div>
                     </div>
-                `;
-                container.appendChild(monthElement);
-            });
-        }
+                </div>
+            </button>
+            <div id="content-${index}" class="hidden border-t">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="text-white" style="background-color: #5D8736">
+                                <th class="px-6 py-3 text-left">No</th>
+                                <th class="px-6 py-3 text-left">NIP</th>
+                                <th class="px-6 py-3 text-left">Nama</th>
+                                <th class="px-6 py-3 text-left">Tanggal</th>
+                                <th class="px-6 py-3 text-right">Simpanan Wajib</th>
+                                <th class="px-6 py-3 text-right">Simpanan Pokok</th>
+                                <th class="px-6 py-3 text-right">Simpanan Sukarela</th>
+                                <th class="px-6 py-3 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            ${monthData.items.map((item, idx) => `
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="px-6 py-4 cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${idx + 1}</td>
+                                    <td class="px-6 py-4 cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${item.nip}</td>
+                                    <td class="px-6 py-4 cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${item.nama}</td>
+                                    <td class="px-6 py-4 cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${new Date(item.tanggal).toLocaleDateString('id-ID')}</td>
+                                    <td class="px-6 py-4 text-right cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${item.simpanan_wajib.toLocaleString('id-ID')}</td>
+                                    <td class="px-6 py-4 text-right cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${item.simpanan_pokok.toLocaleString('id-ID')}</td>
+                                    <td class="px-6 py-4 text-right cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${item.simpanan_sukarela.toLocaleString('id-ID')}</td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex justify-center space-x-2">
+                                            <button class="text-blue-600 hover:text-blue-800" onclick="editSimpanan(${item.id})" title="Edit">
+                                                <span class="material-icons">edit</span>
+                                            </button>
+                                            <button class="text-red-600 hover:text-red-800" onclick="deleteSimpanan(${item.id})" title="Hapus">
+                                                <span class="material-icons">delete</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+
+        container.appendChild(monthElement);
+    });
+}
 
         function toggleMonth(index) {
             const content = document.getElementById(`content-${index}`);
@@ -297,10 +302,13 @@
     showDeleteConfirmModal(id);
 }
 
-        function editSimpanan(id) {
-            // Implement edit functionality
-            console.log('Edit simpanan:', id);
-        }
+function editSimpanan(id) {
+    if (!id) {
+        showNotification('ID simpanan tidak valid', 'error');
+        return;
+    }
+    editSimpananById(id); // This calls the function we defined in editModal.ejs
+}
     </script>
 </body>
 </html>

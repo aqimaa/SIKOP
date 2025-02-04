@@ -1,6 +1,6 @@
 <!-- Modal History -->
 <div id="historyModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
-    <div class="bg-white rounded-lg w-[1000px] max-h-[90vh] flex flex-col">
+    <div class="bg-white rounded-lg w-[1200px] max-h-[90vh] flex flex-col">
         <!-- Header -->
         <div class="p-6 border-b bg-[#5D8736] rounded-t-lg">
             <div class="flex justify-between items-center">
@@ -10,21 +10,28 @@
                 </button>
             </div>
         </div>
-
         <!-- Body -->
         <div class="p-6 overflow-y-auto">
-            <div class="mb-4">
+            <div class="mb-4 flex justify-between items-center">
                 <h3 class="text-lg font-medium" id="historyTitle"></h3>
+                <!-- Sort Control -->
+                <button id="sortButton" onclick="toggleSort()" class="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg hover:bg-gray-200">
+                    <span id="sortText">Terbaru</span>
+                    <span class="material-icons">arrow_downward</span>
+                </button>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full" id="historyTable">
                     <thead>
                         <tr class="text-white" style="background-color: #5D8736">
+                            <th class="px-6 py-3 text-left">No</th>
                             <th class="px-6 py-3 text-left">Tanggal</th>
                             <th class="px-6 py-3 text-right">Simpanan Wajib</th>
                             <th class="px-6 py-3 text-right">Simpanan Pokok</th>
                             <th class="px-6 py-3 text-right">Simpanan Sukarela</th>
                             <th class="px-6 py-3 text-left">Metode Bayar</th>
+                            <th class="px-6 py-3 text-left">Tipe Perubahan</th>
+                            <th class="px-6 py-3 text-left">Detail Perubahan</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200" id="historyTableBody">
@@ -37,31 +44,148 @@
 
 <script>
 let currentHistoryAnggota = null;
+let historyData = [];
+let isNewest = true; // true = terbaru, false = terlama
 
-async function showHistory(idAnggota, nama) {
-    try {
-        currentHistoryAnggota = idAnggota;
-        const response = await fetch(`/api/simpanan/history/${idAnggota}`);
-        const historyData = await response.json();
+function toggleSort() {
+    isNewest = !isNewest;
+    const button = document.getElementById('sortButton');
+    const icon = button.querySelector('.material-icons');
+    const text = button.querySelector('#sortText');
+    
+    text.textContent = isNewest ? 'Terbaru' : 'Terlama';
+    icon.textContent = isNewest ? 'arrow_downward' : 'arrow_upward';
+    
+    renderHistoryTable();
+}
+
+function getChangeDetails(oldData, newData) {
+    if (!oldData && !newData) return '';
+    
+    // If it's a deletion, only show old data
+    if (!newData) {
+        return 'Data dihapus';
+    }
+    
+    // If it's a new creation, only show new data
+    if (!oldData) {
+        return 'Data baru dibuat';
+    }
+
+    const changes = [];
+    const fields = {
+        simpanan_wajib: 'Simpanan Wajib',
+        simpanan_pokok: 'Simpanan Pokok',
+        simpanan_sukarela: 'Simpanan Sukarela',
+        metode_bayar: 'Metode Bayar'
+    };
+
+    for (const [key, label] of Object.entries(fields)) {
+        const oldValue = oldData[key];
+        const newValue = newData[key];
         
-        // Update modal title
-        document.getElementById('historyTitle').textContent = `Riwayat Transaksi - ${nama}`;
+        if (oldValue !== newValue) {
+            const formattedOld = typeof oldValue === 'number' 
+                ? oldValue.toLocaleString('id-ID') 
+                : oldValue || '';
+            const formattedNew = typeof newValue === 'number'
+                ? newValue.toLocaleString('id-ID')
+                : newValue || '';
+            
+            changes.push(`${label}: ${formattedOld} → ${formattedNew}`);
+        }
+    }
+
+    return changes.length > 0 ? changes.join('<br>') : 'Tidak ada perubahan';
+}
+
+function renderHistoryTable() {
+    const sortedData = [...historyData].sort((a, b) => {
+        const dateA = new Date(a.action_date).getTime();
+        const dateB = new Date(b.action_date).getTime();
+        return isNewest ? dateB - dateA : dateA - dateB;
+    });
+
+    const tableBody = document.getElementById('historyTableBody');
+    tableBody.innerHTML = sortedData.map((item, index) => {
+        let actionDisplay = '';
+        let actionClass = '';
         
-        // Render history table
-        const tableBody = document.getElementById('historyTableBody');
-        tableBody.innerHTML = historyData.map(item => `
+        switch(item.action_type) {
+            case 'buat':
+                actionDisplay = 'Dibuat';
+                actionClass = 'text-green-600';
+                break;
+            case 'edit':
+                actionDisplay = 'Diedit';
+                actionClass = 'text-blue-600';
+                break;
+            case 'tambah':
+                actionDisplay = 'Ditambah';
+                actionClass = 'text-indigo-600';
+                break;
+            case 'delete':
+                actionDisplay = 'Dihapus';
+                actionClass = 'text-red-600';
+                break;
+            case 'update':
+                actionDisplay = 'Diupdate';
+                actionClass = 'text-yellow-600';
+                break;
+        }
+
+        const changeDetails = getChangeDetails(item.old_data, item.new_data);
+
+        return `
             <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4">${index + 1}</td>
                 <td class="px-6 py-4">${new Date(item.tanggal).toLocaleDateString('id-ID')}</td>
                 <td class="px-6 py-4 text-right">${item.simpanan_wajib.toLocaleString('id-ID')}</td>
                 <td class="px-6 py-4 text-right">${item.simpanan_pokok.toLocaleString('id-ID')}</td>
                 <td class="px-6 py-4 text-right">${item.simpanan_sukarela.toLocaleString('id-ID')}</td>
-                <td class="px-6 py-4">${item.metode_bayar}</td>
+                <td class="px-6 py-4">${item.metode_bayar || ''}</td>
+                <td class="px-6 py-4">
+                    <span class="${actionClass} font-medium">${actionDisplay}</span>
+                    <br>
+                    <span class="text-xs text-gray-500">
+                        ${new Date(item.action_date).toLocaleString('id-ID')}
+                    </span>
+                </td>
+                <td class="px-6 py-4 text-sm">
+                    ${changeDetails}
+                </td>
             </tr>
-        `).join('');
+        `;
+    }).join('');
+}
+
+
+
+async function showHistory(idAnggota, nama) {
+    try {
+        const response = await fetch(`/api/simpanan/history/${idAnggota}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch history');
+        }
+        
+        historyData = await response.json();
+        
+        // Update modal title
+        document.getElementById('historyTitle').textContent = `Riwayat Transaksi - ${nama}`;
+        
+        // Reset sort to newest first
+        isNewest = true;
+        const button = document.getElementById('sortButton');
+        const icon = button.querySelector('.material-icons');
+        const text = button.querySelector('#sortText');
+        text.textContent = 'Terbaru';
+        icon.textContent = 'arrow_downward';
+        
+        // Render table
+        renderHistoryTable();
         
         // Show modal
         document.getElementById('historyModal').classList.remove('hidden');
-        
     } catch (error) {
         console.error('Error loading history:', error);
         showNotification('Gagal memuat riwayat transaksi', 'error');
@@ -71,6 +195,7 @@ async function showHistory(idAnggota, nama) {
 function closeHistoryModal() {
     document.getElementById('historyModal').classList.add('hidden');
     currentHistoryAnggota = null;
+    historyData = [];
 }
 
 // Event Listeners

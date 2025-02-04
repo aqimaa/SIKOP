@@ -52,18 +52,15 @@ router.get('/kreditPimpinan', kreditPimpinanController.getKreditPimpinan);
 router.post('/kredit/filter', kreditPimpinanController.filterData);
   
 
-
 // Route untuk Pinjaman Pimpinan
 router.get('/pinjamanPimpinan', pinjamanPimpinanController.getPinjamanPimpinan);
 router.post('/pinjaman/filter', pinjamanPimpinanController.filterData);
-
 
 // Route untuk Simpanan Pimpinan,Filter Data Simpanan dengan Pagination
 router.get('/cetak-laporan', cetakLaporanPimpinanController.cetakLaporan); 
 router.get('/simpananPimpinan', simpananPimpinanController.getSimpananPimpinan);
 
 router.post('/simpanan/filter', simpananPimpinanController.filterData);
-
 
 // Route untuk Laporan
 // router.get('/laporan', laporanController.getLaporan);
@@ -86,14 +83,14 @@ router.get('/simpanan', (req, res) => {
 router.get('/api/simpanan', simpananController.getSimpananData);
 router.get('/koperasi/simpanan/lihatsimpanan', simpananController.lihatSimpanan);
 
-// API Routes untuk Simpanan
-router.get('/api/simpanan', simpananController.getSimpananData);
-
 router.get('/api/simpanan/filter', simpananController.filterSimpanan);
 router.get('/api/simpanan/years', simpananController.getAvailableYears);
 router.get('/api/anggota', simpananController.getAnggotaList);
 router.get('/api/simpanan/history/:id_anggota', simpananController.getHistorySimpanan);
 
+router.get('/api/simpanan/:id', simpananController.getSimpananById);
+router.put('/api/simpanan/:id', simpananController.updateSimpanan);
+  
 router.post('/api/simpanan', simpananController.createSimpanan);
 router.delete('/api/simpanan/:id', simpananController.deleteSimpanan);
 

@@ -89,12 +89,13 @@ router.get('/simpanan', (req, res) => {
 
 // API Routes untuk Simpanan
 router.get('/api/simpanan', simpananController.getSimpananData);
-router.get('/koperasi/simpanan/lihatsimpanan', simpananController.lihatSimpanan);
+router.get('/simpanankoperasi', simpananController.lihatSimpanan);
 
 router.get('/api/simpanan/filter', simpananController.filterSimpanan);
 router.get('/api/simpanan/years', simpananController.getAvailableYears);
 router.get('/api/anggota', simpananController.getAnggotaList);
 router.get('/api/simpanan/history/:id_anggota', simpananController.getHistorySimpanan);
+router.post('/api/simpanan/periode', simpananController.createPeriode);
 
 router.get('/api/simpanan/:id', simpananController.getSimpananById);
 router.put('/api/simpanan/:id', simpananController.updateSimpanan);

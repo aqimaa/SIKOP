@@ -3,7 +3,8 @@
 const db = require('../../config/database');
 
 // Pegawai
-exports.getPegawai = (req, res) => {
+// Mendapatkan semua pegawai
+exports.getPegawai = (req, res) => { 
   const query = 'SELECT * FROM pegawai';
   db.query(query, (err, results) => {
     if (err) {
@@ -13,55 +14,91 @@ exports.getPegawai = (req, res) => {
   });
 };
 
+// Menambahkan pegawai
 exports.createPegawai = (req, res) => {
+  console.log("Data diterima dari frontend:", req.body); // Debugging
+
   const { nip, nama, wilayah } = req.body;
-  const query = 'INSERT INTO pegawai (nip, nama, wilayah) VALUES (?, ?, ?)';
-  db.query(query, [nip, nama, wilayah], (err, results) => {
-    if (err) {
-      return res.status(500).json({ message: 'Database error', error: err });
-    }
-    res.redirect('/master/pegawai/tambahPegawai');
-  });
-};
 
-exports.updatePegawai = (req, res) => {
-  const { nip, nama, wilayah } = req.body;
-  const query = 'UPDATE pegawai SET nama = ?, wilayah = ? WHERE nip = ?';
-  db.query(query, [nama, wilayah, nip], (err, results) => {
-    if (err) {
-      return res.status(500).json({ message: 'Database error', error: err });
-    }
-    res.redirect('/master/pegawai/ubahPegawai');
-  });
-};
-
-exports.deletePegawai = (req, res) => {
-  const { nip } = req.params;
-  const { confirm } = req.query; // Bisa juga menggunakan req.body tergantung metode yang digunakan
-
-  if (confirm !== 'yes') {
-    return res.send(`
-      <script>
-        if (confirm("Lanjutkan menghapus?")) {
-          window.location.href = "/master/pegawai/delete/${nip}?confirm=yes";
-        } else {
-          window.location.href = "/master/pegawai/pegawai";
-        }
-      </script>
-    `);
+  if (!nip || !nama || !wilayah) {
+    return res.status(400).json({ success: false, message: "Semua field harus diisi" });
   }
 
-  const query = 'DELETE FROM pegawai WHERE nip = ?';
+  const query = "INSERT INTO pegawai (nip, nama, wilayah) VALUES (?, ?, ?)";
+
+  db.query(query, [nip, nama, wilayah], (err, results) => {
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).json({ success: false, message: "Terjadi kesalahan pada database", error: err.message });
+    }
+
+    res.status(201).json({ success: true, message: "Pegawai berhasil ditambahkan!" });
+  });
+};
+
+// 📌 Menampilkan form ubah pegawai dengan data yang benar
+exports.getUbahPegawai = (req, res) => {
+  const { nip } = req.params;
+  const query = 'SELECT * FROM pegawai WHERE nip = ?';
+
   db.query(query, [nip], (err, results) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
-    res.send(`
-      <script>
-        alert("Pegawai berhasil dihapus");
-        window.location.href = "/master/pegawai/pegawai";
-      </script>
-    `);
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'Pegawai tidak ditemukan' });
+    }
+    res.render('master/pegawai/ubahPegawai', { pegawai: results[0] });
+  });
+};
+
+// 📌 Proses update pegawai
+exports.updatePegawai = (req, res) => {
+  const { nip } = req.params;
+  const { new_nip, nama, wilayah } = req.body;
+
+  if (!new_nip || !nama || !wilayah) {
+    return res.status(400).json({ message: 'Semua field harus diisi' });
+  }
+
+  const checkQuery = 'SELECT * FROM pegawai WHERE nip = ?';
+  db.query(checkQuery, [nip], (err, results) => {
+    if (err) {
+      return res.status(500).json({ message: 'Database error', error: err });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'Pegawai tidak ditemukan' });
+    }
+
+    const updateQuery = 'UPDATE pegawai SET nip = ?, nama = ?, wilayah = ? WHERE nip = ?';
+    db.query(updateQuery, [new_nip, nama, wilayah, nip], (err) => {
+      if (err) {
+        return res.status(500).json({ message: 'Database error', error: err });
+      }
+      res.send(`
+        <script>
+          alert("Pegawai berhasil diperbarui");
+          window.location.href = "/master/pegawai";
+        </script>
+      `);
+    });
+  });
+};
+
+// Menghapus pegawai
+exports.deletePegawai = (req, res) => {
+  const { nip } = req.params;
+
+  const query = 'DELETE FROM pegawai WHERE nip = ?';
+  db.query(query, [nip], (err, results) => {
+    if (err) {
+      return res.redirect('/master/pegawai?msg=error');
+    }
+    if (results.affectedRows === 0) {
+      return res.redirect('/master/pegawai?msg=notfound');
+    }
+
+    res.redirect('/master/pegawai?msg=deleted');
   });
 };
 
@@ -78,7 +115,6 @@ exports.getAnggota = (req, res) => {
   });
 }; 
 
-// Mengambil data pegawai untuk ditampilkan pada tambah anggota
 exports.getPegawaiForAnggota = (req, res) => {
   const query = 'SELECT * FROM pegawai';
   db.query(query, (err, results) => {
@@ -89,7 +125,6 @@ exports.getPegawaiForAnggota = (req, res) => {
   });
 };
 
-// Menambahkan anggota
 exports.createAnggota = (req, res) => {
   const { nip_anggota, status } = req.body;
   const query = 'INSERT INTO anggota (nip_anggota, status) VALUES (?, ?)';
@@ -100,33 +135,6 @@ exports.createAnggota = (req, res) => {
     res.redirect('/master/anggota');
   });
 };
-
-// exports.createAnggota = (req, res) => { 
-//   const { id, nip_anggota, status } = req.body;
-
-//   // Cek apakah nip_anggota ada di tabel pegawai
-//   const checkQuery = 'SELECT nip FROM pegawai WHERE nip = ?';
-//   db.query(checkQuery, [nip_anggota], (err, results) => {
-//     if (err) {
-//       return res.status(500).json({ message: 'Database error', error: err });
-//     }
-
-//     // Jika tidak ditemukan, kirim pesan error
-//     if (results.length === 0) {
-//       return res.status(400).json({ message: 'NIP tidak ditemukan di tabel pegawai' });
-//     }
-
-//     // Jika ditemukan, lanjutkan proses insert ke tabel anggota
-//     const insertQuery = 'INSERT INTO anggota (id, nip_anggota, status) VALUES (?, ?, ?)';
-//     db.query(insertQuery, [id, nip_anggota, status], (err, results) => {
-//       if (err) {
-//         return res.status(500).json({ message: 'Database error', error: err });
-//       }
-//       res.redirect('/master/anggota/anggotaKoperasi');
-//     });
-//   });
-// };
-
 
 exports.updateAnggota = (req, res) => {
   const { id, nip_anggota, status } = req.body;
@@ -157,11 +165,10 @@ exports.getUser = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
-    res.render('master/user/userKoperasi', { users: results }); // Update this line
+    res.render('master/user/userKoperasi', { users: results }); 
   });
 };
 
-// Mengambil data user berdasarkan ID
 exports.getUserById = (req, res) => {
   const { id } = req.params;
   const query = 'SELECT * FROM users WHERE id = ?';
@@ -173,11 +180,10 @@ exports.getUserById = (req, res) => {
     if (results.length === 0) {
       return res.status(404).json({ message: 'User not found' });
     }
-    res.render('master/user/editUser', { user: results[0] }); // Kirim data user ke editUser.ejs
+    res.render('master/user/editUser', { user: results[0] }); 
   });
 };
 
-// Mengupdate user
 exports.updateUser = (req, res) => {
   const { id } = req.params;
   const { nama, email, password, role_user } = req.body;
@@ -188,6 +194,6 @@ exports.updateUser = (req, res) => {
       return res.status(500).json({ message: 'Database error', error: err });
     }
     
-    res.redirect('/master/user/userKoperasi'); // Redirect ke halaman daftar user setelah update
+    res.redirect('/master/user/userKoperasi'); 
   });
 };

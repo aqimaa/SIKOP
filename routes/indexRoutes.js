@@ -115,48 +115,61 @@ router.delete('/pinjaman/hapus/:id', lihatPinjamanController.hapusPinjaman);
 
 // Route untuk Master
 //Route Pegawai
+
+// 📌 Menampilkan daftar pegawai
 router.get('/master/pegawai', masterController.getPegawai);
+
+// 📌 Form tambah pegawai
 router.get('/master/pegawai/tambahPegawai', (req, res) => {
   res.render('master/pegawai/tambahPegawai');
 });
+
+// 📌 Proses tambah pegawai
 router.post('/master/pegawai/tambahPegawai', masterController.createPegawai);
 
-router.get('/master/pegawai/ubahPegawai/:nip', (req, res) => {
-  const { nip } = req.params;
-  const query = 'SELECT * FROM pegawai WHERE nip = ?';
-  db.query(query, [nip], (err, results) => {
-    if (err) {
-      return res.status(500).json({ message: 'Database error', error: err });
-    }
-    res.render('master/pegawai/ubahPegawai', { pegawai: results[0] });
-  });
-});
-router.post('/master/pegawai/ubahPegawai/:nip', masterController.updatePegawai);
+// 📌 Form ubah pegawai (Memastikan data dikirim dengan benar)
+router.get('/master/pegawai/ubahPegawai/:nip', masterController.getUbahPegawai);
 
-router.get('/master/pegawai/delete/:nip', masterController.deletePegawai);
+// 📌 Proses update pegawai
+router.put('/master/pegawai/:nip', masterController.updatePegawai);
+
+// 📌 Proses hapus pegawai
+router.delete('/master/pegawai/:nip', masterController.deletePegawai);
 
 // Route Anggota
+// router.get('/master/anggota', masterController.getAnggota);
+// router.get('/master/anggota/tambahAnggota', masterController.getPegawaiForAnggota);
+// router.post('/master/anggota/tambahAnggota', masterController.createAnggota);
+// router.get('/master/anggota/ubahAnggota/:id', (req, res) => {
+//     res.render('master/anggota/ubahAnggota', { anggota: results[0] });
+//   });
+// router.post('/master/anggota/ubahAnggota/:id', masterController.updateAnggota);
+// router.get('/master/anggota/delete/:id', masterController.deleteAnggota);
+// Menampilkan daftar anggota
 router.get('/master/anggota', masterController.getAnggota);
+
+// Menampilkan form tambah anggota
 router.get('/master/anggota/tambahAnggota', masterController.getPegawaiForAnggota);
-router.post('/master/anggota/tambahAnggota', masterController.createAnggota);
 
+// Menambahkan anggota baru
+router.post('/master/anggota/tambahAnggota', masterController.tambahAnggota);
 
-router.get('/master/anggota/ubahAnggota/:id', (req, res) => {
-    res.render('master/anggota/ubahAnggota', { anggota: results[0] });
-  });
+// Menampilkan form ubah anggota
+router.get('/master/anggota/ubahAnggota/:id', masterController.getAnggotaById);
+
+// Mengubah status anggota
 router.post('/master/anggota/ubahAnggota/:id', masterController.updateAnggota);
 
+// Menghapus anggota
 router.get('/master/anggota/delete/:id', masterController.deleteAnggota);
+
 
 //Route user
 // Menampilkan daftar user
 router.get('/master/user', masterController.getUser);
-
 // Menampilkan halaman edit user berdasarkan ID
 router.get('/master/user/editUser/:id', masterController.getUserById);
-
 // Menangani update user
 router.post('/master/user/editUser/:id', masterController.updateUser);
-
 // Export Router
 module.exports = router;

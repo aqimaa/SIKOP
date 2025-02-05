@@ -29,26 +29,33 @@
         }
 
         function submitForm(event) {
-            event.preventDefault();
-            
-            const form = document.getElementById("anggotaForm");
-            const formData = new FormData(form);
-            
-            fetch("/master/anggota/tambahAnggota", {
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert("Anggota berhasil ditambahkan!");
-                    window.location.href = "/master/anggota";
-                } else {
-                    alert("Gagal menambahkan anggota: " + data.message);
-                }
-            })
-            .catch(error => console.error("Error:", error));
-        }
+        event.preventDefault();
+
+        const form = document.getElementById("anggotaForm");
+        const formData = new URLSearchParams(new FormData(form));
+
+        fetch("/master/anggota/tambahAnggota", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Anggota berhasil ditambahkan!");
+                window.location.href = "/master/anggota"; // Redirect setelah sukses
+            } else {
+                alert("Gagal menambahkan anggota: " + data.message); // Pesan error yang jelas
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Terjadi kesalahan, silakan coba lagi.");
+        });
+    }
+
     </script>
 </head>
 <body class="flex">
@@ -94,7 +101,6 @@
             </button>
         </div>
     </div>
-
     <div class="flex-1 ml-72 bg-gray-100 min-h-screen">
         <header class="flex justify-between items-center mb-8 bg-white p-4 shadow-md">
             <h1 class="text-2xl font-bold text-center flex-1">Data Anggota Koperasi</h1>
@@ -103,34 +109,48 @@
                 <img src="../../images/profile-user.png" alt="User" class="rounded-full w-10 h-10" />
             </div>
         </header>
-
         <div class="p-8">
             <div class="bg-white p-6 rounded-lg shadow-md">
                 <h2 class="text-2xl font-bold text-center mb-8">Tambah Anggota</h2>
                 <form id="anggotaForm" class="space-y-4">
                     <div>
                         <label class="block text-gray-700 mb-1">NIP</label>
-                        <select id="nip_anggota" class="w-full p-2 border border-gray-300 rounded" name="nip_anggota" required>
+                        <select id="nip" class="w-full p-2 border border-gray-300 rounded" name="nip_anggota" required>
                             <option value="" disabled selected>Pilih NIP Pegawai</option>
-                            <% if (pegawai) { %>
-                              <% pegawai.forEach(function(pegawai) { %>
-                                <option value="<%= pegawai.nip %>"><%= pegawai.nip %> - <%= pegawai.nama %></option>
-                              <% }); %>
-                            <% } %>
                         </select>
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function () {
+                                fetch("/master/anggota/pegawaiTersedia")
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.success) {
+                                            const select = document.getElementById("nip");
+                                            data.data.forEach(pegawai => {
+                                                const option = document.createElement("option");
+                                                option.value = pegawai.nip;
+                                                option.textContent = `${pegawai.nip} - ${pegawai.nama}`;
+                                                select.appendChild(option);
+                                            });
+                                        } else {
+                                            alert("Gagal memuat data pegawai.");
+                                        }
+                                    })
+                                    .catch(error => console.error("Error:", error));
+                            });
+                        </script>
                     </div>
+                
                     <div>
                         <label class="block text-gray-700 mb-1">Status Anggota</label>
-                        <select class="w-full p-2 border border-gray-300 rounded mb-4" name="status">
-                            <option value="Aktif">Aktif</option>
-                            <option value="Tidak Aktif">Tidak Aktif</option>
-                        </select>
+                        <input type="text" class="w-full p-2 border border-gray-300 rounded bg-gray-100" value="Aktif" readonly>
                     </div>
+                
                     <div class="flex justify-between mt-12">
-                        <button type="button" class="bg-red-700 text-white px-4 py-2 rounded w-1/3" onclick="window.location.href='/master/anggota'">Cancel</button>
-                        <button type="submit" class="bg-green-700 text-white px-4 py-2 rounded w-1/3" onclick="submitForm(event)">Simpan</button>
+                        <button type="button" style="background-color: #e21931" class=" text-white px-4 py-2 rounded w-1/3" onclick="window.location.href='/master/anggota'">Cancel</button>
+                        <button type="submit" style="background-color: #22c55e" class=" text-white px-4 py-2 rounded w-1/3" onclick="submitForm(event)">Simpan</button>
                     </div>
                 </form>
+                
             </div>
         </div>
     </div>

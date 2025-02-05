@@ -144,43 +144,66 @@ exports.getAnggotaById = (req, res) => {
   });
 };
 
+// Mengambil daftar pegawai yang belum menjadi anggota aktif
+exports.getPegawaiYangBisaDipilih = (req, res) => {
+  const query = `
+        SELECT p.nip, p.nama 
+        FROM pegawai p 
+        LEFT JOIN anggota a ON p.nip = a.nip_anggota 
+        WHERE a.nip_anggota IS NULL
+    `;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: "Database error", error: err });
+        }
+        res.json({ success: true, data: results });
+    });
+};
+
+
 // Menambahkan anggota baru
 exports.tambahAnggota = (req, res) => {
-  const { nip, status } = req.body;
+  console.log("Body data diterima:", req.body);
+  const { nip_anggota } = req.body; // No need for `status`, since it's always "Aktif"
 
-  // Cek apakah pegawai terdaftar
-  const checkPegawaiQuery = 'SELECT * FROM pegawai WHERE nip = ?';
-  db.query(checkPegawaiQuery, [nip], (err, pegawaiResults) => {
-      if (err) {
-          return res.status(500).json({ error: 'Database error saat mencari pegawai' });
-      }
+  if (!nip_anggota) {
+      return res.status(400).json({ success: false, message: "Harap pilih pegawai." });
+  }
+
+  // Check if the pegawai exists in the database
+  const checkPegawaiQuery = 'SELECT nama FROM pegawai WHERE nip = ?';
+  db.query(checkPegawaiQuery, [nip_anggota], (err, pegawaiResults) => {
+      if (err) return res.status(500).json({ success: false, message: 'Database error saat mencari pegawai' });
       if (pegawaiResults.length === 0) {
-          return res.status(404).json({ message: 'Pegawai tidak ditemukan' });
+          return res.status(404).json({ success: false, message: 'Pegawai tidak ditemukan di database' });
       }
 
-      const nama = pegawaiResults[0].nama; // Ambil nama pegawai dari tabel pegawai
+      const nama = pegawaiResults[0].nama;
 
-      // Cek apakah pegawai sudah menjadi anggota
-      const checkAnggotaQuery = 'SELECT * FROM anggota WHERE nip_anggota = ?';
-      db.query(checkAnggotaQuery, [nip], (err, anggotaResults) => {
-          if (err) {
-              return res.status(500).json({ error: 'Database error saat mencari anggota' });
-          }
-          if (anggotaResults.length > 0) {
-              return res.status(400).json({ message: 'Pegawai ini sudah menjadi anggota' });
-          }
+      // Get the current highest ID in the anggota table
+      const getMaxIdQuery = 'SELECT MAX(id) AS max_id FROM anggota';
+      db.query(getMaxIdQuery, (err, result) => {
+          if (err) return res.status(500).json({ success: false, message: 'Gagal mendapatkan ID terakhir' });
 
-          // Jika belum menjadi anggota, tambahkan ke tabel anggota
-          const insertQuery = 'INSERT INTO anggota (nip_anggota, status) VALUES (?, ?)';
-          db.query(insertQuery, [nip, status], (err, result) => {
-              if (err) {
-                  return res.status(500).json({ error: 'Gagal menambahkan anggota' });
-              }
-              res.status(201).json({ message: 'Anggota berhasil ditambahkan', data: { nip, nama, status } });
+          // If there are no entries, start with id 1
+          const newId = result[0].max_id ? result[0].max_id + 1 : 1;
+
+          // Insert the new anggota with the next available ID
+          const insertQuery = 'INSERT INTO anggota (id, nip_anggota, status) VALUES (?, ?, "Aktif")';
+          db.query(insertQuery, [newId, nip_anggota], (err, insertResult) => {
+              if (err) return res.status(500).json({ success: false, message: 'Gagal menambahkan anggota ke database' });
+
+              res.status(201).json({
+                  success: true,
+                  message: 'Anggota berhasil ditambahkan',
+                  data: { id: newId, nip_anggota, nama, status: "Aktif" }
+              });
           });
       });
   });
 };
+
 
 // Mengubah status anggota (Aktif <-> Tidak Aktif)
 exports.updateAnggota = (req, res) => {
@@ -212,14 +235,25 @@ exports.updateAnggota = (req, res) => {
 
 exports.deleteAnggota = (req, res) => {
   const { id } = req.params;
+  console.log("Menghapus anggota dengan ID:", id); // Debugging
+
   const query = 'DELETE FROM anggota WHERE id = ?';
   db.query(query, [id], (err, results) => {
     if (err) {
+      console.error("Database error:", err);
       return res.status(500).json({ message: 'Database error', error: err });
     }
-    res.redirect('/master/anggota/tambahAnggota');
+    if (results.affectedRows === 0) {
+      console.warn("Anggota tidak ditemukan:", id);
+      return res.status(404).json({ message: 'Anggota tidak ditemukan' });
+    }
+
+    // Redirect ke halaman daftar anggota dan kirim pesan sukses lewat query parameter
+    res.redirect('/master/anggota?message=Anggota berhasil dihapus');
   });
 };
+
+
 
 // User Fix
 exports.getUser = (req, res) => {

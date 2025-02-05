@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Kredit Barang</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body class="flex bg-gray-100">
     <!-- Sidebar -->
@@ -19,19 +20,19 @@
         <nav>
             <ul>
                 <li class="mb-4">
-                    <a href="/views/koperasi/dashboardKeuangan.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
+                    <a href="/dashboardKeuangan" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
                         <img src="/images/vectordasbor.png" alt="lihat data icon" class="w=5 h-5 ">
                         <span class="ml-2 text-xl ml-5">Dashboard</span>
                     </a>
                 </li>
                 <li class="mb-4">
-                    <a href="/views/koperasi/simpananKeuangan/lihatSimpanan.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
+                    <a href="/simpanan" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
                     <span class="material-icons">account_balance_wallet</span>
                     <span class="ml-2 text-xl ml-5">Simpanan</span>
                     </a>
                 </li>
                 <li class="mb-4">
-                    <a href="/views/koperasi/pinjamankeuangan/lihatPinjaman.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
+                    <a href="/kredit-barang" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
                     <span class="material-icons">credit_card</span>
                     <span class="ml-2 text-xl ml-5">Pinjaman</span>
                     </a>
@@ -48,7 +49,7 @@
                     </button>
                     <ul id="dropdownMenu" class="pl-6 hidden">
                         <li class="mb-2">
-                            <a href="/views/koperasi/kreditKeuangan/lihatKreditBarang.ejs" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Barang</a>
+                            <a href="/kredit-barang" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Barang</a>
                         </li>
                         <li class="mb-2">
                             <a href="#" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Kredit Elektronik</a>
@@ -73,7 +74,7 @@
     </script>
 
     <!-- Main Content -->
-     <div class="flex-1 p-6">
+    <div class="flex-1 p-6 ml-72">
         <header class="flex justify-between items-center mb-8">
             <!-- Arrow Back Icon -->
             <button class="text-gray-600">
@@ -86,7 +87,7 @@
             <!-- Profile Section -->
             <div class="flex items-center space-x-4">
                 <span>admin</span>
-                <img src="../../public/images/profile-user.png" alt="User" class="rounded-full w-10 h-10">
+                <img src="/images/profile-user.png" alt="User" class="rounded-full w-10 h-10">
             </div>
         </header>
         <div class="flex justify-between items-center mb-4">
@@ -101,59 +102,53 @@
             </div>
 
 
-            <table class="table-auto w-full border-collapse">
-                <thead>
-                    <tr class="text-left bg-gray-100">
+            <table class="table-auto w-full border-collapse shadow-lg rounded-lg overflow-hidden">
+                <thead style="background-color: #5D8736; color: white;">
+                    <tr>
                         <th class="p-4">No</th>
-                        <th class="p-4">No. Anggota</th>
-                        <th class="p-4">Nama</th>
+                        <th class="p-4">Nama Anggota</th>
                         <th class="p-4">Harga Pokok</th>
                         <th class="p-4">Jangka Waktu</th>
                         <th class="p-4">Pokok DP</th>
                         <th class="p-4">Total Angsuran</th>
                         <th class="p-4">Pokok</th>
                         <th class="p-4">Margin</th>
-                        <th class="p-4">Angsuran Ke</th>
+                        <th class="p-4">Angsuran ke</th>
                         <th class="p-4">Sisa Piutang</th>
-                        <th class="p-4">Mulai Perjanjian</th>
-                        <th class="p-4">Ket</th>
-                        <th class="p-4">Bayar</th>
+                        <th class="p-4">Tanggal Mulai</th>
+                        <th class="p-4">Status</th>
                         <th class="p-4">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="text-left border-b">
-                        <td class="p-4">1</td>
-                        <td class="p-4">001</td>
-                        <td class="p-4">Adriani Adnani</td>
-                        <td class="p-4">262.500</td>
-                        <td class="p-4">9</td>
-                        <td class="p-4">26.250</td>
-                        <td class="p-4">246.458</td>
-                        <td class="p-4">26.250</td>
-                        <td class="p-4">1.750</td>
-                        <td class="p-4">5</td>
-                        <td class="p-4">105.000</td>
-                        <td class="p-4">2023-07-25</td>
-                        <td class="p-4">Belum Lunas</td>
-                        <td class="p-4">
-                            <button class="bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700">Bayar</button>
-                        </td>
-                        <td class="p-4 flex space-x-2">
-                            <button class="bg-blue-600 text-white p-2 rounded hover:bg-blue-700" title="Edit">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M12 20h9" />
-                                    <path d="M16.5 3.5a2.121 2.121 0 113 3L7 19l-4 1 1-4 12.5-12.5z" />
-                                </svg>
-                            </button>
-                            <button class="bg-red-600 text-white p-2 rounded hover:bg-red-700" title="Hapus">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </td>
-                    </tr>
-                    <!-- Tambahkan baris data tambahan sesuai kebutuhan -->
+                    <% if (data && data.length > 0) { %>
+                        <% data.forEach((item, index) => { %>
+                            <tr class="border-b hover:bg-[#A4C68C] transition duration-200">
+
+                                <td class="p-4 text-center"><%= index + 1 %></td>
+                                <td class="p-4"><%= item.nama_anggota %></td>
+                                <td class="p-4 text-right">Rp <%= item.harga_pokok ? item.harga_pokok.toLocaleString('id-ID') : '0' %></td>
+                                <td class="p-4 text-center"><%= item.jangka_waktu %> Bulan</td>
+                                <td class="p-4 text-right">Rp <%= item.pokok_dp ? item.pokok_dp.toLocaleString('id-ID') : '0' %></td>
+                                <td class="p-4 text-right">Rp <%= item.total_angsuran ? item.total_angsuran.toLocaleString('id-ID') : '0' %></td>
+                                <td class="p-4 text-right">Rp <%= item.pokok ? item.pokok.toLocaleString('id-ID') : '0' %></td>
+                                <td class="p-4 text-right">Rp <%= item.margin ? item.margin.toLocaleString('id-ID') : '0' %></td>
+                                <td class="p-4 text-center"><%= item.angsuran_ke || 0 %></td>
+                                <td class="p-4 text-right">Rp <%= item.sisa_piutang ? item.sisa_piutang.toLocaleString('id-ID') : '0' %></td>
+                                <td class="p-4 text-center"><%= item.tanggal_mulai ? new Date(item.tanggal_mulai).toLocaleDateString('id-ID') : '-' %></td>
+                                <td class="p-4 text-center font-semibold <%= item.ket_status === 'Lunas' ? 'text-[#5D8736]' : 'text-red-700' %>"><%= item.ket_status || '-' %></td>
+                                <td class="p-4 flex space-x-2 justify-center">
+                                    <button class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition duration-200">Edit</button>
+                                    <button class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition duration-200">Hapus</button>
+                                </td>
+                            </tr>
+            
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="14" class="p-4 text-center">Tidak ada data</td>
+                        </tr>
+                    <% } %>
                 </tbody>
             </table>
         </div>

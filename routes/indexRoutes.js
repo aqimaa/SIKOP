@@ -71,6 +71,13 @@ router.post('/simpanan/filter', simpananPimpinanController.filterData);
 // router.get('/pinjaman', pinjamanController.getPinjaman);
 // router.post('/pinjaman', pinjamanController.createPinjaman);
 
+// Route untuk Kredit Barang
+router.get('/kredit-barang', kreditController.getAllKreditBarang);
+router.post('/kredit-barang', kreditController.createKreditBarang);
+router.get('/kredit-barang/:id', kreditController.getKreditBarangById);
+router.put('/kredit-barang/:id', kreditController.updateKreditBarang);
+router.delete('/kredit-barang/:id', kreditController.deleteKreditBarang);
+
 // Route untuk Simpanan
 router.get('/simpanan', (req, res) => {
   if (req.session.role === 'Admin Keuangan') {

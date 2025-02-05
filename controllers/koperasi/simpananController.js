@@ -59,10 +59,10 @@ const getAnggotaList = (req, res) => {
 
 // Filter data simpanan
 const filterSimpanan = (req, res) => {
-    const { anggota, tahun, bulan } = req.query;
+    const { anggota, tahun } = req.query;
     let query = `
-        SELECT 
-            MIN(s.id) as id,  /* Tambahkan ini untuk mendapatkan ID */
+        SELECT
+            MIN(s.id) as id,
             id_anggota,
             p.nip,
             p.nama,
@@ -78,21 +78,19 @@ const filterSimpanan = (req, res) => {
     `;
 
     const params = [];
+
     if (anggota) {
         query += ` AND s.id_anggota = ?`;
         params.push(anggota);
     }
+
     if (tahun) {
         query += ` AND YEAR(s.tanggal) = ?`;
         params.push(tahun);
     }
-    if (bulan) {
-        query += ` AND MONTH(s.tanggal) = ?`;
-        params.push(bulan);
-    }
 
-    query += ` GROUP BY id_anggota, p.nip, p.nama, s.metode_bayar
-              ORDER BY MAX(s.tanggal) DESC`;
+    query += ` GROUP BY id_anggota, p.nip, p.nama, s.metode_bayar, MONTH(s.tanggal)
+              ORDER BY MAX(s.tanggal) ASC`;
 
     db.query(query, params, (error, results) => {
         if (error) {
@@ -102,6 +100,7 @@ const filterSimpanan = (req, res) => {
         res.json(results);
     });
 };
+
 
 const getAvailableYears = (req, res) => {
     const query = `
@@ -118,6 +117,86 @@ const getAvailableYears = (req, res) => {
         res.json(results.map(row => row.year));
     });
 };
+
+const createPeriode = async (req, res) => {
+    const { tahun, bulan } = req.body;
+    
+    try {
+        // Get all active members
+        const getActiveMembers = `
+            SELECT id 
+            FROM anggota 
+            WHERE status = 'aktif'
+        `;
+        
+        db.query(getActiveMembers, async (error, members) => {
+            if (error) {
+                console.error("Error getting members:", error);
+                return res.status(500).json({ message: error.message });
+            }
+
+            // Set tanggal ke awal bulan yang dipilih
+            const tanggal = new Date(tahun, bulan - 1, 1);
+            const formattedDate = tanggal.toISOString().split('T')[0];
+
+            // Create records for each active member
+            for (const member of members) {
+                const createQuery = `
+                    INSERT INTO simpanan 
+                    (id_anggota, tanggal, simpanan_wajib, simpanan_pokok, simpanan_sukarela, metode_bayar)
+                    VALUES (?, ?, 0, 0, 0, 'system')
+                `;
+
+                try {
+                    const result = await new Promise((resolve, reject) => {
+                        db.query(createQuery, [member.id, formattedDate], (err, res) => {
+                            if (err) reject(err);
+                            resolve(res);
+                        });
+                    });
+
+                    // Save to history
+                    const historyQuery = `
+                        INSERT INTO simpanan_history
+                        (simpanan_id, id_anggota, action_type, new_data, changed_by)
+                        VALUES (?, ?, 'buat', ?, 'system')
+                    `;
+
+                    const newData = {
+                        id: result.insertId,
+                        id_anggota: member.id,
+                        tanggal: formattedDate,
+                        simpanan_wajib: 0,
+                        simpanan_pokok: 0,
+                        simpanan_sukarela: 0,
+                        metode_bayar: 'system'
+                    };
+
+                    await new Promise((resolve, reject) => {
+                        db.query(historyQuery, [result.insertId, member.id, JSON.stringify(newData)], (err) => {
+                            if (err) reject(err);
+                            resolve();
+                        });
+                    });
+                } catch (err) {
+                    console.error("Error creating record for member:", member.id, err);
+                    // Continue with next member even if one fails
+                }
+            }
+
+            res.json({
+                success: true,
+                message: 'Periode berhasil dibuat',
+                tahun,
+                bulan
+            });
+        });
+    } catch (error) {
+        console.error("Error in createPeriode:", error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
 
 // Create new simpanan
 const createSimpanan = async (req, res) => {
@@ -509,6 +588,7 @@ const getHistorySimpanan = (req, res) => {
 
 module.exports = {
     lihatSimpanan,
+    createPeriode,
     getSimpananData,
     getAnggotaList,
     filterSimpanan,

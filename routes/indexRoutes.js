@@ -136,14 +136,32 @@ router.put('/master/pegawai/:nip', masterController.updatePegawai);
 router.delete('/master/pegawai/:nip', masterController.deletePegawai);
 
 // Route Anggota
+// router.get('/master/anggota', masterController.getAnggota);
+// router.get('/master/anggota/tambahAnggota', masterController.getPegawaiForAnggota);
+// router.post('/master/anggota/tambahAnggota', masterController.createAnggota);
+// router.get('/master/anggota/ubahAnggota/:id', (req, res) => {
+//     res.render('master/anggota/ubahAnggota', { anggota: results[0] });
+//   });
+// router.post('/master/anggota/ubahAnggota/:id', masterController.updateAnggota);
+// router.get('/master/anggota/delete/:id', masterController.deleteAnggota);
+// Menampilkan daftar anggota
 router.get('/master/anggota', masterController.getAnggota);
+
+// Menampilkan form tambah anggota
 router.get('/master/anggota/tambahAnggota', masterController.getPegawaiForAnggota);
-router.post('/master/anggota/tambahAnggota', masterController.createAnggota);
-router.get('/master/anggota/ubahAnggota/:id', (req, res) => {
-    res.render('master/anggota/ubahAnggota', { anggota: results[0] });
-  });
+
+// Menambahkan anggota baru
+router.post('/master/anggota/tambahAnggota', masterController.tambahAnggota);
+
+// Menampilkan form ubah anggota
+router.get('/master/anggota/ubahAnggota/:id', masterController.getAnggotaById);
+
+// Mengubah status anggota
 router.post('/master/anggota/ubahAnggota/:id', masterController.updateAnggota);
+
+// Menghapus anggota
 router.get('/master/anggota/delete/:id', masterController.deleteAnggota);
+
 
 //Route user
 // Menampilkan daftar user

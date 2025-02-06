@@ -1,0 +1,154 @@
+<div id="periodeModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-lg w-[500px] max-h-[90vh] flex flex-col">
+        <!-- Header -->
+        <div class="p-6 border-b bg-[#5D8736] rounded-t-lg">
+            <div class="flex justify-between items-center">
+                <h2 class="text-xl font-semibold">Tambah Periode Baru</h2>
+                <button onclick="closePeriodeModal()" class="text-white hover:text-gray-200">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6 overflow-y-auto">
+            <form id="periodeForm" class="space-y-6">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Tahun</label>
+                        <input
+                            type="number"
+                            id="tahunPeriode"
+                            name="tahun"
+                            class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500"
+                            min="2024"
+                            max="2100"
+                            value="2024"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Bulan</label>
+                        <select
+                            id="bulanPeriode"
+                            name="bulan"
+                            class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500"
+                        >
+                            <option value="1">Januari</option>
+                            <option value="2">Februari</option>
+                            <option value="3">Maret</option>
+                            <option value="4">April</option>
+                            <option value="5">Mei</option>
+                            <option value="6">Juni</option>
+                            <option value="7">Juli</option>
+                            <option value="8">Agustus</option>
+                            <option value="9">September</option>
+                            <option value="10">Oktober</option>
+                            <option value="11">November</option>
+                            <option value="12">Desember</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Footer -->
+        <div class="px-6 py-4 border-t mt-auto bg-gray-50 rounded-b-lg">
+            <div class="flex justify-end gap-3">
+                <button onclick="closePeriodeModal()" class="px-4 py-2 border rounded-lg hover:bg-gray-100 transition-colors">
+                    Batal
+                </button>
+                <button onclick="submitPeriode()" class="px-4 py-2 text-white rounded-lg bg-[#5D8736] hover:bg-[#4a6c2b] transition-colors"style="background-color: #5D8736">
+                    Buat Periode
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openPeriodeModal() {
+        document.getElementById('periodeModal').classList.remove('hidden');
+        
+        // Set default tahun to current year
+        const currentYear = new Date().getFullYear();
+        document.getElementById('tahunPeriode').value = currentYear;
+        
+        // Set default bulan to current month
+        const currentMonth = new Date().getMonth() + 1;
+        document.getElementById('bulanPeriode').value = currentMonth;
+    }
+    
+    function closePeriodeModal() {
+        document.getElementById('periodeModal').classList.add('hidden');
+        document.getElementById('periodeForm').reset();
+    }
+    
+    async function submitPeriode() {
+        const tahun = document.getElementById('tahunPeriode').value;
+        const bulan = document.getElementById('bulanPeriode').value;
+    
+        if (!validatePeriode(tahun, bulan)) return;
+    
+        try {
+            const response = await fetch('/api/simpanan/periode', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ tahun, bulan })
+            });
+    
+            if (!response.ok) throw new Error('Network response was not ok');
+    
+            const result = await response.json();
+            showNotification('Periode baru berhasil dibuat', 'success');
+            closePeriodeModal();
+            handleFilter(); // Refresh data display
+    
+        } catch (error) {
+            console.error('Error creating periode:', error);
+            showNotification('Gagal membuat periode baru', 'error');
+        }
+    }
+    
+    function validatePeriode(tahun, bulan) {
+    if (!tahun) {
+        showNotification('Tahun harus diisi', 'warning');
+        return false;
+    }
+
+    if (!bulan) {
+        showNotification('Bulan harus dipilih', 'warning');
+        return false;
+    }
+
+    const currentDate = new Date();
+    const selectedDate = new Date(tahun, bulan - 1);
+    
+    // Hanya validasi untuk periode masa depan
+    if (selectedDate > currentDate) {
+        showNotification('Tidak dapat membuat periode untuk waktu yang akan datang', 'warning');
+        return false;
+    }
+
+    return true;
+}
+
+
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Close modal when clicking outside
+        document.getElementById('periodeModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                closePeriodeModal();
+            }
+        });
+    
+        // Add keyboard support (Escape to close)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !document.getElementById('periodeModal').classList.contains('hidden')) {
+                closePeriodeModal();
+            }
+        });
+    });
+    </script>

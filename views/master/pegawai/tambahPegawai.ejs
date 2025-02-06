@@ -1,14 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tambah Pegawai</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-</head>
+  <script>
+      function logout() {
+        if (confirm('Yakin ingin keluar?')) {
+          fetch('/logout', {
+              method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                alert('Anda berhasil logout')
+                window.location.href = '/login'
+              } else {
+                alert('Gagal logout, coba lagi.')
+              }
+            })
+            .catch(error => console.error('Logout error:', error))
+        }
+      }
 
+      // Dropdown toggle
+      function toggleDropdown() {
+        const dropdownMenu = document.getElementById('dropdownMenu')
+        dropdownMenu.classList.toggle('hidden')
+      }
+
+      function submitForm(event) {
+        event.preventDefault(); // Mencegah submit default form
+
+        // Ambil data dari form
+        const nip = document.querySelector('input[name="nip"]').value;
+        const nama = document.querySelector('input[name="nama"]').value;
+        const wilayah = document.querySelector('select[name="wilayah"]').value;
+
+        if (!nip || !nama || !wilayah) {
+            alert("Semua field harus diisi!");
+            return;
+        }
+
+        // Kirim request ke backend dalam format JSON
+        fetch("/master/pegawai/tambahPegawai", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ nip, nama, wilayah }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Pegawai berhasil ditambahkan!");
+                window.location.href = "/master/pegawai"; // Redirect setelah sukses
+            } else {
+                alert("Gagal menambahkan pegawai: " + data.message);
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Terjadi kesalahan, coba lagi nanti.");
+        });
+    }
+      </script>
+</head>
 <body class="flex">
   <!-- Sidebar -->
   <div id="sidebar"
@@ -63,34 +122,7 @@
         <span class="ml-5 text-xl">Log Out</span>
       </button>
     </div>
-
-    <script>
-      function logout() {
-        if (confirm('Yakin ingin keluar?')) {
-          fetch('/logout', {
-              method: 'POST'
-            })
-            .then(response => response.json())
-            .then(data => {
-              if (data.success) {
-                alert('Anda berhasil logout')
-                window.location.href = '/login'
-              } else {
-                alert('Gagal logout, coba lagi.')
-              }
-            })
-            .catch(error => console.error('Logout error:', error))
-        }
-      }
-
-      // Dropdown toggle
-      function toggleDropdown() {
-        const dropdownMenu = document.getElementById('dropdownMenu')
-        dropdownMenu.classList.toggle('hidden')
-      }
-    </script>
   </div>
-
   <!-- Main Content -->
   <div class="flex-1 ml-72 bg-gray-100 min-h-screen">
     <header class="flex justify-between items-center mb-8 bg-white p-4 shadow-md">
@@ -102,7 +134,6 @@
         <img src="../../images/profile-user.png" alt="User " class="rounded-full w-10 h-10" />
       </div>
     </header>
-
     <div class="flex-1 p-8">
       <!-- Content Container -->
       <div class="bg-white p-6 rounded-lg shadow-md">
@@ -110,9 +141,8 @@
         <div class="text-center mb-4">
           <h2 class="text-2xl font-bold mb-8">Form Tambah Pegawai</h2>
         </div>
-
         <!-- Form -->
-        <form class="space-y-4">
+        <form class="space-y-4 form" action="/master/pegawai/tambahPegawai" method="post">
           <div>
             <label class="block text-gray-700 mb-1">NIP</label>
             <input type="number" class="w-full p-2 border border-gray-300 rounded" name="nip" required />
@@ -123,23 +153,29 @@
           </div>
           <div>
             <label class="block text-gray-700 mb-1">Wilayah</label>
-            <select class="w-full p-2 border border-gray-300 rounded mb-4">
-              <option>Jambi</option>
-              <option>Kep. Riau</option>
-              <option>Riau</option>
-              <option>Sumatra Barat</option>
+            <select class="w-full p-2 border border-gray-300 rounded mb-8" name="wilayah" required>
+              <option value="">Pilih Wilayah</option>
+              <option value="Jambi">Jambi</option>
+              <option value="Kep. Riau">Kep. Riau</option>
+              <option value="Riau">Riau</option>
+              <option value="Sumatra Barat">Sumatra Barat</option>
             </select>
           </div>
-          <div class="text-center mt-12">
-            <button type="submit" class="bg-green-700 text-white px-4 py-2 rounded w-full"
-              style="background-color: #5d8736">
+          <div class="text-center mt-12 flex justify-between">
+            <button type="button" class="bg-red-700 text-white px-4 py-2 rounded w-1/3"
+                    style="background-color: #e21931" onclick="window.location.href='/master/pegawai'">
+              Cancel
+            </button>
+            <button type="submit" class="bg-green-700 text-white px-4 py-2 rounded w-1/3"
+                    style="background-color: #5d8736" onclick="submitForm(event)">
               Simpan
             </button>
+          </div>
+        </form>
           </div>
         </form>
       </div>
     </div>
   </div>
 </body>
-
 </html>

@@ -230,8 +230,15 @@ function toggleSimpananForm(type) {
     }
 }
 
-function openSimpananModal() {
+function openSimpananModal(bulan) {
     document.getElementById('simpananModal').classList.remove('hidden');
+    
+    // Set tanggal sesuai bulan yang dipilih
+    if (bulan) {
+        const tahun = document.getElementById('filterTahun').value || new Date().getFullYear();
+        const tanggalSimpanan = new Date(tahun, bulan - 1);
+        document.getElementById('tanggalSimpanan').valueAsDate = tanggalSimpanan;
+    }
 }
 
 function closeSimpananModal() {

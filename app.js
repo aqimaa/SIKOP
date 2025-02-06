@@ -3,10 +3,10 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-// const flash = require('connect-flash');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const allRoutes = require('./routes/indexRoutes.js');
+const methodOverride = require('method-override');
 
 // Initialize app
 const app = express();
@@ -27,7 +27,7 @@ app.use(
     saveUninitialized: true,
   })
 );
-// app.use(flash());
+app.use(methodOverride('_method'));
 
 // Default Home Route
 app.use(allRoutes);

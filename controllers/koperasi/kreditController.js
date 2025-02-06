@@ -127,22 +127,21 @@ const deleteKredit = async (req, res, tableName) => {
 // Fungsi Khusus untuk Kredit Barang
 // ==================================================
 
+
 // Create Kredit Barang
 exports.createKreditBarang = async (req, res) => {
-    const { id_anggota, harga_pokok, jangka_waktu, pokok_dp, total_angsuran, pokok, margin, angsuran_ke, sisa_piutang, tanggal_mulai, ket_status } = req.body;
+    const { harga_pokok, jangka_waktu, pokok_dp, margin, tanggal_perjanjian, total_angsuran, total_margin } = req.body;
 
     try {
-        const result = await db.query(
+        await db.query(
             `INSERT INTO kredit_barang 
-            (id_anggota, harga_pokok, jangka_waktu, pokok_dp, total_angsuran, pokok, margin, angsuran_ke, sisa_piutang, tanggal_mulai, ket_status) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [id_anggota, harga_pokok, jangka_waktu, pokok_dp, total_angsuran, pokok, margin, angsuran_ke, sisa_piutang, tanggal_mulai, ket_status]
+            (harga_pokok, jangka_waktu, pokok_dp, margin, tanggal_perjanjian, total_angsuran, total_margin) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            [harga_pokok, jangka_waktu, pokok_dp, margin, tanggal_perjanjian, total_angsuran, total_margin]
         );
 
-        res.status(201).json({
-            message: 'Kredit barang berhasil ditambahkan',
-            data: result
-        });
+        // Redirect ke halaman daftar kredit barang setelah sukses menyimpan
+        res.redirect('/kredit-barang');
     } catch (error) {
         res.status(500).json({
             message: 'Gagal menambahkan kredit barang',
@@ -151,40 +150,49 @@ exports.createKreditBarang = async (req, res) => {
     }
 };
 
+
+// Menampilkan halaman Tambah Kredit Barang
+exports.getTambahKredit = (req, res) => {
+    res.render('koperasi/kreditKeuangan/kreditBarang/tambahKredit');
+};
+
 // Read All Kredit Barang
 // Fungsi untuk mengambil semua data kredit barang
-exports.getAllKreditBarang = async (req, res) => {
-    try {
-        const results = await db.query(`
-            SELECT
-                kb.id,
-                kb.id_anggota,
-                p.nama AS nama_anggota,  
-                kb.harga_pokok,
-                kb.jangka_waktu,
-                kb.pokok_dp,
-                kb.total_angsuran,
-                kb.pokok,
-                kb.margin,
-                kb.angsuran_ke,
-                kb.sisa_piutang,
-                kb.tanggal_mulai,
-                kb.ket_status
-            FROM kredit_barang kb
-            JOIN anggota a ON kb.id_anggota = a.id
-            JOIN pegawai p ON a.nip_anggota = p.nip;
-        `);
+exports.getAllKreditBarang = (req, res) => {
+    const sql = `
+        SELECT
+            kb.id,
+            kb.id_anggota,
+            p.nama AS nama_anggota,  
+            kb.harga_pokok,
+            kb.jangka_waktu,
+            kb.pokok_dp,
+            kb.total_angsuran,
+            kb.pokok,
+            kb.margin,
+            kb.angsuran_ke,
+            kb.sisa_piutang,
+            kb.tanggal_mulai,
+            kb.ket_status
+        FROM kredit_barang kb
+        JOIN anggota a ON kb.id_anggota = a.id
+        JOIN pegawai p ON a.nip_anggota = p.nip;
+    `;
+
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.error("Error SQL:", err);
+            return res.status(500).send("Internal Server Error");
+        }
 
         console.log("Hasil Query:", results); // Cek hasil query di terminal
 
         res.render('koperasi/kreditKeuangan/kreditBarang/lihatKreditBarang', {
             data: results
         });
-    } catch (error) {
-        console.error('Error SQL:', error);
-        res.status(500).send('Internal Server Error');
-    }
+    });
 };
+
 
 
 
@@ -256,8 +264,7 @@ exports.deleteKreditBarang = async (req, res) => {
         }
 
         res.status(200).json({
-            message: 'Kredit barang berhasil dihapus',
-            data: result
+            message: 'Kredit barang berhasil dihapus'
         });
     } catch (error) {
         res.status(500).json({

@@ -269,29 +269,26 @@ exports.getUser = (req, res) => {
 exports.getUserById = (req, res) => {
   const { id } = req.params;
   const query = 'SELECT * FROM users WHERE id = ?';
-
   db.query(query, [id], (err, results) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
     if (results.length === 0) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: 'User  not found' });
     }
-    res.render('master/user/editUser', { user: results[0] }); 
+    res.render('master/user/editUser ', { user: results[0] });
   });
 };
 
-exports.updateUser = (req, res) => {
+exports.updateUser  = (req, res) => {
   const { id } = req.params;
   const { nama, email, password, role_user } = req.body;
   const query = 'UPDATE users SET nama = ?, email = ?, password = ?, role_user = ? WHERE id = ?';
-
   db.query(query, [nama, email, password, role_user, id], (err, results) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
-    
-    res.redirect('/master/user/userKoperasi'); 
+    res.redirect('/master/user');
   });
 };
 

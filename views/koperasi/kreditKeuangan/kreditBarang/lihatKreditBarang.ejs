@@ -30,7 +30,9 @@
         </header>
         <div class="flex justify-between items-center mb-4">
             <h1 class="text-2xl font-bold">Data Kredit Barang</h1>
-            <button style="background-color: #5D8736; color: white;" class="px-4 py-2 rounded hover:bg-[#4c6e2f]">+ Tambah Kredit Baru</button>
+            <a href="/tambahKreditBarang" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                + Tambah Kredit Baru
+            </a>
         </div>
 
         <div class="bg-white p-4 rounded shadow">
@@ -55,6 +57,7 @@
                         <th class="p-4">Sisa Piutang</th>
                         <th class="p-4">Tanggal Mulai</th>
                         <th class="p-4">Status</th>
+                        <th class="p-4">Bayar</th>
                         <th class="p-4">Aksi</th>
                     </tr>
                 </thead>
@@ -75,22 +78,62 @@
                                 <td class="p-4 text-right">Rp <%= item.sisa_piutang ? item.sisa_piutang.toLocaleString('id-ID') : '0' %></td>
                                 <td class="p-4 text-center"><%= item.tanggal_mulai ? new Date(item.tanggal_mulai).toLocaleDateString('id-ID') : '-' %></td>
                                 <td class="p-4 text-center font-semibold <%= item.ket_status === 'Lunas' ? 'text-[#5D8736]' : 'text-red-700' %>"><%= item.ket_status || '-' %></td>
-                                <td class="p-4 flex space-x-2 justify-center">
-                                    <button class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition duration-200">Edit</button>
-                                    <button class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition duration-200">Hapus</button>
+                                <td class="p-4">
+                                    <a href="/bayarKreditBarang/<%= item.id %>" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700">Bayar</a>
                                 </td>
+                                <td class="p-4">
+                                    <div class="flex space-x-2">
+                                        <!-- Tombol Edit -->
+                                        <a href="/edit-kredit/<%= item.id %>" 
+                                           class="flex items-center px-3 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition duration-300">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                <path d="M17.293 3.293a1 1 0 010 1.414L8.414 13.586a1 1 0 01-.293.207l-4 2a1 1 0 01-1.414-1.414l2-4a1 1 0 01.207-.293L15.293 3.293a1 1 0 011.414 0z"/>
+                                            </svg>
+                                            Edit
+                                        </a>
+                                
+                                        <!-- Tombol Hapus -->
+                                        <button onclick="hapusKredit('<%= item.id %>')"
+                                            class="flex items-center px-3 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition duration-300">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M7 4a1 1 0 011-1h4a1 1 0 011 1h4a1 1 0 110 2H4a1 1 0 110-2h3zM5 7a1 1 0 011-1h8a1 1 0 011 1v8a1 1 0 01-1 1H6a1 1 0 01-1-1V7z" clip-rule="evenodd"/>
+                                            </svg>
+                                            Hapus
+                                        </button>
+                                    </div>
+                                </td>
+                
                             </tr>
             
                         <% }) %>
                     <% } else { %>
                         <tr>
-                            <td colspan="14" class="p-4 text-center">Tidak ada data</td>
+                            <td colspan="14" class="p-4 text-center">Tidak ada data Kredit Barang</td>
                         </tr>
                     <% } %>
                 </tbody>
             </table>
         </div>
     </div>
+
+    <script>
+        function hapusKredit(id) {
+            if (confirm("Apakah Anda yakin ingin menghapus data ini?")) {
+                fetch(`/kredit-barang/${id}`, {
+                    method: "DELETE"
+                })
+                .then(response => {
+                    if (response.ok) {
+                        document.getElementById(`row-${id}`).remove();
+                        alert("Data berhasil dihapus!");
+                    } else {
+                        alert("Gagal menghapus data!");
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+            }
+        }
+    </script>
 
 
 </body>

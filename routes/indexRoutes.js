@@ -6,7 +6,6 @@ const router = express.Router();
 const loginController = require("../controllers/auth/loginController.js");
 const simpananController = require('../controllers/koperasi/simpananController');
 // const pinjamanController = require('../controllers/koperasi/pinjamanController');
-// const kreditController = require('../controllers/koperasi/kreditController');
 const pinjamanController = require('../controllers/koperasi/lihatPinjaman.js');
 const kreditController = require('../controllers/koperasi/kreditController');
 const kreditPimpinanController = require('../controllers/pimpinan/kreditPimpinanController');
@@ -77,6 +76,9 @@ router.post('/kredit-barang', kreditController.createKreditBarang);
 router.get('/kredit-barang/:id', kreditController.getKreditBarangById);
 router.put('/kredit-barang/:id', kreditController.updateKreditBarang);
 router.delete('/kredit-barang/:id', kreditController.deleteKreditBarang);
+
+// Route untuk menampilkan halaman tambah kredit barang
+router.get('/tambahKreditBarang', kreditController.getTambahKredit);
 
 // Route untuk Simpanan
 router.get('/simpanan', (req, res) => {

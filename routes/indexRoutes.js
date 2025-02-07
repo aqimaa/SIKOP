@@ -117,53 +117,28 @@ router.delete('/pinjaman/hapus/:id', lihatPinjamanController.hapusPinjaman);
 
 // Route untuk Master
 //Route Pegawai
-
-// 📌 Menampilkan daftar pegawai
 router.get('/master/pegawai', masterController.getPegawai);
-
-// 📌 Form tambah pegawai
 router.get('/master/pegawai/tambahPegawai', (req, res) => {
   res.render('master/pegawai/tambahPegawai');
 });
-
-// 📌 Proses tambah pegawai
 router.post('/master/pegawai/tambahPegawai', masterController.createPegawai);
-
-// 📌 Form ubah pegawai (Memastikan data dikirim dengan benar)
 router.get('/master/pegawai/ubahPegawai/:nip', masterController.getUbahPegawai);
-
-// 📌 Proses update pegawai
 router.put('/master/pegawai/:nip', masterController.updatePegawai);
-
-// 📌 Proses hapus pegawai
 router.delete('/master/pegawai/:nip', masterController.deletePegawai);
 
 // Route Anggota
-// Menampilkan daftar anggota
 router.get('/master/anggota', masterController.getAnggota);
-
-// Menampilkan form tambah anggota
 router.get('/master/anggota/tambahAnggota', masterController.getPegawaiForAnggota);
-
-// Menambahkan anggota baru
 router.post('/master/anggota/tambahAnggota', masterController.tambahAnggota);
-router.get("/master/anggota/pegawaiTersedia", masterController.getPegawaiYangBisaDipilih);
-
-// Menampilkan form ubah anggota
+router.get('/master/anggota/pegawaiTersedia', masterController.getPegawaiYangBisaDipilih);
 router.get('/master/anggota/ubahAnggota/:id', masterController.getAnggotaById);
-
-// Mengubah status anggota
 router.post('/master/anggota/ubahAnggota/:id', masterController.updateAnggota);
-
-// Menghapus anggota
 router.delete('/master/anggota/delete/:id', masterController.deleteAnggota);
 
 //Route user
-// Menampilkan daftar user
 router.get('/master/user', masterController.getUser);
-// Menampilkan halaman edit user berdasarkan ID
 router.get('/master/user/editUser/:id', masterController.getUserById);
-// Menangani update user
 router.post('/master/user/editUser/:id', masterController.updateUser);
+
 // Export Router
 module.exports = router;

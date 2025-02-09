@@ -181,5 +181,28 @@ router.get("/master/user", masterController.getUser);
 router.get("/master/user/editUser/:id", masterController.getUserById);
 // Menangani update user
 router.post("/master/user/editUser/:id", masterController.updateUser);
+router.get('/master/pegawai', masterController.getPegawai);
+router.get('/master/pegawai/tambahPegawai', (req, res) => {
+  res.render('master/pegawai/tambahPegawai');
+});
+router.post('/master/pegawai/tambahPegawai', masterController.createPegawai);
+router.get('/master/pegawai/ubahPegawai/:nip', masterController.getUbahPegawai);
+router.put('/master/pegawai/:nip', masterController.updatePegawai);
+router.delete('/master/pegawai/:nip', masterController.deletePegawai);
+
+// Route Anggota
+router.get('/master/anggota', masterController.getAnggota);
+router.get('/master/anggota/tambahAnggota', masterController.getPegawaiForAnggota);
+router.post('/master/anggota/tambahAnggota', masterController.tambahAnggota);
+router.get('/master/anggota/pegawaiTersedia', masterController.getPegawaiYangBisaDipilih);
+router.get('/master/anggota/ubahAnggota/:id', masterController.getAnggotaById);
+router.post('/master/anggota/ubahAnggota/:id', masterController.updateAnggota);
+router.delete('/master/anggota/delete/:id', masterController.deleteAnggota);
+
+//Route user
+router.get('/master/user', masterController.getUser);
+router.get('/master/user/editUser/:id', masterController.getUserById);
+router.post('/master/user/editUser/:id', masterController.updateUser);
+
 // Export Router
 module.exports = router;

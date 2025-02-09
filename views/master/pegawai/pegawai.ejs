@@ -108,12 +108,12 @@
                     <button style="background-color: #3394cc; color: white;" class="ml-2 px-4 py-2 rounded hover:bg-[#4c6e2f]">Cari</button>
                 </div>
                 <a href="/master/pegawai/tambahPegawai" class="ml-4">
-                    <button style="background-color: #5D8736; color: white;" class="px-4 py-2 rounded hover:bg-[#4c6e2f]">+ Tambah Pegawai Baru</button>
+                    <button style="background-color: #22c55e; color: white;" class="px-4 py-2 rounded hover:bg-[#4c6e2f]">+ Tambah Pegawai Baru</button>
                 </a>
             </div>
             <table class="table-auto w-full border-collapse">
                 <thead>
-                    <tr class="text-left bg-gray-100">
+                    <tr class="text-center", style="background-color: #22c55e; color : white"">
                         <th class="p-4">Nip</th>
                         <th class="p-4">Nama</th>
                         <th class="p-4">Wilayah</th>
@@ -122,7 +122,7 @@
                 </thead>
                 <tbody>
                     <% pegawai.forEach(function(pegawai) { %>
-                        <tr class="border-b">
+                        <tr class="text-center border-b">
                             <td class="p-4"><%= pegawai.nip %></td>
                             <td class="p-4"><%= pegawai.nama %></td>
                             <td class="p-4"><%= pegawai.wilayah %></td>

@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<body class="flex bg-gray-100">
+<body class="flex bg-white">
     <!-- Sidebar -->
     <%- include('../../sidebar') %>
 
@@ -17,7 +17,7 @@
             <h1 class="text-2xl"></h1>
             <div class="flex items-center">
                 <span>Admin Keuangan</span>
-                <img src="/public/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
+                <img src="/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
             </div>
         </div>
 
@@ -25,94 +25,86 @@
             <h1 class="text-2xl font-bold mb-8">Tambah Pinjaman Baru</h1>
         </div>
 
-        <div class="space-y-6">
-            <!-- Data Anggota -->
-            <div class="bg-gray-200 p-6 rounded-md shadow-md">
-                <h3 class="text-xl font-semibold mb-4">Data Anggota</h3>
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Nomor Anggota</label>
-                        <input type="text" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Nama Anggota</label>
-                        <input type="text" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Data Pinjaman -->
-            <div class="bg-gray-200 p-6 rounded-md shadow-md">
-                <h3 class="text-xl font-semibold mb-4">Data Pinjaman</h3>
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Jumlah Pinjaman</label>
-                        <input type="number" id="jumlahPinjaman" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Kategori Pinjaman</label>
-                        <select class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2">
-                            <option>Pilih Kategori</option>
-                            <option>Jangka Panjang</option>
-                            <option>Jangka Pendek</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Jangka Waktu (Bulan)</label>
-                        <input type="number" id="jangkaWaktu" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Pokok</label>
-                        <input type="number" id="pokok" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Margin (%)</label>
-                        <input type="number" id="margin" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Tanggal Perjanjian</label>
-                        <input type="date" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2">
+        <form action="/pinjaman/tambah" method="POST">
+            <div class="space-y-6">
+                <!-- Data Anggota -->
+                <div class="bg-gray-200 p-6 rounded-lg">
+                    <h2 class="text-lg font-semibold mb-4">Data Anggota</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block mb-2">No. Anggota</label>
+                            <input type="text" id="id_anggota" name="id_anggota" class="w-full border p-2 rounded" placeholder="Masukkan No. Anggota" required oninput="getNamaAnggota(this.value)">
+                        </div>
+                        <div>
+                            <label class="block mb-2">Nama Anggota</label>
+                            <input type="text" id="nama_anggota" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Nama anggota akan otomatis ditambahkan">
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Hasil Perhitungan -->
-            <div class="bg-blue-100 p-6 rounded-md shadow-md mb-20">
-                <h3 class="text-xl font-semibold mb-4">Hasil Perhitungan</h3>
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Total Angsuran</label>
-                        <input type="text" id="totalAngsuran" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" readonly>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Margin per Bulan</label>
-                        <input type="text" id="marginPerBulan" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" readonly>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Total Angsuran per Bulan</label>
-                        <input type="text" id="totalAngsuranPerBulan" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" readonly>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Total Margin</label>
-                        <input type="text" id="totalMargin" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" readonly>
+                <!-- Data Pinjaman -->
+                <div class="bg-gray-200 p-6 rounded-lg">
+                    <h2 class="text-lg font-semibold mb-4">Data Pinjaman</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block mb-2">Kategori Pinjaman</label>
+                            <select name="kategori" class="w-full border p-2 rounded" required>
+                                <option value="jangka panjang">Jangka Panjang</option>
+                                <option value="jangka pendek">Jangka Pendek</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block mb-2">Jumlah Pinjaman</label>
+                            <input type="number" id="jumlahPinjaman" name="jumlah_pinjaman" class="w-full border p-2 rounded" placeholder="Masukkan Jumlah Pinjaman" required>
+                        </div>
+                        <div>
+                            <label class="block mb-2">Jangka Waktu (Bulan)</label>
+                            <input type="number" id="jangkaWaktu" name="jangka_waktu" class="w-full border p-2 rounded" placeholder="Masukkan Jangka Waktu" required>
+                        </div>
+                        <div>
+                            <label class="block mb-2">Margin (%)</label>
+                            <input type="number" id="margin" name="margin_persen" class="w-full border p-2 rounded" placeholder="Masukkan Persen Margin" required>
+                        </div>
+                        <div>
+                            <label class="block mb-2">Tanggal Perjanjian</label>
+                            <input type="date" name="tanggal_perjanjian" class="w-full border p-2 rounded" required>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Buttons -->
-            <div class="flex space-x-4">
-                <button class="flex-1 border border-green-800 text-green-800 py-2 px-4 rounded-md mt-4" style="border-color: #5D8736; color: #5D8736;">Batal</button>
-                <button class="flex-1 text-white py-2 px-4 rounded-md mt-4" style="background-color: #5D8736;">Simpan</button>
+                <!-- Hasil Perhitungan -->
+                <div class="bg-blue-100 p-6 rounded-lg">
+                    <h2 class="text-lg font-semibold mb-4">Hasil Perhitungan</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block mb-2">Total Angsuran Keseluruhan</label>
+                            <input type="text" id="totalAngsuran" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Dihitung otomatis">
+                        </div>
+                        <div>
+                            <label class="block mb-2">Total Angsuran per Bulan</label>
+                            <input type="text" id="totalAngsuranPerBulan" name="total_angsuran" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Dihitung otomatis">
+                        </div>
+                        <div>
+                            <label class="block mb-2">Margin per Bulan</label>
+                            <input type="text" id="marginPerBulan" name="margin_per_bulan" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Dihitung otomatis">
+                        </div>
+                        <div>
+                            <label class="block mb-2">Angsuran Pokok per Bulan</label>
+                            <input type="text" id="pokok" name="angsuran_pokok" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Dihitung otomatis">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex space-x-4">
+                    <button type="button" id="batalButton" class="flex-1 border border-green-800 text-green-800 py-2 px-4 rounded-md mt-4" style="border-color: #5D8736; color: #5D8736;">Batal</button>
+                    <button type="submit" class="flex-1 text-white py-2 px-4 rounded-md mt-4" style="background-color: #5D8736;">Simpan</button>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
 
     <script>
-        function toggleDropdown() {
-            const dropdownMenu = document.getElementById('dropdownMenu');
-            dropdownMenu.classList.toggle('hidden');
-        }
-        
         document.addEventListener('DOMContentLoaded', function() {
             const jumlahPinjamanInput = document.getElementById('jumlahPinjaman');
             const jangkaWaktuInput = document.getElementById('jangkaWaktu');
@@ -122,7 +114,6 @@
             const totalAngsuranOutput = document.getElementById('totalAngsuran');
             const marginPerBulanOutput = document.getElementById('marginPerBulan');
             const totalAngsuranPerBulanOutput = document.getElementById('totalAngsuranPerBulan');
-            const totalMarginOutput = document.getElementById('totalMargin');
 
             function calculateResults() {
                 const jumlahPinjaman = parseFloat(jumlahPinjamanInput.value) || 0;
@@ -133,17 +124,40 @@
                 const totalAngsuran = jumlahPinjaman + totalMargin;
                 const marginPerBulan = totalMargin / jangkaWaktu;
                 const totalAngsuranPerBulan = totalAngsuran / jangkaWaktu;
+                const angsuranPokokPerBulan = jumlahPinjaman / jangkaWaktu;
 
-                totalAngsuranOutput.value = totalAngsuran.toFixed(2);
-                marginPerBulanOutput.value = marginPerBulan.toFixed(2);
-                totalAngsuranPerBulanOutput.value = totalAngsuranPerBulan.toFixed(2);
-                totalMarginOutput.value = totalMargin.toFixed(2);
+                totalAngsuranOutput.value = totalAngsuran.toFixed(2); // Total Angsuran Keseluruhan
+                marginPerBulanOutput.value = marginPerBulan.toFixed(2); // Margin per Bulan
+                totalAngsuranPerBulanOutput.value = totalAngsuranPerBulan.toFixed(2); // Total Angsuran per Bulan
+                pokokInput.value = angsuranPokokPerBulan.toFixed(2); // Angsuran Pokok per Bulan
             }
 
             jumlahPinjamanInput.addEventListener('input', calculateResults);
             jangkaWaktuInput.addEventListener('input', calculateResults);
             marginInput.addEventListener('input', calculateResults);
+
+            // Event listener untuk tombol "Batal"
+            document.getElementById('batalButton').addEventListener('click', function() {
+                window.location.href = '/lihatPinjaman'; // Redirect ke halaman lihatPinjaman
+            });
         });
+
+        function getNamaAnggota(idAnggota) {
+            if (idAnggota) {
+                fetch(`/pinjaman/getAnggota/${idAnggota}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById('nama_anggota').value = data.nama;
+                        } else {
+                            document.getElementById('nama_anggota').value = '';
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            } else {
+                document.getElementById('nama_anggota').value = '';
+            }
+        }
     </script>
 </body>
 </html>

@@ -96,7 +96,7 @@
                         <select id="jenis" name="jenis" class="border rounded-lg px-5 py-3 w-60 bg-white" required>
                             <option value="">Pilih Kredit</option>
                             <% jenisKredit.forEach(jenis => { %>
-                                <option value="<%= jenis %>"><%= jenis.replace('kredit_', '').toUpperCase() %></option>
+                                <option value="<%= jenis %>"><%= jenis.replace('kredit_', '').replace(/\b\w/g, char => char.toUpperCase()) %></option>
                             <% }); %>
                         </select>
                     </div>
@@ -195,7 +195,7 @@
                         <td class="px-6 py-4">${index + 1}</td>
                         <td class="px-6 py-4">${row.nip}</td>
                         <td class="px-6 py-4">${row.nama}</td>
-                        <td class="px-6 py-4">${row.jenis.replace('kredit_', '').toUpperCase()}</td>
+                        <td class="px-6 py-4">${row.jenis.replace('kredit_', '').replace(/\b\w/g, char => char.toUpperCase())}</td>
                         <td class="px-6 py-4">${row.jangka_waktu} Bulan</td>
                         <td class="px-6 py-4">${Number(row.jumlah).toLocaleString('id-ID')}</td>
                     </tr>

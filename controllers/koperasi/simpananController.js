@@ -84,13 +84,14 @@ const filterSimpanan = (req, res) => {
         params.push(anggota);
     }
 
-    if (tahun) {
+    // Modifikasi kondisi tahun
+    if (tahun && tahun !== '') {
         query += ` AND YEAR(s.tanggal) = ?`;
         params.push(tahun);
     }
 
-    query += ` GROUP BY id_anggota, p.nip, p.nama, s.metode_bayar, MONTH(s.tanggal)
-              ORDER BY MAX(s.tanggal) ASC`;
+    query += ` GROUP BY id_anggota, p.nip, p.nama, s.metode_bayar, MONTH(s.tanggal), YEAR(s.tanggal)
+              ORDER BY s.tanggal ASC`;
 
     db.query(query, params, (error, results) => {
         if (error) {
@@ -100,6 +101,7 @@ const filterSimpanan = (req, res) => {
         res.json(results);
     });
 };
+
 
 
 const getAvailableYears = (req, res) => {

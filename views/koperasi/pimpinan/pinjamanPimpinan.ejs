@@ -96,7 +96,7 @@
                         <select id="jenis" name="jenis" class="border rounded-lg px-5 py-3 w-60 bg-white" required>
                             <option value="">Pilih Pinjaman</option>
                             <% jenisPinjaman.forEach(jenis => { %>
-                                <option value="<%= jenis %>"><%= jenis %></option>
+                                <option value="<%= jenis %>"><%= jenis.replace(/\b\w/g, char => char.toUpperCase()) %></option>
                             <% }); %>
                         </select>
                     </div>

@@ -107,6 +107,8 @@ router.put("/api/simpanan/:id", simpananController.updateSimpanan);
 router.post("/api/simpanan", simpananController.createSimpanan);
 router.delete("/api/simpanan/:id", simpananController.deleteSimpanan);
 
+// <!--------------------------------------- Route Pinjaman ---------------------------------------> //
+
 // Route untuk Pinjaman
 router.get("/lihatPinjaman", lihatPinjamanController.lihatPinjaman);
 
@@ -114,8 +116,10 @@ router.get("/lihatPinjaman", lihatPinjamanController.lihatPinjaman);
 router.delete("/pinjaman/hapus/:id", lihatPinjamanController.hapusPinjaman);
 
 // Route untuk menampilkan form edit pinjaman
-// router.get("/pinjaman/edit/:id", lihatPinjamanController.tampilkanEditPinjaman);
-// router.post("/pinjaman/edit/:id", lihatPinjamanController.simpanEditPinjaman);
+router.get("/pinjaman/edit/:id", lihatPinjamanController.tampilkanEditPinjaman);
+
+// Route untuk menyimpan perubahan pinjaman
+router.post("/pinjaman/edit/:id", lihatPinjamanController.simpanEditPinjaman);
 
 // Route untuk menampilkan form tambah pinjaman
 router.get("/pinjaman/tambah", (req, res) => {
@@ -128,15 +132,20 @@ router.post("/pinjaman/tambah", lihatPinjamanController.tambahPinjaman);
 // Route untuk mengambil data anggota berdasarkan ID
 router.get("/pinjaman/getAnggota/:id", lihatPinjamanController.getAnggotaById);
 
+// Route untuk menampilkan halaman bayar pinjaman
+router.get("/pinjaman/bayar/:id", lihatPinjamanController.tampilkanBayarPinjaman);
+
+// Route untuk menyimpan pembayaran pinjaman
+router.post("/pinjaman/bayar/:id", lihatPinjamanController.prosesBayar);
+
 // Route untuk mencari anggota
 router.get("/pinjaman/cari", lihatPinjamanController.cariAnggota);
+
+// <!--------------------------------------- Batas Route Pinjaman ---------------------------------------> //
 
 // Route untuk Kredit
 // router.get('/kredit', kreditController.getKredit);
 // router.post('/kredit', kreditController.createKredit);
-
-// Route untuk Master
-//Route Pegawai
 
 // 📌 Menampilkan daftar pegawai
 router.get("/master/pegawai", masterController.getPegawai);

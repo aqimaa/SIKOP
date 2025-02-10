@@ -107,7 +107,7 @@ router.put("/api/simpanan/:id", simpananController.updateSimpanan);
 router.post("/api/simpanan", simpananController.createSimpanan);
 router.delete("/api/simpanan/:id", simpananController.deleteSimpanan);
 
-// <!--------------------------------------- Route Pinjaman ---------------------------------------> //
+// <!=============================================== Route Pinjaman ===============================================> //
 
 // Route untuk Pinjaman
 router.get("/lihatPinjaman", lihatPinjamanController.lihatPinjaman);
@@ -141,11 +141,7 @@ router.post("/pinjaman/bayar/:id", lihatPinjamanController.prosesBayar);
 // Route untuk mencari anggota
 router.get("/pinjaman/cari", lihatPinjamanController.cariAnggota);
 
-// <!--------------------------------------- Batas Route Pinjaman ---------------------------------------> //
-
-// Route untuk Kredit
-// router.get('/kredit', kreditController.getKredit);
-// router.post('/kredit', kreditController.createKredit);
+// <!=============================================== Route Master ===============================================> //
 
 // 📌 Menampilkan daftar pegawai
 router.get("/master/pegawai", masterController.getPegawai);

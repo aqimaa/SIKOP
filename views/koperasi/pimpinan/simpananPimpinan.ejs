@@ -195,7 +195,7 @@
                         <td class="px-6 py-4">${index + 1}</td>
                         <td class="px-6 py-4">${row.nip}</td>
                         <td class="px-6 py-4">${row.nama}</td>
-                        <td class="px-6 py-4">${jenis.replace('simpanan_', '').toUpperCase()}</td>
+                        <td class="px-6 py-4">${jenis.replace('simpanan_', '').replace(/\b\w/g, char => char.toUpperCase())}</td>
                         <td class="px-6 py-4">${Number(row.jumlah).toLocaleString('id-ID')}</td>
                     </tr>
                 `).join('');

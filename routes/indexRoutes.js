@@ -15,7 +15,6 @@ const cetakLaporanPimpinanController = require('../controllers/pimpinan/cetakLap
 const lihatPinjamanController = require('../controllers/koperasi/lihatPinjaman'); 
 // const laporanController = require('../controllers/koperasi/laporanController');
 // const pinjamanController = require('../controllers/koperasi/pinjamanController');
-// const kreditController = require('../controllers/koperasi/kreditController');
 const masterController = require('../controllers/master/masterController');
 
 // Route untuk Login
@@ -76,6 +75,10 @@ router.post('/kredit-barang', kreditController.createKreditBarang);
 router.get('/kredit-barang/:id', kreditController.getKreditBarangById);
 router.put('/kredit-barang/:id', kreditController.updateKreditBarang);
 router.delete('/kredit-barang/:id', kreditController.deleteKreditBarang);
+
+// Tambahkan route baru di sini
+router.get('/api/anggota', kreditController.getAnggotaList);
+
 
 // Route untuk menampilkan halaman tambah kredit barang
 router.get('/tambahKreditBarang', kreditController.getTambahKredit);

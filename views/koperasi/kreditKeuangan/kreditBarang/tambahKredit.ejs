@@ -6,6 +6,46 @@
     <title>Form Input Kredit Barang</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <style>
+        .select2-container {
+            width: 100% !important;
+        }
+        .select2-container--default .select2-selection--single {
+            height: 42px;
+            padding: 6px;
+            background-color: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 40px;
+        }
+        .select2-dropdown {
+            border-color: #e2e8f0;
+            border-radius: 0.375rem;
+        }
+        .select2-search__field {
+            padding: 8px;
+            border-radius: 0.375rem !important;
+        }
+        .select2-results__option {
+            padding: 8px;
+        }
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #5D8736;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 28px;
+        }
+        .select2-container--default .select2-search--dropdown .select2-search__field {
+            border: 1px solid #e2e8f0;
+        }
+    </style>
+
 </head>
 <body class="flex">
     <!-- Sidebar -->
@@ -17,17 +57,16 @@
 
         <!-- Form Section -->
         <form class="space-y-6">
+
             <!-- Data Anggota -->
             <div class="bg-gray-100 p-6 rounded-lg">
                 <h2 class="text-lg font-semibold mb-4">Data Anggota</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block mb-2">No. Anggota</label>
-                        <input type="text" class="w-full border p-2 rounded" placeholder="Masukkan No. Anggota">
-                    </div>
-                    <div>
-                        <label class="block mb-2">Nama Anggota</label>
-                        <input type="text" class="w-full border p-2 rounded" placeholder="Masukkan Nama Anggota">
+                        <label class="block mb-2">Pilih Anggota</label>
+                        <select id="id_anggota" class="w-full border p-2 rounded select2-dropdown" required>
+                            <option value="">Pilih Anggota</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -91,6 +130,38 @@
     </div>
 
     <script>
+        $(document).ready(function() {
+            $('#id_anggota').select2({
+                placeholder: 'Cari Anggota (Nama/ID)',
+                allowClear: true,
+                ajax: {
+                    url: '/api/anggota',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        console.log('Search params:', params); // Debug
+                        return {
+                            search: params.term || ''
+                        };
+                    },
+                    processResults: function(data) {
+                        console.log('API Response:', data); // Debug
+                        return {
+                            results: data.map(function(item) {
+                                return {
+                                    id: item.id,
+                                    text: `${item.id} - ${item.nama}`
+                                };
+                            })
+                        };
+                    },
+                    cache: true
+                },
+                minimumInputLength: 1,
+            });
+        });
+
+
         function hitungKredit() {
             let hargaPokok = parseFloat(document.getElementById("harga_pokok").value) || 0;
             let jangkaWaktu = parseInt(document.getElementById("jangka_waktu").value) || 0;
@@ -124,6 +195,60 @@
                 document.getElementById("total_margin").value = "";
             }
         }
+
+        function resetForm() {
+            $('#id_anggota').val(null).trigger('change');
+            document.getElementById('harga_pokok').value = '';
+            document.getElementById('jangka_waktu').value = '';
+            document.getElementById('margin').value = '';
+            document.getElementById('tanggal_perjanjian').value = '';
+            document.getElementById('pokok_dp').value = '';
+            document.getElementById('margin_per_bulan').value = '';
+            document.getElementById('angsuran_pokok').value = '';
+            document.getElementById('total_angsuran').value = '';
+            document.getElementById('total_margin').value = '';
+        }
+
+        // Handle form submission
+        document.querySelector('form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                id_anggota: document.getElementById('id_anggota').value,
+                harga_pokok: parseFloat(document.getElementById('harga_pokok').value),
+                jangka_waktu: parseInt(document.getElementById('jangka_waktu').value),
+                pokok_dp: parseFloat(document.getElementById('pokok_dp').value),
+                margin: parseFloat(document.getElementById('margin').value),
+                total_angsuran: parseFloat(document.getElementById('total_angsuran').value),
+                angsuran_pokok: parseFloat(document.getElementById('angsuran_pokok').value),
+                margin_per_bulan: parseFloat(document.getElementById('margin_per_bulan').value),
+                total_margin: parseFloat(document.getElementById('total_margin').value),
+                tanggal_perjanjian: document.getElementById('tanggal_perjanjian').value
+            };
+
+            try {
+                const response = await fetch('/kredit-barang', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(data.message);
+                    window.location.href = '/kredit-barang';
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                alert(error.message || 'Terjadi kesalahan saat menyimpan data');
+            }
+        });
+
+    
     </script>
 
 </body>

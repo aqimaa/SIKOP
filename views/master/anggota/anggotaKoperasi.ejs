@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script>
+
         // Function to show alert with the message from the URL query parameter
         function showAlertFromUrl() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -101,9 +102,11 @@
         <div class="bg-white p-8 w-5/6 rounded shadow mx-auto">
             <div class="mb-4 flex justify-between items-center">
                 <div class="flex items-center">
-                    <input type="text" placeholder="Cari Anggota" class="border border-gray-300 p-2 rounded w-64" />
-                    <button style="background-color: #3394cc; color: white;" class="ml-2 px-4 py-2 rounded hover:bg-[#4c6e2f]">Cari</button>
-                </div>
+                    <form action="/master/anggota" method="GET" class="mb-4 flex items-center">
+                        <input type="text" name="search" placeholder="Cari berdasarkan ID, Nama, atau NIP" class="border border-gray-300 p-2 rounded w-64" value="<%= searchQuery || '' %>"/>
+                        <button style="background-color: #3394cc; color: white;" class="ml-2 px-4 py-2 rounded hover:bg-[#4c6e2f]">Cari</button>
+                    </form>
+                    </div>
                 <div><a href="/master/anggota/tambahAnggota"><button style="background-color: #22c55e; color: white;" class="px-4 py-2 rounded hover:bg-[#4c6e2f]">+ Tambah Anggota Baru</button></a></div>
             </div>
             <table class="table-auto w-full border-collapse">

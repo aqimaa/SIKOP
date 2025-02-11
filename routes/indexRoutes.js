@@ -15,6 +15,7 @@ const lihatPinjamanController = require("../controllers/koperasi/lihatPinjaman")
 // const laporanController = require('../controllers/koperasi/laporanController');
 // const pinjamanController = require('../controllers/koperasi/pinjamanController');
 const masterController = require('../controllers/master/masterController');
+const { exportData } = require('../controllers/master/eksporBackup');
 // const kreditController = require('../controllers/koperasi/kreditController');
 
 // Route untuk Login
@@ -227,6 +228,9 @@ router.delete('/master/anggota/delete/:id', masterController.deleteAnggota);
 router.get('/master/user', masterController.getUser);
 router.get('/master/user/editUser/:id', masterController.getUserById);
 router.post('/master/user/editUser/:id', masterController.updateUser);
-
+router.get('/master/user/export/:format', (req, res) => {
+  const format = req.params.format.toLowerCase();
+  exportData(req, res, format);
+});
 // Export Router
 module.exports = router;

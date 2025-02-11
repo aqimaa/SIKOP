@@ -4,7 +4,6 @@ const router = express.Router();
 // Import Controllers
 const loginController = require("../controllers/auth/loginController.js");
 const simpananController = require("../controllers/koperasi/simpananController");
-// const pinjamanController = require('../controllers/koperasi/pinjamanController');
 const pinjamanController = require("../controllers/koperasi/lihatPinjaman.js");
 const kreditController = require("../controllers/koperasi/kreditController");
 const kreditPimpinanController = require("../controllers/pimpinan/kreditPimpinanController");

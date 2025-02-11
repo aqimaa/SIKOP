@@ -77,19 +77,9 @@ router.get("/kredit-barang/:id", kreditController.getKreditBarangById);
 router.put("/kredit-barang/:id", kreditController.updateKreditBarang);
 router.delete("/kredit-barang/:id", kreditController.deleteKreditBarang);
 
-// Route untuk update kredit barang 
-router.put('/update-kredit-barang/:id', kreditController.updateKreditBarang);
-
 // Route untuk pembayaran kredit barang
 router.get('/bayarKreditBarang/:id', kreditController.getBayarKreditBarang);
 router.post('/bayarKreditBarang/:id', kreditController.prosesBayarKreditBarang);
-
-// Tambahkan route edit kredit barang
-router.get('/edit-kredit-barang/:id', kreditController.getEditKreditBarang);
-
-// Route untuk pembayaran kredit barang
-router.get('/bayarKreditBarang/:id', kreditController.getBayarKreditBarang);
-
 
 // Tambahkan route baru di sini
 router.get('/api/anggota', kreditController.getAnggotaList);

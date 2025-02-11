@@ -525,7 +525,6 @@ exports.prosesBayarKreditBarang = (req, res) => {
 
         // Validasi input
         if (!tanggal_bayar || !jumlah_bayar) {
-            res.setHeader('Content-Type', 'application/json');
             return db.rollback(() => {
                 res.status(400).json({
                     success: false,
@@ -561,11 +560,9 @@ exports.prosesBayarKreditBarang = (req, res) => {
             const jumlahBayarNumeric = parseFloat(jumlah_bayar);
             if (jumlahBayarNumeric > currentKredit.sisa_piutang) {
                 return db.rollback(() => {
-                    return db.rollback(() => {
-                            res.status(400).json({
-                            success: false,
-                            message: `Jumlah bayar (Rp ${jumlahBayarNumeric.toLocaleString('id-ID')}) tidak boleh melebihi sisa hutang (Rp ${currentKredit.sisa_piutang.toLocaleString('id-ID')})`,
-                        });
+                    res.status(400).json({
+                        success: false,
+                        message: `Jumlah bayar tidak boleh melebihi sisa piutang (Rp ${currentKredit.sisa_piutang.toLocaleString()})`
                     });
                 });
             }
@@ -630,8 +627,6 @@ exports.prosesBayarKreditBarang = (req, res) => {
                             db.commit((errCommit) => {
                                 if (errCommit) {
                                     return db.rollback(() => {
-                                        // Set header JSON
-                                        res.setHeader('Content-Type', 'application/json');
                                         res.status(500).json({
                                             success: false,
                                             message: 'Gagal commit transaksi',
@@ -639,19 +634,17 @@ exports.prosesBayarKreditBarang = (req, res) => {
                                         });
                                     });
                                 }
-                    
-                                // Set header JSON
-                                res.setHeader('Content-Type', 'application/json');
-                    
+
                                 // Kirim respon sukses
                                 res.status(200).json({
                                     success: true,
-                                    message: `Pembayaran angsuran ke-${newAngsuranKe} sebesar Rp ${jumlahBayarNumeric.toLocaleString('id-ID')} berhasil disimpan`,
+                                    message: 'Pembayaran berhasil disimpan',
                                     angsuranKe: newAngsuranKe,
                                     sisaPiutang: newSisaPiutang,
                                     status: isLunas ? 'Lunas' : 'Belum Lunas'
                                 });
-                            });                        }
+                            });
+                        }
                     );
                 }
             );

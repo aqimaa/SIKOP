@@ -6,52 +6,12 @@
     <title>Form Input Kredit Barang</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
-    <style>
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .animate-fade-in {
-            animation: fadeIn 0.3s ease-out forwards;
-        }
-
-        .modal-content {
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        /* Custom scrollbar */
-        .modal-content::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .modal-content::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
-        }
-
-        .modal-content::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 4px;
-        }
-
-        .modal-content::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-    </style>
 
 </head>
 <body>
     <div id="popup-bayar" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="w-full max-w-4xl p-8">
-            <h1 class="text-2xl mb-6 text-white flex items-center">
-                <i class="material-icons mr-2">payment</i>
-                Bayar Kredit Barang
-            </h1>
+            <h1 class="text-2xl mb-6 text-white">Bayar Kredit Barang</h1>
     
             <!-- Pop-up Section -->
             <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-4xl mx-auto">
@@ -153,126 +113,66 @@
     </div>
 
     <script>
-        // Definisikan kreditId secara eksplisit menggunakan EJS
-        const kreditId = '<%= kredit.id %>';
-        const sisaPiutang = <%= kredit.sisa_piutang %>;
-
         document.addEventListener('DOMContentLoaded', () => {
-            // Set default date to today
             document.getElementById('tanggal_bayar').valueAsDate = new Date();
             
-            // Handle form submission
             const form = document.getElementById('formPembayaran');
+            
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
+                console.log('Form submitted');
                 
-                // Konfirmasi pembayaran
-                const formData = {
-                    tanggal_bayar: document.getElementById('tanggal_bayar').value,
-                    jumlah_bayar: parseFloat(document.getElementById('jumlah_bayar').value),
-                    keterangan: document.getElementById('keterangan').value || '-'
-                };
-
-                // Validasi jumlah bayar sebelum konfirmasi
-                if (formData.jumlah_bayar > sisaPiutang) {
-                    Swal.fire({
-                        title: 'Peringatan!',
-                        text: `Jumlah bayar tidak boleh melebihi sisa hutang (Rp ${sisaPiutang.toLocaleString('id-ID')})`,
-                        icon: 'warning'
-                    });
-                    return;
-                }
-
-                // Show confirmation dialog
-                const result = await Swal.fire({
-                    title: 'Konfirmasi Pembayaran',
-                    text: `Anda akan melakukan pembayaran sebesar Rp ${formData.jumlah_bayar.toLocaleString('id-ID')}. Lanjutkan?`,
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonColor: '#10B981',
-                    cancelButtonColor: '#6B7280',
-                    confirmButtonText: 'Ya, Bayar',
-                    cancelButtonText: 'Batal'
-                });
-
-                if (result.isConfirmed) {
-                    const submitBtn = document.getElementById('submitBtn');
-                    submitBtn.disabled = true;
+                const submitBtn = document.getElementById('submitBtn');
+                submitBtn.disabled = true;
+                
+                try {
+                    const kreditId = '<%= kredit.id %>'; // Ambil ID dari data kredit
+                    const formData = {
+                        tanggal_bayar: document.getElementById('tanggal_bayar').value,
+                        jumlah_bayar: parseFloat(document.getElementById('jumlah_bayar').value),
+                        keterangan: document.getElementById('keterangan').value || '-'
+                    };
                     
-                    try {
-                        const response = await fetch(`/bayarKreditBarang/${kreditId}`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json' // Tambahkan ini
-                            },
-                            body: JSON.stringify(formData)
-                        });
-
-                        // Tambahkan logging untuk memeriksa respon
-                        console.log('Response status:', response.status);
-                        console.log('Response headers:', Object.fromEntries(response.headers.entries()));
-
-                        // Periksa tipe konten
-                        const contentType = response.headers.get('content-type');
-                        if (!contentType || !contentType.includes('application/json')) {
-                            throw new Error('Respon bukan JSON');
-                        }
-
-                        const responseData = await response.json();
-                        
-                        console.log('Response data:', responseData); // Logging data respon
-
-                        if (responseData.success) {
-                            await Swal.fire({
-                                title: 'Berhasil!',
-                                text: responseData.message,
-                                icon: 'success',
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
-                            window.location.reload();
-                        } else {
-                            Swal.fire({
-                                title: 'Gagal!',
-                                text: responseData.message || 'Terjadi kesalahan',
-                                icon: 'error'
-                            });   
-                        }
-                    } catch (error) {
-                        console.error('Error detail:', error);
-                        Swal.fire({
-                            title: 'Gagal!',
-                            text: error.message || 'Terjadi kesalahan saat memproses pembayaran',
-                            icon: 'error'
-                        });
-                    } finally {
-                        submitBtn.disabled = false;
-                    }
-                }
-            });
-
-            // Validate payment amount on input
-            document.getElementById('jumlah_bayar').addEventListener('input', function(e) {
-                const value = parseFloat(e.target.value) || 0;
-                
-                if (value > sisaPiutang) {
-                    Swal.fire({
-                        title: 'Peringatan!',
-                        text: `Jumlah bayar tidak boleh melebihi sisa hutang (Rp ${sisaPiutang.toLocaleString('id-ID')})`,
-                        icon: 'warning',
-                        toast: true,
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        timerProgressBar: true
+                    console.log('Sending payment data:', formData);
+                    
+                    const response = await fetch(`/bayarKreditBarang/${kreditId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
                     });
-                    e.target.value = sisaPiutang;
+                    
+                    const result = await response.json();
+                    console.log('Server response:', result);
+                    
+                    if (result.success) {
+                        alert(result.message);
+                        // Refresh halaman untuk menampilkan perubahan
+                        window.location.reload();
+                    } else {
+                        throw new Error(result.message || 'Gagal memproses pembayaran');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert(error.message || 'Terjadi kesalahan saat memproses pembayaran');
+                } finally {
+                    submitBtn.disabled = false;
                 }
             });
         });
-    </script>
     
+        // Validasi jumlah bayar
+        document.getElementById('jumlah_bayar').addEventListener('input', function(e) {
+            const sisaPiutang = <%= kredit.sisa_piutang %>;
+            const value = parseFloat(e.target.value) || 0;
+            
+            if (value > sisaPiutang) {
+                alert(`Jumlah bayar tidak boleh melebihi sisa hutang (Rp ${sisaPiutang.toLocaleString('id-ID')})`);
+                e.target.value = sisaPiutang;
+            }
+        });
+    </script>    
 </body>
 </html>
 

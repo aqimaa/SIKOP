@@ -84,7 +84,7 @@ router.get('/bayarKreditBarang/:id', kreditController.getBayarKreditBarang);
 router.post('/bayarKreditBarang/:id', kreditController.prosesBayarKreditBarang);
 
 // Tambahkan route baru di sini
-router.get('/api/anggota', kreditController.getAnggotaList);
+router.get('/api/anggotaKredit', kreditController.getAnggotaListKredit);
 
 // Route untuk menampilkan halaman tambah kredit barang
 router.get("/tambahKreditBarang", kreditController.getTambahKredit);
@@ -153,7 +153,7 @@ router.get("/simpanankoperasi", simpananController.lihatSimpanan);
 
 router.get("/api/simpanan/filter", simpananController.filterSimpanan);
 router.get("/api/simpanan/years", simpananController.getAvailableYears);
-router.get("/api/anggota", simpananController.getAnggotaList);
+router.get("/api/anggota", simpananController.getAnggotaListSimpanan);
 router.get("/api/simpanan/history/:id_anggota", simpananController.getHistorySimpanan);
 router.post("/api/simpanan/periode", simpananController.createPeriode);
 

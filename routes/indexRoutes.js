@@ -15,6 +15,7 @@ const lihatPinjamanController = require("../controllers/koperasi/lihatPinjaman")
 const masterController = require('../controllers/master/masterController');
 const kreditUmrohController = require("../controllers/koperasi/kreditUmrohController");
 const kreditElektronikController = require("../controllers/koperasi/kreditElektronik");
+const kreditMotorController = require("../controllers/koperasi/kreditMotorController");
 
 // Route untuk Login
 router.get("/", (req, res) => {
@@ -102,6 +103,20 @@ router.post("/kreditElektronik/bayar/:id", kreditElektronikController.prosesBaya
 router.get("/kreditElektronik/cari", kreditElektronikController.cariKreditElektronik);
 
 
+// router.delete("/kreditElektronik/hapus/:id", kreditUmrohController.hapusKreditUmroh);
+// router.get("/kreditElektronik/edit/:id", kreditUmrohController.tampilkanEditKreditUmroh);
+// router.post("/kreditElektronik/edit/:id", kreditUmrohController.simpanEditKreditUmroh);
+// router.get("/kreditUmroh/tambah", (req, res) => {
+//   res.render("koperasi/kreditKeuangan/kreditUmroh/tambahKreditUmroh");
+// });
+// router.post("/kreditUmroh/tambah", kreditUmrohController.tambahKreditUmroh);
+// router.get("/kreditUmroh/getAnggota/:id", kreditUmrohController.getAnggotaById);
+// router.get("/kreditUmroh/bayar/:id", kreditUmrohController.tampilkanBayarKreditUmroh);
+// router.post("/kreditUmroh/bayar/:id", kreditUmrohController.prosesBayar);
+// router.get("/kreditUmroh/cari", kreditUmrohController.cariAnggota);
+
+// Route untuk Motor
+router.get("/lihatKreditMotor", kreditMotorController.lihatKreditMotor);
 // router.delete("/kreditElektronik/hapus/:id", kreditUmrohController.hapusKreditUmroh);
 // router.get("/kreditElektronik/edit/:id", kreditUmrohController.tampilkanEditKreditUmroh);
 // router.post("/kreditElektronik/edit/:id", kreditUmrohController.simpanEditKreditUmroh);

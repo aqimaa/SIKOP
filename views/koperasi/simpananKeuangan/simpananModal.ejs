@@ -55,40 +55,46 @@
 
                 <!-- Jenis Simpanan Selection -->
                 <div class="grid grid-cols-3 gap-6">
+                    <!-- Simpanan Pokok -->
+                    <div class="bg-white rounded-lg border p-6 hover:shadow-md transition-shadow">
+                        <label class="inline-flex items-center mb-3">
+                            <input type="checkbox" id="checkPokok" class="form-checkbox h-5 w-5 text-green-600" 
+                                onchange="toggleSimpananForm('Pokok')" checked>
+                            <span class="ml-2 text-gray-700 font-medium">Simpanan Pokok</span>
+                        </label>
+                        <div id="formPokok" class="mt-4">
+                            <label class="block text-sm text-gray-600 mb-2">Jumlah (Rp)</label>
+                            <input type="number" name="simpanan_pokok" value="100000" 
+                                class="w-full p-3 border rounded-lg bg-gray-100" readonly>
+                            <p class="text-sm text-gray-500 mt-2">*Simpanan pokok ditetapkan sebesar Rp 100.000</p>
+                        </div>
+                    </div>
+
                     <!-- Simpanan Wajib -->
                     <div class="bg-white rounded-lg border p-6 hover:shadow-md transition-shadow">
                         <label class="inline-flex items-center mb-3">
-                            <input type="checkbox" id="checkWajib" class="form-checkbox h-5 w-5 text-green-600" onchange="toggleSimpananForm('Wajib')">
+                            <input type="checkbox" id="checkWajib" class="form-checkbox h-5 w-5 text-green-600" 
+                                onchange="toggleSimpananForm('Wajib')">
                             <span class="ml-2 text-gray-700 font-medium">Simpanan Wajib</span>
                         </label>
                         <div id="formWajib" class="hidden mt-4">
                             <label class="block text-sm text-gray-600 mb-2">Jumlah (Rp)</label>
-                            <input type="number" name="simpanan_wajib" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500">
-                        </div>
-                    </div>
-
-                    <!-- Simpanan Pokok -->
-                    <div class="bg-white rounded-lg border p-6 hover:shadow-md transition-shadow">
-                        <label class="inline-flex items-center mb-3">
-                            <input type="checkbox" id="checkPokok" class="form-checkbox h-5 w-5 text-green-600" onchange="toggleSimpananForm('Pokok')">
-                            <span class="ml-2 text-gray-700 font-medium">Simpanan Pokok</span>
-                        </label>
-                        <div id="formPokok" class="hidden mt-4">
-                            <label class="block text-sm text-gray-600 mb-2">Jumlah (Rp)</label>
-                            <input type="number" name="simpanan_pokok" value="100000" class="w-full p-3 border rounded-lg bg-gray-100" readonly>
-                            <p class="text-sm text-gray-500 mt-2">*Simpanan pokok ditetapkan sebesar Rp 100.000</p>
+                            <input type="number" name="simpanan_wajib" 
+                                class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500">
                         </div>
                     </div>
 
                     <!-- Simpanan Sukarela -->
                     <div class="bg-white rounded-lg border p-6 hover:shadow-md transition-shadow">
                         <label class="inline-flex items-center mb-3">
-                            <input type="checkbox" id="checkSukarela" class="form-checkbox h-5 w-5 text-green-600" onchange="toggleSimpananForm('Sukarela')">
+                            <input type="checkbox" id="checkSukarela" class="form-checkbox h-5 w-5 text-green-600" 
+                                onchange="toggleSimpananForm('Sukarela')">
                             <span class="ml-2 text-gray-700 font-medium">Simpanan Sukarela</span>
                         </label>
                         <div id="formSukarela" class="hidden mt-4">
                             <label class="block text-sm text-gray-600 mb-2">Jumlah (Rp)</label>
-                            <input type="number" name="simpanan_sukarela" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500">
+                            <input type="number" name="simpanan_sukarela" 
+                                class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500">
                         </div>
                     </div>
                 </div>
@@ -245,8 +251,20 @@ function closeSimpananModal() {
     document.getElementById('simpananModal').classList.add('hidden');
     document.getElementById('simpananForm').reset();
     clearForm();
+
+    // Reset semua checkbox dan form
     ['Wajib', 'Pokok', 'Sukarela'].forEach(type => {
-        document.getElementById(`form${type}`).classList.add('hidden');
+        const checkbox = document.getElementById(`check${type}`);
+        const form = document.getElementById(`form${type}`);
+        
+        // Khusus untuk Pokok, set ulang ke checked dan tampilkan form
+        if (type === 'Pokok') {
+            checkbox.checked = true;
+            form.classList.remove('hidden');
+        } else {
+            checkbox.checked = false;
+            form.classList.add('hidden');
+        }
     });
 }
 

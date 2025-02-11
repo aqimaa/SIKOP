@@ -117,7 +117,6 @@ exports.getAnggota = (req, res) => {
   });
 };
 
-
 exports.getPegawaiForAnggota = (req, res) => {
   const query = 'SELECT * FROM pegawai';
   db.query(query, (err, results) => {
@@ -205,26 +204,32 @@ exports.tambahAnggota = (req, res) => {
 exports.updateAnggota = (req, res) => {
   const { nip } = req.body;
 
+  if (!nip) {
+    return res.status(400).json({ error: "NIP harus disertakan" });
+  }
+
   const getStatusQuery = "SELECT status FROM anggota WHERE nip_anggota = ?";
   db.query(getStatusQuery, [nip], (err, results) => {
+    if (err) {
+      console.error("Database error saat mencari anggota:", err);
+      return res.status(500).json({ error: "Database error saat mencari anggota" });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ message: "Anggota tidak ditemukan" });
+    }
+
+    const currentStatus = results[0].status;
+    const newStatus = currentStatus === "Aktif" ? "Tidak Aktif" : "Aktif";
+
+    // Update status anggota
+    const updateQuery = "UPDATE anggota SET status = ? WHERE nip_anggota = ?";
+    db.query(updateQuery, [newStatus, nip], (err, result) => {
       if (err) {
-          return res.status(500).json({ error: 'Database error saat mencari anggota' });
+        console.error("Gagal mengubah status anggota:", err);
+        return res.status(500).json({ error: "Gagal mengubah status anggota" });
       }
-      if (results.length === 0) {
-          return res.status(404).json({ message: 'Anggota tidak ditemukan' });
-      }
-
-      const currentStatus = results[0].status;
-      const newStatus = currentStatus === 'Aktif' ? 'Tidak Aktif' : 'Aktif';
-
-      // Update status anggota
-      const updateQuery = 'UPDATE anggota SET status = ? WHERE nip_anggota = ?';
-      db.query(updateQuery, [newStatus, nip], (err, result) => {
-          if (err) {
-              return res.status(500).json({ error: 'Gagal mengubah status anggota' });
-          }
-          res.status(200).json({ message: `Status anggota berhasil diubah menjadi ${newStatus}` });
-      });
+      res.status(200).json({ message: `Status anggota berhasil diubah menjadi ${newStatus}` });
+    });
   });
 };
 

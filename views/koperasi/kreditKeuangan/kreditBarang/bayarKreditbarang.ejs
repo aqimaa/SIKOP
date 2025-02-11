@@ -5,119 +5,174 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form Input Kredit Barang</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 </head>
-<body class="flex">
-    <!-- Sidebar -->
-    <%- include('../../../sidebar') %>
-    <!-- Main Content -->
-    <div id="popup-bayar" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-        <div class="flex-1 p-8">
-            <h1 class="text-2xl mb-6">Bayar Kredit Barang</h1>
+<body>
+    <div id="popup-bayar" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="w-full max-w-4xl p-8">
+            <h1 class="text-2xl mb-6 text-white">Bayar Kredit Barang</h1>
     
             <!-- Pop-up Section -->
-            <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-2xl mx-auto">
+            <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-4xl mx-auto">
                 <!-- Informasi Kredit -->
                 <div class="bg-blue-100 p-4 rounded-lg mb-6">
                     <h2 class="text-lg font-semibold mb-2">Informasi Kredit</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <p><strong>No. Anggota:</strong> 001</p>
-                        <p><strong>Nama Anggota:</strong> Adriani Adnani</p>
-                        <p><strong>Harga Pokok:</strong> 262,500</p>
-                        <p><strong>Jangka Waktu:</strong> 9 Bulan</p>
-                        <p><strong>Angsuran Ke:</strong> 5 dari 9</p>
-                        <p><strong>Sisa Hutang:</strong> 105,000</p>
-                        <p><strong>Angsuran Per Bulan:</strong> 28,000</p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="font-semibold">No. Anggota:</p>
+                            <p><%= kredit.id_anggota %></p>
+                        </div>
+                        <div>
+                            <p class="font-semibold">Nama Anggota:</p>
+                            <p><%= kredit.nama_anggota %></p>
+                        </div>
+                        <div>
+                            <p class="font-semibold">Harga Pokok:</p>
+                            <p>Rp <%= kredit.harga_pokok.toLocaleString('id-ID') %></p>
+                        </div>
+                        <div>
+                            <p class="font-semibold">Jangka Waktu:</p>
+                            <p><%= kredit.jangka_waktu %> Bulan</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold">Angsuran Ke:</p>
+                            <p><%= kredit.angsuran_ke %> dari <%= kredit.jangka_waktu %></p>
+                        </div>
+                        <div>
+                            <p class="font-semibold">Sisa Hutang:</p>
+                            <p>Rp <%= kredit.sisa_piutang.toLocaleString('id-ID') %></p>
+                        </div>
+                        <div>
+                            <p class="font-semibold">Angsuran Per Bulan:</p>
+                            <p>Rp <%= kredit.total_angsuran.toLocaleString('id-ID') %></p>
+                        </div>
                     </div>
                 </div>
-    
+
                 <!-- Detail Pembayaran -->
-                <div class="bg-green-100 p-4 rounded-lg mb-6">
-                    <h2 class="text-lg font-semibold mb-2">Detail Pembayaran</h2>
-                    <form class="space-y-4">
-                        <div>
-                            <label for="tanggal" class="block mb-2">Tanggal Pembayaran</label>
-                            <input type="date" id="tanggal" class="w-full border p-2 rounded">
+                <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                    <h2 class="text-xl font-bold mb-4">Detail Pembayaran</h2>
+                    <form id="formPembayaran" class="space-y-4" method="POST" action="/bayarKreditBarang/<%= kredit.id %>">                        <div>
+                            <label class="block mb-2">Tanggal Pembayaran</label>
+                            <input type="date" id="tanggal_bayar" name="tanggal_bayar" class="w-full border p-2 rounded" required>
                         </div>
+                    
                         <div>
-                            <label for="jumlah" class="block mb-2">Jumlah Bayar</label>
-                            <input type="number" id="jumlah" class="w-full border p-2 rounded" placeholder="Masukkan jumlah bayar">
+                            <label class="block mb-2">Jumlah Bayar</label>
+                            <input type="number" id="jumlah_bayar" name="jumlah_bayar" class="w-full border p-2 rounded" required>
                         </div>
+                    
                         <div>
-                            <label for="keterangan" class="block mb-2">Keterangan</label>
-                            <textarea id="keterangan" class="w-full border p-2 rounded" placeholder="Masukkan keterangan"></textarea>
+                            <label class="block mb-2">Keterangan</label>
+                            <textarea id="keterangan" name="keterangan" class="w-full border p-2 rounded"></textarea>
+                        </div>
+                
+                        <!-- Action Buttons -->
+                        <div class="flex justify-end space-x-4 mt-6">
+                            <button type="button" onclick="window.location.href='/kredit-barang'" 
+                                    class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">
+                                Batal
+                            </button>
+                            <button type="submit" id="submitBtn"
+                                    class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                                Simpan
+                            </button>
                         </div>
                     </form>
                 </div>
     
+        
+                
                 <!-- Rincian Pembayaran -->
-                <div class="bg-gray-100 p-4 rounded-lg">
-                    <h2 class="text-lg font-semibold mb-2">Rincian Pembayaran</h2>
-                    <table class="w-full text-left border">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-xl font-bold mb-4">Riwayat Pembayaran</h2>
+                    <table class="w-full border-collapse">
                         <thead>
-                            <tr class="bg-gray-200">
-                                <th class="border px-4 py-2">Tanggal</th>
-                                <th class="border px-4 py-2">Angsuran Ke</th>
-                                <th class="border px-4 py-2">Jumlah</th>
-                                <th class="border px-4 py-2">Keterangan</th>
+                            <tr class="bg-gray-100">
+                                <th class="border p-2">Tanggal</th>
+                                <th class="border p-2">Angsuran Ke</th>
+                                <th class="border p-2">Jumlah</th>
+                                <th class="border p-2">Keterangan</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td class="border px-4 py-2">2023-07-16</td>
-                                <td class="border px-4 py-2">4</td>
-                                <td class="border px-4 py-2">28,000</td>
-                                <td class="border px-4 py-2">- </td>
-                            </tr>
-                            <tr>
-                                <td class="border px-4 py-2">2023-06-16</td>
-                                <td class="border px-4 py-2">3</td>
-                                <td class="border px-4 py-2">28,000</td>
-                                <td class="border px-4 py-2">- </td>
-                            </tr>
-                            <tr>
-                                <td class="border px-4 py-2">2023-05-16</td>
-                                <td class="border px-4 py-2">2</td>
-                                <td class="border px-4 py-2">28,000</td>
-                                <td class="border px-4 py-2">-</td>
-                            </tr>
-                            <tr>
-                                <td class="border px-4 py-2">2023-04-16</td>
-                                <td class="border px-4 py-2">1</td>
-                                <td class="border px-4 py-2">28,000</td>
-                                <td class="border px-4 py-2">- </td>
-                            </tr>
+                            <% pembayaran.forEach(function(bayar) { %>
+                                <tr>
+                                    <td class="border p-2"><%= new Date(bayar.tanggal_bayar).toLocaleDateString('id-ID') %></td>
+                                    <td class="border p-2"><%= bayar.angsuran_ke %></td>
+                                    <td class="border p-2">Rp <%= bayar.jumlah_bayar.toLocaleString('id-ID') %></td>
+                                    <td class="border p-2"><%= bayar.ket || '-' %></td>
+                                </tr>
+                            <% }); %>
                         </tbody>
                     </table>
-                </div>
-    
-                <!-- Action Buttons -->
-                <div class="flex justify-end space-x-4 mt-6">
-                    <button class="bg-gray-400 text-white px-4 py-2 rounded">Batal</button>
-                    <button class="bg-green-500 text-white px-4 py-2 rounded">Simpan</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Ambil elemen tombol "Bayar" dan modal
-        const bayarButtons = document.querySelectorAll('.btn-bayar');
-        const popup = document.getElementById('popup-bayar');
-        const closePopup = document.getElementById('close-popup');
-    
-        // Tambahkan event listener pada tombol "Bayar"
-        bayarButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                popup.classList.remove('hidden'); // Tampilkan modal
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('tanggal_bayar').valueAsDate = new Date();
+            
+            const form = document.getElementById('formPembayaran');
+            
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                console.log('Form submitted');
+                
+                const submitBtn = document.getElementById('submitBtn');
+                submitBtn.disabled = true;
+                
+                try {
+                    const kreditId = '<%= kredit.id %>'; // Ambil ID dari data kredit
+                    const formData = {
+                        tanggal_bayar: document.getElementById('tanggal_bayar').value,
+                        jumlah_bayar: parseFloat(document.getElementById('jumlah_bayar').value),
+                        keterangan: document.getElementById('keterangan').value || '-'
+                    };
+                    
+                    console.log('Sending payment data:', formData);
+                    
+                    const response = await fetch(`/bayarKreditBarang/${kreditId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                    
+                    const result = await response.json();
+                    console.log('Server response:', result);
+                    
+                    if (result.success) {
+                        alert(result.message);
+                        // Refresh halaman untuk menampilkan perubahan
+                        window.location.reload();
+                    } else {
+                        throw new Error(result.message || 'Gagal memproses pembayaran');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert(error.message || 'Terjadi kesalahan saat memproses pembayaran');
+                } finally {
+                    submitBtn.disabled = false;
+                }
             });
         });
     
-        // Tambahkan event listener untuk menutup modal
-        closePopup.addEventListener('click', () => {
-            popup.classList.add('hidden'); // Sembunyikan modal
+        // Validasi jumlah bayar
+        document.getElementById('jumlah_bayar').addEventListener('input', function(e) {
+            const sisaPiutang = <%= kredit.sisa_piutang %>;
+            const value = parseFloat(e.target.value) || 0;
+            
+            if (value > sisaPiutang) {
+                alert(`Jumlah bayar tidak boleh melebihi sisa hutang (Rp ${sisaPiutang.toLocaleString('id-ID')})`);
+                e.target.value = sisaPiutang;
+            }
         });
-    </script>
-    
+    </script>    
 </body>
 </html>
 

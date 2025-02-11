@@ -146,8 +146,7 @@ exports.cariAnggota = async (req, res) => {
         ku.angsuran_ke,
         ku.sisa_piutang,
         ku.tanggal_mulai,
-        ku.ket_status,
-        ku.margin_persen
+        ku.ket_status
       FROM kredit_umroh ku
       JOIN anggota a ON ku.id_anggota = a.id
       JOIN pegawai pg ON a.nip_anggota = pg.nip
@@ -288,8 +287,7 @@ exports.tampilkanEditKreditUmroh = async (req, res) => {
       ku.pokok,
       ku.margin,
       ku.sisa_piutang,
-      ku.tanggal_mulai,
-      ku.margin_persen
+      ku.tanggal_mulai
     FROM kredit_umroh ku
     JOIN anggota a ON ku.id_anggota = a.id
     JOIN pegawai pg ON a.nip_anggota = pg.nip
@@ -320,8 +318,7 @@ exports.simpanEditKreditUmroh = async (req, res) => {
     pokok,
     margin,
     tanggal_mulai,
-    sisa_piutang,
-    margin_persen
+    sisa_piutang
   } = req.body;
 
   const query = `
@@ -334,8 +331,7 @@ exports.simpanEditKreditUmroh = async (req, res) => {
       pokok = ?,
       margin = ?,
       tanggal_mulai = ?,
-      sisa_piutang = ?,
-      margin_persen = ?
+      sisa_piutang = ?
     WHERE id = ?
   `;
 
@@ -348,7 +344,6 @@ exports.simpanEditKreditUmroh = async (req, res) => {
     margin,
     tanggal_mulai,
     sisa_piutang,
-    margin_persen,
     id
   ];
 
@@ -362,42 +357,4 @@ exports.simpanEditKreditUmroh = async (req, res) => {
     }
     res.redirect('/lihatKreditUmroh');
   });
-};
-
-exports.cariAnggota = async (req, res) => {
-  const { keyword } = req.query;
-
-  try {
-    const query = `
-      SELECT 
-        ku.id,
-        ku.id_anggota,
-        pg.nama AS nama_anggota,
-        ku.jumlah_pinjaman,
-        ku.jangka_waktu,
-        ku.total_angsuran,
-        ku.pokok,
-        ku.margin,
-        ku.angsuran_ke,
-        ku.sisa_piutang,
-        ku.tanggal_mulai,
-        ku.ket_status,
-        ku.margin_persen
-      FROM kredit_umroh ku
-      JOIN anggota a ON ku.id_anggota = a.id
-      JOIN pegawai pg ON a.nip_anggota = pg.nip
-      WHERE pg.nama LIKE ? OR ku.id_anggota LIKE ?
-    `;
-
-    db.query(query, [`%${keyword}%`, `%${keyword}%`], (error, results) => {
-      if (error) {
-        console.error("Error saat mencari data kredit umroh:", error);
-        return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mencari data kredit umroh." });
-      }
-      res.json(results);
-    });
-  } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ success: false, message: "Terjadi kesalahan saat mencari data kredit umroh." });
-  }
 };

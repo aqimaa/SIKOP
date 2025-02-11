@@ -9,7 +9,7 @@
 </head>
 <body class="flex bg-white">
     <!-- Sidebar -->
-    <%- include('../../../sidebar') %>
+    <%- include('../../sidebar') %>
 
     <!-- Main Content -->
     <div class="flex-1 ml-72 p-8">
@@ -55,27 +55,11 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Margin (%)</label>
-                        <input type="text" name="margin_persen" value="<%= kreditUmroh.margin_persen %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" oninput="validateNumberInput(this)">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Tanggal Perjanjian</label>
-                        <input type="date" name="tanggal_mulai" value="<%= kreditUmroh.tanggal_mulai.toISOString().split('T')[0] %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Angsuran Pokok</label>
-                        <input type="text" name="pokok" value="<%= kreditUmroh.pokok %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" oninput="validateNumberInput(this)">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Angsuran Margin</label>
                         <input type="text" name="margin" value="<%= kreditUmroh.margin %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" oninput="validateNumberInput(this)">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Total Angsuran</label>
-                        <input type="text" name="total_angsuran" value="<%= kreditUmroh.total_angsuran %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" oninput="validateNumberInput(this)">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Sisa Piutang</label>
-                        <input type="text" name="sisa_piutang" value="<%= kreditUmroh.sisa_piutang %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" oninput="validateNumberInput(this)">
+                        <label class="block text-sm font-medium text-gray-700">Tanggal Mulai</label>
+                        <input type="date" name="tanggal_mulai" value="<%= kreditUmroh.tanggal_mulai.toISOString().split('T')[0] %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2">
                     </div>
                 </div>
             </div>

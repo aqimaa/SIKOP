@@ -4,6 +4,7 @@ const router = express.Router();
 // Import Controllers
 const loginController = require("../controllers/auth/loginController.js");
 const simpananController = require("../controllers/koperasi/simpananController");
+const pinjamanController = require("../controllers/koperasi/lihatPinjaman.js");
 const kreditController = require("../controllers/koperasi/kreditController");
 const kreditPimpinanController = require("../controllers/pimpinan/kreditPimpinanController");
 const pinjamanPimpinanController = require("../controllers/pimpinan/pinjamanPimpinanController");
@@ -13,7 +14,7 @@ const lihatPinjamanController = require("../controllers/koperasi/lihatPinjaman")
 // const laporanController = require('../controllers/koperasi/laporanController');
 const masterController = require('../controllers/master/masterController');
 const kreditUmrohController = require("../controllers/koperasi/kreditUmrohController");
-const kreditElektroController = require("../controllers/koperasi/kreditElektroController");
+const kreditElektronikController = require("../controllers/koperasi/kreditElektronik");
 
 // Route untuk Login
 router.get("/", (req, res) => {
@@ -88,7 +89,7 @@ router.get('/api/anggota', kreditController.getAnggotaList);
 router.get("/tambahKreditBarang", kreditController.getTambahKredit);
 
 // Route untuk Elektronik
-router.get("/lihatKreditElektronik", kreditElektroController.lihatKreditElektronik);
+router.get("/lihatKreditElektronik", kreditElektronikController.lihatKreditElektronik);
 // router.delete("/kreditElektronik/hapus/:id", kreditUmrohController.hapusKreditUmroh);
 // router.get("/kreditElektronik/edit/:id", kreditUmrohController.tampilkanEditKreditUmroh);
 // router.post("/kreditElektronik/edit/:id", kreditUmrohController.simpanEditKreditUmroh);

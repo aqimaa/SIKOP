@@ -87,7 +87,7 @@
                 <thead class="bg-gray-50">
                     <tr>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Angsuran Ke</th> <!-- Kolom baru -->
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Angsuran Ke</th> 
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keterangan</th>
                     </tr>
@@ -96,10 +96,10 @@
                     <% if (riwayatPembayaran && riwayatPembayaran.length > 0) { %>
                     <% riwayatPembayaran.forEach((pembayaran) => { %>
                         <tr>
-                        <td class="px-6 py-4 whitespace-nowrap"><%= pembayaran.tanggal_bayar.toISOString().split('T')[0] %></td>
-                        <td class="px-6 py-4 whitespace-nowrap"><%= pembayaran.angsuran_ke %></td> 
-                        <td class="px-6 py-4 whitespace-nowrap"><%= pembayaran.jumlah_bayar.toLocaleString() %></td>
-                        <td class="px-6 py-4 whitespace-nowrap"><%= pembayaran.ket %></td>
+                        <td class="border px-6 py-4"><%= pembayaran.tanggal_bayar.toISOString().split('T')[0] %></td>
+                        <td class="border px-6 py-4"><%= pembayaran.angsuran_ke %></td> 
+                        <td class="border px-6 py-4"><%= pembayaran.jumlah_bayar.toLocaleString() %></td>
+                        <td class="border px-6 py-4"><%= pembayaran.ket %></td>
                         </tr>
                     <% }) %>
                     <% } else { %>

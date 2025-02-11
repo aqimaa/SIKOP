@@ -201,7 +201,7 @@ exports.createKreditBarang = async (req, res) => {
 };
   
 
-exports.getAnggotaList = (req, res) => {
+exports.getAnggotaListKredit = (req, res) => {
     const { search } = req.query;
     
     let sql = `

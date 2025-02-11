@@ -36,7 +36,7 @@ const getSimpananData = (req, res) => {
 };
 
 // Get data anggota untuk dropdown
-const getAnggotaList = (req, res) => {
+const getAnggotaListSimpanan = (req, res) => {
     const query = `
         SELECT 
             a.id,
@@ -592,7 +592,7 @@ module.exports = {
     lihatSimpanan,
     createPeriode,
     getSimpananData,
-    getAnggotaList,
+    getAnggotaListSimpanan,
     filterSimpanan,
     getAvailableYears,
     createSimpanan,

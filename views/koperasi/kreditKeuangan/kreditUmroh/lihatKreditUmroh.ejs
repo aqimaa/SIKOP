@@ -65,7 +65,7 @@
                             <th class="px-6 py-3 text-left text-white">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="kreditUmrohTableBody">
                         <% if (kreditUmroh && kreditUmroh.length > 0) { %>
                             <% kreditUmroh.forEach((item, index) => { %>
                                 <tr class="border-b border-gray-200">
@@ -78,14 +78,14 @@
                                     <td class="px-6 py-4"><%= item.pokok ? item.pokok.toLocaleString() : '0' %></td>
                                     <td class="px-6 py-4"><%= item.margin ? item.margin.toLocaleString() : '0' %></td>
                                     <td class="px-6 py-4"><%= item.total_angsuran ? item.total_angsuran.toLocaleString() : '0' %></td>
-                                    <td class="px-6 py-4"><%= item.angsuran_ke || 0 %></td>                                    
+                                    <td class="px-6 py-4"><%= item.angsuran_ke || 0 %></td>
                                     <td class="px-6 py-4"><%= item.sisa_piutang.toLocaleString() %></td>
                                     <td class="px-6 py-4"><%= item.tanggal_mulai.toISOString().split('T')[0] %></td>
                                     <td class="px-6 py-4">
                                         <% if (item.ket_status === 'Lunas') { %>
-                                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm">Lunas</span>
+                                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm whitespace-nowrap">Lunas</span>
                                         <% } else { %>
-                                            <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm">Belum Lunas</span>
+                                            <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm whitespace-nowrap">Belum Lunas</span>
                                         <% } %>
                                     </td>
                                     <td class="px-6 py-4">
@@ -112,30 +112,88 @@
         </div>
 
         <script>
-            function bayarKreditUmroh(id) {
-                window.location.href = `/kreditUmroh/bayar/${id}`;
-            }
-        
-            function editKreditUmroh(id) {
-                window.location.href = `/kreditUmroh/edit/${id}`;
-            }
-        
-            function hapusKreditUmroh(id) {
-                if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-                    fetch(`/kreditUmroh/hapus/${id}`, {
-                        method: 'DELETE',
-                    })
+            function cariAnggota() {
+                const keyword = document.getElementById('searchInput').value;
+                fetch(`/kreditUmroh/cari?keyword=${keyword}`)
                     .then(response => response.json())
                     .then(data => {
-                        if (data.success) {
-                            alert('Data berhasil dihapus');
-                            window.location.reload();
+                        const tableBody = document.querySelector('tbody');
+                        tableBody.innerHTML = ''; // Kosongkan tabel sebelum menambahkan data baru
+
+                        if (data.length > 0) {
+                            data.forEach((item, index) => {
+                                const row = `
+                                    <tr class="border-b border-gray-200">
+                                        <td class="px-6 py-4">${index + 1}</td>
+                                        <td class="px-6 py-4">${item.id_anggota}</td>
+                                        <td class="px-6 py-4">${item.nama_anggota}</td>
+                                        <td class="px-6 py-4">${item.jumlah_pinjaman.toLocaleString()}</td>
+                                        <td class="px-6 py-4">${item.jangka_waktu} Bulan</td>
+                                        <td class="px-6 py-4">${item.margin_persen ? item.margin_persen.toFixed(2) : '0.00'}%</td>
+                                        <td class="px-6 py-4">${item.pokok ? item.pokok.toLocaleString() : '0'}</td>
+                                        <td class="px-6 py-4">${item.margin ? item.margin.toLocaleString() : '0'}</td>
+                                        <td class="px-6 py-4">${item.total_angsuran ? item.total_angsuran.toLocaleString() : '0'}</td>
+                                        <td class="px-6 py-4">${item.angsuran_ke || 0}</td>
+                                        <td class="px-6 py-4">${item.sisa_piutang.toLocaleString()}</td>
+                                        <td class="px-6 py-4">${item.tanggal_mulai.split('T')[0]}</td>
+                                        <td class="px-6 py-4">
+                                            ${item.ket_status === 'Lunas' ? 
+                                                '<span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm">Lunas</span>' : 
+                                                '<span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm">Belum Lunas</span>'}
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex space-x-2">
+                                                <button onclick="bayarKreditUmroh('${item.id}')" class="border border-gray-300 px-2 py-1 rounded p-1" style="background-color: #5D8736; color: white;">Bayar</button>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex space-x-2">
+                                                <button onclick="editKreditUmroh('${item.id}')" class="border border-gray-300 rounded p-1"><span class="material-icons">edit</span></button>
+                                                <button onclick="hapusKreditUmroh('${item.id}')" class="border border-gray-300 rounded p-1"><span class="material-icons">delete</span></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `;
+                                tableBody.innerHTML += row;
+                            });
                         } else {
-                            alert('Gagal menghapus data');
+                            tableBody.innerHTML = `
+                                <tr>
+                                    <td colspan="15" class="px-6 py-4 text-center">Tidak ada data kredit umroh.</td>
+                                </tr>
+                            `;
                         }
                     })
-                    .catch(error => console.error('Error:', error));
-                }
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Terjadi kesalahan saat mengambil data.');
+                    });
+            }
+          
+            function hapusKreditUmroh(id) {
+              if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                fetch(`/kreditUmroh/hapus/${id}`, {
+                  method: 'DELETE',
+                })
+                .then(response => response.json())
+                .then(data => {
+                  if (data.success) {
+                    alert('Data berhasil dihapus');
+                    window.location.reload(); // Reload halaman untuk memperbarui data
+                  } else {
+                    alert('Gagal menghapus data');
+                  }
+                })
+                .catch(error => console.error('Error:', error));
+              }
+            }
+          
+            function editKreditUmroh(id) {
+              window.location.href = `/kreditUmroh/edit/${id}`;
+            }
+          
+            function bayarKreditUmroh(id) {
+              window.location.href = `/kreditUmroh/bayar/${id}`;
             }
         </script>
 </body>

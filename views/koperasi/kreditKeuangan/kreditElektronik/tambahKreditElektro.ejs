@@ -5,88 +5,102 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form Input Kredit Barang Elektronik</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 </head>
 <body class="flex">
     <!-- Sidebar -->
     <%- include('../../../sidebar') %>
 
     <!-- Main Content -->
-    <div class="flex-1 p-8">
+    <div class="flex-1 p-8 ml-72">
         <h1 class="text-2xl mb-6">Form Input Kredit Elektronik</h1>
 
         <!-- Form Section -->
-        <form class="space-y-6">
-            <!-- Data Anggota -->
+        <form id="tambahKreditForm" class="space-y-6">
             <div class="bg-gray-100 p-6 rounded-lg">
-                <h2 class="text-lg font-semibold mb-4">Data Anggota</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block mb-2">No. Anggota</label>
-                        <input type="text" class="w-full border p-2 rounded" placeholder="Masukkan No. Anggota">
-                    </div>
-                    <div>
-                        <label class="block mb-2">Nama Anggota</label>
-                        <input type="text" class="w-full border p-2 rounded" placeholder="Masukkan Nama Anggota">
-                    </div>
+              <h2 class="text-lg font-semibold mb-4">Data Anggota</h2>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block mb-2">No. Anggota</label>
+                  <input type="text" name="id_anggota" class="w-full border p-2 rounded" placeholder="Masukkan No. Anggota" required>
                 </div>
+                <div>
+                  <label class="block mb-2">Nama Anggota</label>
+                  <input type="text" name="nama_anggota" class="w-full border p-2 rounded" placeholder="Masukkan Nama Anggota" required>
+                </div>
+              </div>
             </div>
-
-            <!-- Data Kredit Elektronik -->
             <div class="bg-gray-100 p-6 rounded-lg">
-                <h2 class="text-lg font-semibold mb-4">Data Kredit Elektronik</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block mb-2">Pinjaman</label>
-                        <input type="number" class="w-full border p-2 rounded" placeholder="Masukkan Harga Pokok">
-                    </div>
-                    <div>
-                        <label class="block mb-2">Jangka Waktu (Bulan)</label>
-                        <input type="number" class="w-full border p-2 rounded" placeholder="Masukkan Jangka Waktu">
-                    </div>
-                    <div>
-                        <label class="block mb-2">Margin (%)</label>
-                        <input type="number" class="w-full border p-2 rounded" placeholder="Masukkan Margin">
-                    </div>
-                    <div>
-                        <label class="block mb-2">Tanggal Perjanjian</label>
-                        <input type="date" class="w-full border p-2 rounded">
-                    </div>
-                    <div>
-                        <label class="block mb-2">Keterangan</label>
-                        <textarea class="w-full border p-2 rounded" placeholder="Masukkan Keterangan"></textarea>
-                    </div>
+              <h2 class="text-lg font-semibold mb-4">Data Kredit Elektronik</h2>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block mb-2">Pinjaman</label>
+                  <input type="number" name="jumlah_pinjaman" class="w-full border p-2 rounded" placeholder="Masukkan Harga Pokok" required>
                 </div>
-            </div>
-
-            <!-- Hasil Perhitungan -->
-            <div class="bg-blue-100 p-6 rounded-lg">
-                <h2 class="text-lg font-semibold mb-4">Hasil Perhitungan</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block mb-2">Angsuran Pokok</label>
-                        <input type="number" class="w-full border p-2 rounded" placeholder="Masukkan Angsuran Pokok">
-                    </div>
-                    <div>
-                        <label class="block mb-2">Margin per Bulan</label>
-                        <input type="number" class="w-full border p-2 rounded" placeholder="Masukkan Margin per Bulan">
-                    </div>
-                    <div>
-                        <label class="block mb-2">Total Angsuran per Bulan</label>
-                        <input type="number" class="w-full border p-2 rounded" placeholder="Masukkan Total Angsuran">
-                    </div>
-                    <div>
-                        <label class="block mb-2">Total Margin</label>
-                        <input type="number" class="w-full border p-2 rounded" placeholder="Masukkan Total Margin">
-                    </div>
+                <div>
+                  <label class="block mb-2">Jangka Waktu (Bulan)</label>
+                  <input type="number" name="jangka_waktu" class="w-full border p-2 rounded" placeholder="Masukkan Jangka Waktu" required>
                 </div>
+                <div>
+                  <label class="block mb-2">Margin (%)</label>
+                  <input type="number" name="margin_persen" class="w-full border p-2 rounded" placeholder="Masukkan Margin" required>
+                </div>
+                <div>
+                  <label class="block mb-2">Tanggal Perjanjian</label>
+                  <input type="date" name="tanggal_mulai" class="w-full border p-2 rounded" required>
+                </div>
+              </div>
             </div>
-
-            <!-- Action Buttons -->
             <div class="flex justify-end space-x-4">
-                <button type="reset" class="bg-gray-400 text-white px-4 py-2 rounded">Batal</button>
-                <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Simpan</button>
+              <button type="reset" class="bg-gray-400 text-white px-4 py-2 rounded">Batal</button>
+              <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Simpan</button>
             </div>
-        </form>
+          </form>
+          
+          <!-- SweetAlert2 Script -->
+          <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+          <script>
+            document.getElementById('tambahKreditForm').addEventListener('submit', function (e) {
+              e.preventDefault(); // Mencegah form submit secara default
+          
+              const formData = new FormData(this);
+          
+              fetch('/kreditElektronik/tambah', {
+                method: 'POST',
+                body: formData
+              })
+                .then(response => response.json())
+                .then(data => {
+                  if (data.success) {
+                    Swal.fire({
+                      icon: 'success',
+                      title: 'Sukses!',
+                      text: data.message,
+                      confirmButtonText: 'OK'
+                    }).then(() => {
+                      window.location.href = '/lihatKreditElektronik'; // Redirect ke halaman lihat kredit elektronik
+                    });
+                  } else {
+                    Swal.fire({
+                      icon: 'error',
+                      title: 'Gagal!',
+                      text: data.message,
+                      confirmButtonText: 'OK'
+                    });
+                  }
+                })
+                .catch(error => {
+                  console.error('Error:', error);
+                  Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Terjadi kesalahan saat mengirim data.',
+                    confirmButtonText: 'OK'
+                  });
+                });
+            });
+          </script>
     </div>
 </body>
 </html>

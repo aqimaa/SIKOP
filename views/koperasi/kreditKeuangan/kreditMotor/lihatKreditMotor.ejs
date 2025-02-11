@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Kredit Motor</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body class="flex bg-gray-100">
     <!-- Sidebar -->
     <%- include('../../../sidebar') %>
 
     <!-- Main Content -->
-     <div class="flex-1 p-6">
+    <div class="flex-1 p-6 ml-72">
         <header class="flex justify-between items-center mb-8">
             <!-- Arrow Back Icon -->
             <button class="text-gray-600">
@@ -24,12 +25,14 @@
             <!-- Profile Section -->
             <div class="flex items-center space-x-4">
                 <span>admin keuangan</span>
-                <img src="../../public/images/profile-user.png" alt="User" class="rounded-full w-10 h-10">
+                <img src="/images/profile-user.png" alt="User" class="rounded-full w-10 h-10">
             </div>
         </header>
         <div class="flex justify-between items-center mb-4">
-            <h1 class="text-2xl font-bold">Data Kredit Motor</h1>
-            <button style="background-color: #5D8736; color: white;" class="px-4 py-2 rounded hover:bg-[#4c6e2f]">+ Tambah Kredit Baru</button>
+            <h1 class="text-2xl font-bold">Data Kredit Barang</h1>
+            <a href="/tambahKreditBarang" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                + Tambah Kredit Baru
+            </a>
         </div>
 
         <div class="bg-white p-4 rounded shadow">
@@ -38,42 +41,48 @@
                 <button style="background-color: #5D8736; color: white;" class="ml-2 px-4 py-2 rounded hover:bg-[#4c6e2f]">Cari</button>
             </div>
 
-
-            <table class="table-auto w-full border-collapse">
-                <thead>
-                    <tr class="text-left bg-gray-100">
+            <table class="table-auto w-full border-collapse shadow-lg rounded-lg overflow-hidden">
+                <thead style="background-color: #5D8736; color: white;">
+                    <tr>
                         <th class="p-4">No</th>
                         <th class="p-4">No. Anggota</th>
-                        <th class="p-4">Nama</th>
-                        <th class="p-4">Pinjaman</th>
+                        <th class="p-4">Nama Anggota</th>
+                        <th class="p-4">Jumlah Pinjaman</th>
                         <th class="p-4">Jangka Waktu</th>
+                        <th class="p-4">Margin Persen</th>
+                        <th class="p-4">Angsuran Pokok</th>
+                        <th class="p-4">Angsuran Margin</th>
                         <th class="p-4">Total Angsuran</th>
-                        <th class="p-4">Pokok</th>
-                        <th class="p-4">Margin</th>
                         <th class="p-4">Angsuran Ke</th>
                         <th class="p-4">Sisa Piutang</th>
                         <th class="p-4">Mulai Perjanjian</th>
                         <th class="p-4">Status</th>
                         <th class="p-4">Bayar</th>
                         <th class="p-4">Aksi</th>
-
-                        
                     </tr>
                 </thead>
                 <tbody>
+                    <% kreditMotor.forEach((motor, index) => { %>
                     <tr class="text-left border-b">
-                        <td class="p-4">1</td>
-                        <td class="p-4">007</td>
-                        <td class="p-4">Adek Irma</td>
-                        <td class="p-4">17.572.475</td>
-                        <td class="p-4">36</td>
-                        <td class="p-4">488.124</td>
-                        <td class="p-4">408.472</td>
-                        <td class="p-4">79.652</td>
-                        <td class="p-4">14</td>
-                        <td class="p-4">10.738.739 </td>
-                        <td class="p-4">2022-10-03</td>
-                        <td class="p-4">Belum Lunas</td>
+                        <td class="p-4"><%= index + 1 %></td>
+                        <td class="p-4"><%= motor.id_anggota %></td>
+                        <td class="p-4"><%= motor.nama_anggota %></td>
+                        <td class="p-4"><%= motor.jumlah_pinjaman.toLocaleString() %></td>
+                        <td class="p-4"><%= motor.jangka_waktu %> Bulan</td>
+                        <td class="p-4"><%= motor.margin_persen ? motor.margin_persen.toFixed(2) : '0.00' %>%</td>
+                        <td class="p-4"><%= motor.pokok ? motor.pokok.toLocaleString() : '0' %></td>
+                        <td class="p-4"><%= motor.margin ? motor.margin.toLocaleString() : '0' %></td>
+                        <td class="p-4"><%= motor.total_angsuran ? motor.total_angsuran.toLocaleString() : '0' %></td>
+                        <td class="p-4"><%= motor.angsuran_ke || 0 %></td>                                    
+                        <td class="p-4"><%= motor.sisa_piutang.toLocaleString() %></td>
+                        <td class="p-4"><%= motor.tanggal_mulai.toISOString().split('T')[0] %></td>
+                        <td class="px-6 py-4">
+                            <% if (motor.ket_status === 'Lunas') { %>
+                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm">Lunas</span>
+                            <% } else { %>
+                                <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm">Belum Lunas</span>
+                            <% } %>
+                        </td>
                         <td class="p-4">
                             <button class="bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700">Bayar</button>
                         </td>
@@ -91,12 +100,10 @@
                             </button>
                         </td>
                     </tr>
-                    <!-- Tambahkan baris data tambahan sesuai kebutuhan -->
+                    <% }) %>
                 </tbody>
             </table>
         </div>
     </div>
-
-
 </body>
 </html>

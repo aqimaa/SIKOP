@@ -3,123 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Input Kredit Barang Elektronik</title>
+    <title>Bayar Kredit Umroh</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<body class="flex">
+<body class="flex bg-gray-100">
     <!-- Sidebar -->
     <%- include('../../../sidebar') %>
 
     <!-- Main Content -->
-    <div id="popup-bayar" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-        <div class="flex-1 p-8">
-            <h1 class="text-2xl mb-6">Bayar Kredit Umroh</h1>
-    
-            <!-- Pop-up Section -->
-            <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-2xl mx-auto">
-                <!-- Informasi Kredit -->
-                <div class="bg-blue-100 p-4 rounded-lg mb-6">
-                    <h2 class="text-lg font-semibold mb-2">Informasi Kredit</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <p><strong>No. Anggota:</strong> 001</p>
-                        <p><strong>Nama Anggota:</strong> Adriani Adnani</p>
-                        <p><strong>Harga Pokok:</strong> 262,500</p>
-                        <p><strong>Jangka Waktu:</strong> 9 Bulan</p>
-                        <p><strong>Angsuran Ke:</strong> 5 dari 9</p>
-                        <p><strong>Sisa Hutang:</strong> 105,000</p>
-                        <p><strong>Angsuran Per Bulan:</strong> 28,000</p>
-                    </div>
+    <div class="flex-1 ml-72 p-8">
+        <div class="fixed top-0 left-72 right-0 flex justify-between shadow-md p-4 bg-white z-20">
+            <h1 class="text-2xl"></h1>
+            <div class="flex items-center">
+                <span>Admin Keuangan</span>
+                <img src="/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
+            </div>
+        </div>
+
+        <div class="mt-20 text-center">
+            <h1 class="text-2xl font-bold mb-8">Bayar Angsuran</h1>
+        </div>
+        
+        <!-- Informasi Kredit -->
+        <div class="bg-blue-100 p-6 rounded-md shadow-md mb-6">
+            <h3 class="text-xl font-semibold mb-4">Informasi Kredit</h3>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <p>No. Anggota</p>
+                    <p class="font-bold"><%= kreditUmroh.id_anggota %></p>
                 </div>
-    
-                <!-- Detail Pembayaran -->
-                <div class="bg-green-100 p-4 rounded-lg mb-6">
-                    <h2 class="text-lg font-semibold mb-2">Detail Pembayaran</h2>
-                    <form class="space-y-4">
-                        <div>
-                            <label for="tanggal" class="block mb-2">Tanggal Pembayaran</label>
-                            <input type="date" id="tanggal" class="w-full border p-2 rounded">
-                        </div>
-                        <div>
-                            <label for="jumlah" class="block mb-2">Jumlah Bayar</label>
-                            <input type="number" id="jumlah" class="w-full border p-2 rounded" placeholder="Masukkan jumlah bayar">
-                        </div>
-                        <div>
-                            <label for="keterangan" class="block mb-2">Keterangan</label>
-                            <textarea id="keterangan" class="w-full border p-2 rounded" placeholder="Masukkan keterangan"></textarea>
-                        </div>
-                    </form>
+                <div>
+                    <p>Nama Anggota</p>
+                    <p class="font-bold"><%= kreditUmroh.nama_anggota %></p>
                 </div>
-    
-                <!-- Rincian Pembayaran -->
-                <div class="bg-gray-100 p-4 rounded-lg">
-                    <h2 class="text-lg font-semibold mb-2">Rincian Pembayaran</h2>
-                    <table class="w-full text-left border">
-                        <thead>
-                            <tr class="bg-gray-200">
-                                <th class="border px-4 py-2">Tanggal</th>
-                                <th class="border px-4 py-2">Angsuran Ke</th>
-                                <th class="border px-4 py-2">Jumlah</th>
-                                <th class="border px-4 py-2">Keterangan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="border px-4 py-2">2023-07-16</td>
-                                <td class="border px-4 py-2">4</td>
-                                <td class="border px-4 py-2">28,000</td>
-                                <td class="border px-4 py-2">- </td>
-                            </tr>
-                            <tr>
-                                <td class="border px-4 py-2">2023-06-16</td>
-                                <td class="border px-4 py-2">3</td>
-                                <td class="border px-4 py-2">28,000</td>
-                                <td class="border px-4 py-2">- </td>
-                            </tr>
-                            <tr>
-                                <td class="border px-4 py-2">2023-05-16</td>
-                                <td class="border px-4 py-2">2</td>
-                                <td class="border px-4 py-2">28,000</td>
-                                <td class="border px-4 py-2">-</td>
-                            </tr>
-                            <tr>
-                                <td class="border px-4 py-2">2023-04-16</td>
-                                <td class="border px-4 py-2">1</td>
-                                <td class="border px-4 py-2">28,000</td>
-                                <td class="border px-4 py-2">- </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div>
+                    <p>Jumlah Pinjaman</p>
+                    <p class="font-bold"><%= kreditUmroh.jumlah_pinjaman %></p>
                 </div>
-    
-                <!-- Action Buttons -->
-                <div class="flex justify-end space-x-4 mt-6">
-                    <button class="bg-gray-400 text-white px-4 py-2 rounded">Batal</button>
-                    <button class="bg-green-500 text-white px-4 py-2 rounded">Simpan</button>
+                <div>
+                    <p>Jangka Waktu (bulan)</p>
+                    <p class="font-bold"><%= kreditUmroh.jangka_waktu %> Bulan</p>
+                </div>
+                <div>
+                    <p>Angsuran Ke</p>
+                    <p class="font-bold"><%= kreditUmroh.angsuran_ke %> dari <%= kreditUmroh.jangka_waktu %></p>
+                </div>
+                <div>
+                    <p>Sisa Piutang</p>
+                    <p class="font-bold"><%= kreditUmroh.sisa_piutang %></p>
+                </div>
+                <div>
+                    <p>Angsuran Per Bulan</p>
+                    <p class="font-bold"><%= kreditUmroh.total_angsuran %></p>
                 </div>
             </div>
         </div>
-    </div>
 
-    <script>
-        // Ambil elemen tombol "Bayar" dan modal
-        const bayaarButtons = document.querySelectorAll('.btn-bayar');
-        const popup = document.getElementById('popup-bayar');
-        const closePopup = document.getElementById('close-popup');
-    
-        // Tambahkan event listener pada tombol "Bayar"
-        bayarButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                popup.classList.remove('hidden'); // Tampilkan modal
-            });
-        });
-    
-        // Tambahkan event listener untuk menutup modal
-        closePopup.addEventListener('click', () => {
-            popup.classList.add('hidden'); // Sembunyikan modal
-        });
-    </script>
-    
+        <!-- Form Pembayaran -->
+        <form action="/kreditUmroh/bayar/<%= kreditUmroh.id %>" method="POST">
+            <div class="bg-green-100 p-6 rounded-md shadow-md mb-6">
+                <h3 class="text-xl font-semibold mb-4">Detail Pembayaran</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Tanggal Pembayaran</label>
+                        <input type="date" name="tanggal_bayar" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Jumlah Bayar</label>
+                        <input type="text" name="jumlah_bayar" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" required oninput="validateNumberInput(this)">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Keterangan</label>
+                        <input type="text" name="keterangan" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2">
+                    </div>
+                </div>
+            </div>
+
+        <!-- Riwayat Pembayaran -->
+        <div class="bg-white p-6 rounded-md shadow-md mb-6">
+            <h3 class="text-xl font-semibold mb-4">Rincian Pembayaran</h3>
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Angsuran Ke</th> 
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keterangan</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <% if (riwayatPembayaran.length > 0) { %>
+                        <% riwayatPembayaran.forEach(pembayaran => { %>
+                            <tr>
+                                <td class="border px-4 py-2"><%= pembayaran.tanggal_bayar.toISOString().split('T')[0] %></td>
+                                <td class="border px-4 py-2"><%= pembayaran.angsuran_ke %></td>
+                                <td class="border px-4 py-2"><%= pembayaran.jumlah_bayar.toLocaleString() %></td>
+                                <td class="border px-4 py-2"><%= pembayaran.ket %></td>
+                            </tr>
+                        <% }) %>
+                        <% } else { %>
+                        <tr>
+                            <td colspan="4" class="px-6 py-4 text-center">Belum ada riwayat pembayaran</td>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex space-x-4 mt-8">
+                <button type="button" onclick="window.history.back()" class="flex-1 border py-2 px-4 rounded-md" style="border-color: #5D8736; color: #5D8736;">Batal</button>
+                <button type="submit" class="flex-1 bg-[#5D8736] text-white py-2 px-4 rounded-md" style="background-color: #5D8736;">Simpan</button>
+            </div>
+        </form>
+    </div>
 </body>
 </html>
-
-

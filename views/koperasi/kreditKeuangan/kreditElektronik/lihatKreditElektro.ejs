@@ -11,7 +11,7 @@
     <%- include('../../../sidebar') %>
 
     <!-- Main Content -->
-     <div class="flex-1 p-6">
+    <div class="flex-1 p-6">
         <header class="flex justify-between items-center mb-8">
             <!-- Profile Section -->
             <div class="fixed top-0 left-72 right-0 flex justify-between shadow-md p-4 bg-white z-20">
@@ -34,7 +34,6 @@
                 <button style="background-color: #5D8736; color: white;" class="ml-2 px-4 py-2 rounded hover:bg-[#4c6e2f]">Cari</button>
             </div>
 
-
             <table class="table-auto w-full border-collapse">
                 <thead>
                     <tr class="text-left bg-gray-100">
@@ -52,24 +51,23 @@
                         <th class="p-4">Status</th>
                         <th class="p-4">Bayar</th>
                         <th class="p-4">Aksi</th>
-
-                        
                     </tr>
                 </thead>
                 <tbody>
+                    <% kreditElektronik.forEach((kredit, index) => { %>
                     <tr class="text-left border-b">
-                        <td class="p-4">1</td>
-                        <td class="p-4">005</td>
-                        <td class="p-4">Sari Puspita</td>
-                        <td class="p-4">23.165.000</td>
-                        <td class="p-4">24</td>
-                        <td class="p-4">965.161</td>
-                        <td class="p-4">854.125</td>
-                        <td class="p-4">111.036</td>
-                        <td class="p-4">18</td>
-                        <td class="p-4">- </td>
-                        <td class="p-4">2022-09-27</td>
-                        <td class="p-4">Belum Lunas</td>
+                        <td class="p-4"><%= index + 1 %></td>
+                        <td class="p-4"><%= kredit.id_anggota %></td>
+                        <td class="p-4"><%= kredit.nama_anggota %></td>
+                        <td class="p-4"><%= kredit.jumlah_pinjaman.toLocaleString() %></td>
+                        <td class="p-4"><%= kredit.jangka_waktu %></td>
+                        <td class="p-4"><%= kredit.total_angsuran.toLocaleString() %></td>
+                        <td class="p-4"><%= kredit.pokok.toLocaleString() %></td>
+                        <td class="p-4"><%= kredit.margin.toLocaleString() %></td>
+                        <td class="p-4"><%= kredit.angsuran_ke %></td>
+                        <td class="p-4"><%= kredit.sisa_piutang.toLocaleString() %></td>
+                        <td class="p-4"><%= kredit.tanggal_mulai.toLocaleDateString() %></td>
+                        <td class="p-4"><%= kredit.ket_status %></td>
                         <td class="p-4">
                             <button class="bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700">Bayar</button>
                         </td>
@@ -87,12 +85,10 @@
                             </button>
                         </td>
                     </tr>
-                    <!-- Tambahkan baris data tambahan sesuai kebutuhan -->
+                    <% }) %>
                 </tbody>
             </table>
         </div>
     </div>
-
-
 </body>
 </html>

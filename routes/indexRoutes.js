@@ -131,8 +131,9 @@ router.get('/master/anggota', masterController.getAnggota);
 router.get('/master/anggota/tambahAnggota', masterController.getPegawaiForAnggota);
 router.post('/master/anggota/tambahAnggota', masterController.tambahAnggota);
 router.get('/master/anggota/pegawaiTersedia', masterController.getPegawaiYangBisaDipilih);
-router.get('/master/anggota/ubahAnggota/:id', masterController.getAnggotaById);
-router.post('/master/anggota/ubahAnggota/:id', masterController.updateAnggota);
+router.get('/master/anggota/ubahAnggota/:id', masterController.getAnggotaById); //catatan ubah agar saat sudah tidak aktif tidak bisa diubah lagi
+//router.post('/master/anggota/ubahAnggota/:id', masterController.updateAnggota);
+router.post('/master/anggota/ubahStatus', masterController.updateAnggota);
 router.delete('/master/anggota/delete/:id', masterController.deleteAnggota);
 
 //Route user

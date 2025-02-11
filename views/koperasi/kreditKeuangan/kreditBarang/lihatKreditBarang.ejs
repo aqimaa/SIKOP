@@ -6,6 +6,46 @@
     <title>Data Kredit Barang</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        @keyframes popIn {
+            0% { transform: scale(0.7); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+    
+        #modal-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            overflow: auto;
+            animation: fadeIn 0.3s ease-out;
+            padding: 20px 0;
+        }
+    
+        #modal-container .modal-content {
+            max-width: 90%; 
+            width: 800px; 
+            margin: 50px auto;
+            max-height: 90vh; 
+            overflow-y: auto; 
+            position: relative;
+        }
+
+        #modal-container .modal-content #popup-bayar {
+            position: relative;
+            padding-top: 50px; /* Tambahkan ruang untuk tombol close */
+        }
+    </style>
+
 </head>
 <body class="flex bg-gray-100">
     <!-- Sidebar -->
@@ -78,7 +118,10 @@
                                 <td class="p-4 text-center"><%= item.tanggal_mulai ? new Date(item.tanggal_mulai).toLocaleDateString('id-ID') : '-' %></td>
                                 <td class="p-4 text-center font-semibold <%= item.ket_status === 'Lunas' ? 'text-[#5D8736]' : 'text-red-700' %>"><%= item.ket_status || '-' %></td>
                                 <td class="p-4">
-                                    <a href="/bayarKreditBarang/<%= item.id %>" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700">Bayar</a>
+                                    <button onclick="openBayarModal('<%= item.id %>')" 
+                                            class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700">
+                                        Bayar
+                                    </button>
                                 </td>
                                 <td class="p-4">
                                     <div class="flex space-x-2">
@@ -142,7 +185,73 @@
         }
     </script>
 
+    <div id="modal-container"></div>
 
+    <script>
+        function openBayarModal(kreditId) {
+            fetch(`/bayarKreditBarang/${kreditId}`)
+                .then(response => response.text())
+                .then(html => {
+                    const modalContainer = document.getElementById('modal-container');
+                    modalContainer.innerHTML = `<div class="modal-content">${html}</div>`;
+                    modalContainer.style.display = 'block';
+                    
+                    // Tambahkan sedikit delay untuk animasi
+                    setTimeout(() => {
+                        modalContainer.classList.add('show');
+                    }, 10);
+
+                    // Tambahkan event listener untuk menutup modal
+                    const closeModal = () => {
+                        modalContainer.classList.remove('show');
+                        setTimeout(() => {
+                            modalContainer.style.display = 'none';
+                            modalContainer.innerHTML = '';
+                        }, 300);
+                    };
+
+                    // Modifikasi script di dalam html modal untuk menutup modal
+                    const scriptToModify = modalContainer.querySelector('script');
+                    if (scriptToModify) {
+                        scriptToModify.innerHTML = scriptToModify.innerHTML.replace(
+                            "window.location.href = '/kredit-barang';", 
+                            "closeModal();"
+                        );
+                    }
+
+                    // Tambahkan tombol close
+                    const closeButton = document.createElement('button');
+                    closeButton.innerHTML = '&times;';
+                    closeButton.className = 'absolute top-4 right-4 text-2xl text-white cursor-pointer z-50';
+                    closeButton.onclick = closeModal;
+                    modalContainer.querySelector('#popup-bayar').prepend(closeButton);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Gagal membuka halaman pembayaran');
+                });
+        }
+
+        // Tambahkan di lihatKreditBarang.ejs
+        window.addEventListener('message', function(event) {
+            if (event.data.action === 'updateKreditBarang') {
+                const row = document.getElementById(`row-${event.data.kreditId}`);
+                if (row) {
+                    // Update angsuran ke
+                    row.querySelector('td:nth-child(9)').textContent = event.data.angsuranKe;
+                    // Update sisa piutang
+                    row.querySelector('td:nth-child(10)').textContent = 
+                        `Rp ${event.data.sisaPiutang.toLocaleString('id-ID')}`;
+                    // Update status
+                    const statusCell = row.querySelector('td:nth-child(12)');
+                    statusCell.textContent = event.data.status;
+                    statusCell.className = event.data.status === 'Lunas' 
+                        ? 'p-4 text-center font-semibold text-[#5D8736]'
+                        : 'p-4 text-center font-semibold text-red-700';
+                }
+            }
+        });
+    </script>
 
 </body>
 </html>

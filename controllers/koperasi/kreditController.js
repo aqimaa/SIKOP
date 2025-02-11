@@ -364,7 +364,218 @@ exports.deleteKreditBarang = async (req, res) => {
         message: "Gagal menghapus data"
       });
     }
-  };
+};
+
+
+// Menampilkan halaman pembayaran kredit barang
+exports.getBayarKreditBarang = async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        // Query untuk mendapatkan detail kredit dengan nama anggota
+        const kreditQuery = `
+            SELECT 
+                kb.*,
+                p.nama as nama_anggota
+            FROM kredit_barang kb
+            JOIN anggota a ON kb.id_anggota = a.id
+            JOIN pegawai p ON a.nip_anggota = p.nip
+            WHERE kb.id = ?
+        `;
+
+        // Query untuk mendapatkan riwayat pembayaran
+        const pembayaranQuery = `
+            SELECT 
+                id,
+                tanggal_bayar,
+                angsuran_ke,
+                jumlah_bayar,
+                ket
+            FROM pembayaran 
+            WHERE id_kredit_barang = ?
+            ORDER BY tanggal_bayar DESC
+        `;
+
+        // Eksekusi query menggunakan callback
+        db.query(kreditQuery, [id], (errKredit, kreditResults) => {
+            if (errKredit) {
+                console.error('Error query kredit:', errKredit);
+                return res.status(500).send('Terjadi kesalahan saat mengambil data kredit');
+            }
+
+            if (kreditResults.length === 0) {
+                return res.status(404).send('Data kredit tidak ditemukan');
+            }
+
+            // Query pembayaran
+            db.query(pembayaranQuery, [id], (errPembayaran, pembayaranResults) => {
+                if (errPembayaran) {
+                    console.error('Error query pembayaran:', errPembayaran);
+                    return res.status(500).send('Terjadi kesalahan saat mengambil data pembayaran');
+                }
+
+                // Render halaman dengan data
+                res.render('koperasi/kreditKeuangan/kreditBarang/bayarKreditBarang', {
+                    kredit: kreditResults[0],
+                    pembayaran: pembayaranResults || [] // Pastikan pembayaran selalu array
+                });
+            });
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Terjadi kesalahan saat memuat halaman pembayaran');
+    }
+};
+
+// Proses pembayaran kredit barang
+exports.prosesBayarKreditBarang = (req, res) => {
+    console.log('Payment request received:', {
+        kreditId: req.params.id,
+        body: req.body
+    });
+
+    // Mulai transaksi
+    db.beginTransaction((err) => {
+        if (err) {
+            return res.status(500).json({
+                success: false,
+                message: 'Gagal memulai transaksi',
+                error: err.message
+            });
+        }
+
+        const { id } = req.params;
+        const { tanggal_bayar, jumlah_bayar, keterangan } = req.body;
+
+        // Validasi input
+        if (!tanggal_bayar || !jumlah_bayar) {
+            return db.rollback(() => {
+                res.status(400).json({
+                    success: false,
+                    message: 'Tanggal dan jumlah bayar wajib diisi'
+                });
+            });
+        }
+
+        // Query untuk mendapatkan data kredit saat ini
+        db.query('SELECT * FROM kredit_barang WHERE id = ?', [id], (errKredit, kredits) => {
+            if (errKredit) {
+                return db.rollback(() => {
+                    res.status(500).json({
+                        success: false,
+                        message: 'Gagal mengambil data kredit',
+                        error: errKredit.message
+                    });
+                });
+            }
+            
+            if (kredits.length === 0) {
+                return db.rollback(() => {
+                    res.status(404).json({
+                        success: false,
+                        message: 'Kredit tidak ditemukan'
+                    });
+                });
+            }
+
+            const currentKredit = kredits[0];
+            
+            // Validasi jumlah bayar
+            const jumlahBayarNumeric = parseFloat(jumlah_bayar);
+            if (jumlahBayarNumeric > currentKredit.sisa_piutang) {
+                return db.rollback(() => {
+                    res.status(400).json({
+                        success: false,
+                        message: `Jumlah bayar tidak boleh melebihi sisa piutang (Rp ${currentKredit.sisa_piutang.toLocaleString()})`
+                    });
+                });
+            }
+
+            const newAngsuranKe = currentKredit.angsuran_ke + 1;
+            const newSisaPiutang = currentKredit.sisa_piutang - jumlahBayarNumeric;
+            const isLunas = newSisaPiutang <= 0 || newAngsuranKe >= currentKredit.jangka_waktu;
+
+            // Simpan pembayaran
+            db.query(
+                `INSERT INTO pembayaran (
+                    id_kredit_barang, 
+                    tanggal_bayar, 
+                    angsuran_ke, 
+                    jumlah_bayar, 
+                    ket
+                ) VALUES (?, ?, ?, ?, ?)`,
+                [
+                    id, 
+                    tanggal_bayar, 
+                    newAngsuranKe, 
+                    jumlahBayarNumeric, 
+                    keterangan || 'Pembayaran Angsuran'
+                ],
+                (errPembayaran) => {
+                    if (errPembayaran) {
+                        return db.rollback(() => {
+                            res.status(500).json({
+                                success: false,
+                                message: 'Gagal menyimpan pembayaran',
+                                error: errPembayaran.message
+                            });
+                        });
+                    }
+
+                    // Update status kredit
+                    db.query(
+                        `UPDATE kredit_barang 
+                        SET 
+                            angsuran_ke = ?,
+                            sisa_piutang = ?,
+                            ket_status = ?
+                        WHERE id = ?`,
+                        [
+                            newAngsuranKe, 
+                            newSisaPiutang, 
+                            isLunas ? 'Lunas' : 'Belum Lunas', 
+                            id
+                        ],
+                        (errUpdate) => {
+                            if (errUpdate) {
+                                return db.rollback(() => {
+                                    res.status(500).json({
+                                        success: false,
+                                        message: 'Gagal memperbarui status kredit',
+                                        error: errUpdate.message
+                                    });
+                                });
+                            }
+
+                            // Commit transaksi
+                            db.commit((errCommit) => {
+                                if (errCommit) {
+                                    return db.rollback(() => {
+                                        res.status(500).json({
+                                            success: false,
+                                            message: 'Gagal commit transaksi',
+                                            error: errCommit.message
+                                        });
+                                    });
+                                }
+
+                                // Kirim respon sukses
+                                res.status(200).json({
+                                    success: true,
+                                    message: 'Pembayaran berhasil disimpan',
+                                    angsuranKe: newAngsuranKe,
+                                    sisaPiutang: newSisaPiutang,
+                                    status: isLunas ? 'Lunas' : 'Belum Lunas'
+                                });
+                            });
+                        }
+                    );
+                }
+            );
+        });
+    });
+};
 
 
 // ==================================================

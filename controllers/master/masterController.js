@@ -2,6 +2,48 @@
 
 const db = require('../../config/database');
 
+exports.getDashboardData = (req, res) => {
+  const queryPegawai = 'SELECT COUNT(*) AS total_pegawai FROM pegawai';
+  const queryAnggota = 'SELECT COUNT(*) AS total_anggota FROM anggota';
+  const querySimpanan = 'SELECT SUM(simpanan_wajib + simpanan_pokok + simpanan_sukarela) AS total_simpanan FROM simpanan';
+  const queryPinjaman = 'SELECT SUM(jumlah_pinjaman) AS total_pinjaman FROM pinjaman';
+  const queryKredit = `
+    SELECT SUM(harga_pokok) AS total_kredit FROM kredit_barang 
+    UNION ALL 
+    SELECT SUM(jumlah_pinjaman) FROM kredit_motor 
+    UNION ALL 
+    SELECT SUM(jumlah_pinjaman) FROM kredit_elektronik 
+    UNION ALL 
+    SELECT SUM(jumlah_pinjaman) FROM kredit_umroh
+  `;
+
+  db.query(queryPegawai, (err, pegawaiResult) => {
+      if (err) throw err;
+      db.query(queryAnggota, (err, anggotaResult) => {
+          if (err) throw err;
+          db.query(querySimpanan, (err, simpananResult) => {
+              if (err) throw err;
+              db.query(queryPinjaman, (err, pinjamanResult) => {
+                  if (err) throw err;
+                  db.query(queryKredit, (err, kreditResult) => {
+                      if (err) throw err;
+
+                      const totalKredit = kreditResult.reduce((acc, curr) => acc + (curr.total_kredit || 0), 0);
+
+                      res.json({
+                          total_pegawai: pegawaiResult[0].total_pegawai,
+                          total_anggota: anggotaResult[0].total_anggota,
+                          total_simpanan: simpananResult[0].total_simpanan,
+                          total_pinjaman: pinjamanResult[0].total_pinjaman,
+                          total_kredit: totalKredit
+                      });
+                  });
+              });
+          });
+      });
+  });
+};
+
 exports.getPegawai = (req, res) => {
   const search = req.query.search || "";
   const query = `SELECT * FROM pegawai WHERE nama LIKE ? OR nip LIKE ? OR wilayah LIKE ?`;

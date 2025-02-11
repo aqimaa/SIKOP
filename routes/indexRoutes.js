@@ -38,6 +38,8 @@ router.post("/logout", loginController.logout);
 router.get("/dashboardSuperadmin", (req, res) => {
   res.render("dashboardSuperadmin");
 });
+// Route untuk mengambil data dashboard
+router.get("/api/dashboard", masterController.getDashboardData); 
 router.get("/dashboardPimpinan", (req, res) => {
   res.render("dashboardPimpinan");
 });
@@ -218,11 +220,9 @@ router.post("/master/anggota/ubahAnggota/:id", masterController.updateAnggota);
 router.delete("/master/anggota/delete/:id", masterController.deleteAnggota);
 
 //Route user
-// Menampilkan daftar user
+
 router.get("/master/user", masterController.getUser);
-// Menampilkan halaman edit user berdasarkan ID
 router.get("/master/user/editUser/:id", masterController.getUserById);
-// Menangani update user
 router.post("/master/user/editUser/:id", masterController.updateUser);
 router.get('/master/pegawai', masterController.getPegawai);
 router.get('/master/pegawai/tambahPegawai', (req, res) => {

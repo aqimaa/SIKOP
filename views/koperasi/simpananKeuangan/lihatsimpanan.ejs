@@ -128,47 +128,52 @@
 }
 
 
-        async function handleFilter() {
-            const anggota = document.getElementById('filterAnggota').value;
-            const tahun = document.getElementById('filterTahun').value;
-
-            try {
-                const queryParams = new URLSearchParams({ anggota, tahun }).toString();
-                const response = await fetch(`/api/simpanan/filter?${queryParams}`);
-                const data = await response.json();
-                showNotification('Data berhasil dimuat', 'info');
-
-                // Organize data by month
-                monthlySummaries = data.reduce((acc, item) => {
-                    const month = new Date(item.tanggal).getMonth();
-                    if (!acc[month]) {
-                        acc[month] = {
-                            items: [],
-                            total_wajib: 0,
-                            total_pokok: 0,
-                            total_sukarela: 0
-                        };
-                    }
-                    acc[month].items.push(item);
-                    acc[month].total_wajib += parseFloat(item.simpanan_wajib);
-                    acc[month].total_pokok += parseFloat(item.simpanan_pokok);
-                    acc[month].total_sukarela += parseFloat(item.simpanan_sukarela);
-                    return acc;
-                }, {});
-
-                renderData();
-            } catch (error) {
-                console.error('Error filtering data:', error);
-                showNotification('Gagal memuat data', 'error');
-
+async function handleFilter() {
+    const anggota = document.getElementById('filterAnggota').value;
+    const tahun = document.getElementById('filterTahun').value;
+    
+    try {
+        const queryParams = new URLSearchParams({ anggota, tahun }).toString();
+        const response = await fetch(`/api/simpanan/filter?${queryParams}`);
+        const data = await response.json();
+        
+        showNotification('Data berhasil dimuat', 'info');
+        
+        // Organize data by month and year
+        monthlySummaries = data.reduce((acc, item) => {
+            const date = new Date(item.tanggal);
+            const month = date.getMonth();
+            const year = date.getFullYear();
+            
+            if (!acc[month]) {
+                acc[month] = {
+                    items: [],
+                    total_wajib: 0,
+                    total_pokok: 0,
+                    total_sukarela: 0
+                };
             }
-        }
+            
+            acc[month].items.push(item);
+            acc[month].total_wajib += parseFloat(item.simpanan_wajib);
+            acc[month].total_pokok += parseFloat(item.simpanan_pokok);
+            acc[month].total_sukarela += parseFloat(item.simpanan_sukarela);
+            
+            return acc;
+        }, {});
 
-        function renderData() {
+        renderData();
+        
+    } catch (error) {
+        console.error('Error filtering data:', error);
+        showNotification('Gagal memuat data', 'error');
+    }
+}
+function renderData() {
     const container = document.getElementById('dataContainer');
     container.innerHTML = '';
+    const selectedYear = document.getElementById('filterTahun').value;
 
-    // Sort the items by name within each month
     months.forEach((month, index) => {
         const monthData = monthlySummaries[index] || {
             items: [],
@@ -179,8 +184,26 @@
 
         if (monthData.items.length === 0) return;
 
+        // Filter items berdasarkan tahun yang sesuai
+        const filteredItems = monthData.items.filter(item => {
+            const itemYear = new Date(item.tanggal).getFullYear();
+            // Jika "Semua Tahun" dipilih atau tahun sesuai
+            return !selectedYear || itemYear.toString() === selectedYear;
+        });
+
+        if (filteredItems.length === 0) return;
+
+        // Hitung ulang total untuk items yang sudah difilter
+        const totals = filteredItems.reduce((acc, item) => {
+            return {
+                total_wajib: acc.total_wajib + parseFloat(item.simpanan_wajib || 0),
+                total_pokok: acc.total_pokok + parseFloat(item.simpanan_pokok || 0),
+                total_sukarela: acc.total_sukarela + parseFloat(item.simpanan_sukarela || 0)
+            };
+        }, { total_wajib: 0, total_pokok: 0, total_sukarela: 0 });
+
         // Sort items by name
-        monthData.items.sort((a, b) => a.nama.localeCompare(b.nama));
+        filteredItems.sort((a, b) => a.nama.localeCompare(b.nama));
 
         const monthElement = document.createElement('div');
         monthElement.className = 'bg-white rounded-lg shadow overflow-hidden';
@@ -191,26 +214,27 @@
             >
                 <div class="flex items-center gap-4">
                     <span class="material-icons" id="icon-${index}">expand_more</span>
-                    <h3 class="font-semibold text-lg">${month}</h3>
-                    <span class="text-sm text-gray-500">${monthData.items.length} transaksi</span>
+                    <h3 class="font-semibold text-lg">${month}${selectedYear ? ` - ${selectedYear}` : ''}</h3>
+                    <span class="text-sm text-gray-500">${filteredItems.length} transaksi</span>
                 </div>
                 <div class="flex items-center gap-6">
                     <div class="grid grid-cols-3 gap-6 text-sm">
                         <div class="text-right">
                             <p class="text-gray-600">Simpanan Wajib</p>
-                            <p class="font-semibold">Rp ${monthData.total_wajib.toLocaleString('id-ID')}</p>
+                            <p class="font-semibold">Rp ${totals.total_wajib.toLocaleString('id-ID')}</p>
                         </div>
                         <div class="text-right">
                             <p class="text-gray-600">Simpanan Pokok</p>
-                            <p class="font-semibold">Rp ${monthData.total_pokok.toLocaleString('id-ID')}</p>
+                            <p class="font-semibold">Rp ${totals.total_pokok.toLocaleString('id-ID')}</p>
                         </div>
                         <div class="text-right">
                             <p class="text-gray-600">Simpanan Sukarela</p>
-                            <p class="font-semibold">Rp ${monthData.total_sukarela.toLocaleString('id-ID')}</p>
+                            <p class="font-semibold">Rp ${totals.total_sukarela.toLocaleString('id-ID')}</p>
                         </div>
                     </div>
                 </div>
             </button>
+            <!-- Table content -->
             <div id="content-${index}" class="hidden border-t">
                 <div class="overflow-x-auto">
                     <table class="w-full">
@@ -227,7 +251,7 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
-                            ${monthData.items.map((item, idx) => `
+                            ${filteredItems.map((item, idx) => `
                                 <tr class="hover:bg-gray-50 transition-colors">
                                     <td class="px-6 py-4 cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${idx + 1}</td>
                                     <td class="px-6 py-4 cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${item.nip}</td>

@@ -6,10 +6,12 @@
     <title>Dashboard Pimpinan</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 </head>
 <body class="flex">
-    <!-- Sidebar -->
-    <div class="w-72 text-white min-h-screen p-4 fixed" style="background-color: #5D8736;">
+     <!-- Sidebar -->
+     <div class="w-72 text-white min-h-screen p-4 fixed" style="background-color: #5D8736;">
         <div class="flex items-center mb-8">
             <img src="/images/logo.png" alt="Logo" class="w-16 h-16 mr-7">
             <div>
@@ -26,37 +28,63 @@
                     </a>
                 </li>
                 <li>
-                    <button onclick="toggleDropdown()" class="flex items-center justify-between w-full focus:outline-none">
+                    <button onclick="toggleDropdown('mainDropdown', event)" class="flex items-center justify-between w-full focus:outline-none">
                         <div class="flex items-center">
                             <a href="#" class="flex items-center block p-6 py-3 hover:">
                                 <img src="/images/lihatdata.png" alt="lihat data icon" class="w=5 h-5 ">
                                 <span class="ml-2 text-xl ml-5">Lihat Data</span>
                             </a>
                         </div>
-                        <img src="/images/angle-small-down.png" alt="dropdown icon" class="w-6 h-6 transform transition-transform" id="dropdownIcon">
+                        <img src="/images/angle-small-down.png" alt="dropdown icon" class="w-6 h-6 transform transition-transform" id="mainDropdownIcon">
                     </button>
-                    <ul id="dropdownMenu" class="pl-6 hidden">
+                    <ul id="mainDropdown" class="pl-6 hidden">
                         <li class="mb-2">
                             <a href="/simpananPimpinan" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Data Simpanan</a>
                         </li>
                         <li class="mb-2">
                             <a href="/pinjamanPimpinan" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Data Pinjaman</a>
                         </li>
-                        <li class="mb-3">
+                        <li class="mb-2">
                             <a href="/kreditPimpinan" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">Data Kredit</a>
                         </li>
                     </ul>
                 </li>
             </ul>
         </nav>
-    </div>
-    
-    <script>
-    function toggleDropdown() {
-        const dropdownMenu = document.getElementById('dropdownMenu');
+        <!-- Log Out Button di Bawah -->
+        <div class="absolute bottom-0 left-0 w-full p-4">
+            <button onclick="logout()" class="flex items-center w-full p-6 py-3 hover:bg-green-900 rounded transition duration-300">
+                <span class="material-icons">logout</span>
+                <span class="ml-5 text-xl">Log Out</span>
+            </button>
+        </div>
+
+        <script>
+        function logout() {
+            if (confirm("Yakin ingin keluar?")) {
+                fetch('/logout', { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert("Anda berhasil logout");
+                            window.location.href = "/login";
+                        } else {
+                            alert("Gagal logout, coba lagi.");
+                        }
+                    })
+                    .catch(error => console.error('Logout error:', error));
+            }
+        }
+
+        // Dropdown toggle
+        function toggleDropdown(dropdownId, event) {
+        event.stopPropagation(); // Menghentikan event bubbling
+        const dropdownMenu = document.getElementById(dropdownId);
+        const dropdownIcon = document.getElementById(dropdownId + 'Icon');
         dropdownMenu.classList.toggle('hidden');
-    }
-    </script>
+        dropdownIcon.classList.toggle('rotate-180'); }
+        </script>
+    </div>
 
      <!-- Main Content -->
      <div class="flex-1 bg-gray-100 ml-72">
@@ -96,7 +124,7 @@
                         <select id="jenis" name="jenis" class="border rounded-lg px-5 py-3 w-60 bg-white" required>
                             <option value="">Pilih Kredit</option>
                             <% jenisKredit.forEach(jenis => { %>
-                                <option value="<%= jenis %>"><%= jenis.replace('kredit_', '').toUpperCase() %></option>
+                                <option value="<%= jenis %>"><%= jenis.replace('kredit_', '').replace(/\b\w/g, char => char.toUpperCase()) %></option>
                             <% }); %>
                         </select>
                     </div>
@@ -195,7 +223,7 @@
                         <td class="px-6 py-4">${index + 1}</td>
                         <td class="px-6 py-4">${row.nip}</td>
                         <td class="px-6 py-4">${row.nama}</td>
-                        <td class="px-6 py-4">${row.jenis.replace('kredit_', '').toUpperCase()}</td>
+                        <td class="px-6 py-4">${row.jenis.replace('kredit_', '').replace(/\b\w/g, char => char.toUpperCase())}</td>
                         <td class="px-6 py-4">${row.jangka_waktu} Bulan</td>
                         <td class="px-6 py-4">${Number(row.jumlah).toLocaleString('id-ID')}</td>
                     </tr>

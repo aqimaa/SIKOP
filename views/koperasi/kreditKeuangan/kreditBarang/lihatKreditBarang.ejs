@@ -64,8 +64,7 @@
                 <tbody>
                     <% if (data && data.length > 0) { %>
                         <% data.forEach((item, index) => { %>
-                            <tr class="border-b hover:bg-[#A4C68C] transition duration-200">
-
+                            <tr id="row-<%= item.id %>" class="border-b hover:bg-[#A4C68C] transition duration-200">
                                 <td class="p-4 text-center"><%= index + 1 %></td>
                                 <td class="p-4"><%= item.nama_anggota %></td>
                                 <td class="p-4 text-right">Rp <%= item.harga_pokok ? item.harga_pokok.toLocaleString('id-ID') : '0' %></td>
@@ -93,7 +92,7 @@
                                         </a>
                                 
                                         <!-- Tombol Hapus -->
-                                        <button onclick="hapusKredit('<%= item.id %>')"
+                                        <button onclick="deleteKreditBarang('<%= item.id %>')"
                                             class="flex items-center px-3 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition duration-300">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
                                                 <path fill-rule="evenodd" d="M7 4a1 1 0 011-1h4a1 1 0 011 1h4a1 1 0 110 2H4a1 1 0 110-2h3zM5 7a1 1 0 011-1h8a1 1 0 011 1v8a1 1 0 01-1 1H6a1 1 0 01-1-1V7z" clip-rule="evenodd"/>
@@ -117,23 +116,32 @@
     </div>
 
     <script>
-        function hapusKredit(id) {
-            if (confirm("Apakah Anda yakin ingin menghapus data ini?")) {
-                fetch(`/kredit-barang/${id}`, {
-                    method: "DELETE"
-                })
-                .then(response => {
-                    if (response.ok) {
-                        document.getElementById(`row-${id}`).remove();
-                        alert("Data berhasil dihapus!");
-                    } else {
-                        alert("Gagal menghapus data!");
+        function deleteKreditBarang(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                    fetch(`/kredit-barang/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
                     }
                 })
-                .catch(error => console.error("Error:", error));
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        // Hapus row dari tabel tanpa refresh
+                        document.getElementById(`row-${id}`).remove();
+                    } else {
+                        alert(data.message || 'Gagal menghapus data');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat menghapus data');
+                });
             }
         }
     </script>
+
 
 
 </body>

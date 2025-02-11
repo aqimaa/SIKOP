@@ -73,13 +73,15 @@ exports.tambahKreditUmroh = async (req, res) => {
     total_angsuran,
     pokok,
     margin,
-    tanggal_mulai
+    margin_persen,
+    tanggal_mulai,
+    sisa_piutang
   } = req.body;
 
   const query = `
     INSERT INTO kredit_umroh 
-    (id_anggota, jumlah_pinjaman, jangka_waktu, total_angsuran, pokok, margin, sisa_piutang, tanggal_mulai, ket_status, angsuran_ke)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    (id_anggota, jumlah_pinjaman, jangka_waktu, total_angsuran, pokok, margin, sisa_piutang, tanggal_mulai, ket_status, angsuran_ke, margin_persen)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   const values = [
@@ -89,10 +91,11 @@ exports.tambahKreditUmroh = async (req, res) => {
     total_angsuran,
     pokok,
     margin,
-    jumlah_pinjaman, // Sisa piutang awal
+    sisa_piutang, // Sisa piutang awal
     tanggal_mulai,
     'Belum Lunas', // Status awal
-    0 // Inisialisasi angsuran_ke dengan 0
+    0, // Inisialisasi angsuran_ke dengan 0
+    margin_persen // Margin persen
   ];
 
   db.query(query, values, (error, results) => {

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bayar Pinjaman</title>
+    <title>Dashboard Admin Keuangan</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
@@ -17,7 +17,7 @@
             <h1 class="text-2xl"></h1>
             <div class="flex items-center">
                 <span>Admin Keuangan</span>
-                <img src="/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
+                <img src="/public/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
             </div>
         </div>
 
@@ -25,98 +25,106 @@
             <h1 class="text-2xl font-bold mb-8">Bayar Angsuran</h1>
         </div>
 
-        <!-- Informasi Pinjaman -->
+        <!-- Informasi Kredit -->
         <div class="bg-blue-100 p-6 rounded-md shadow-md mb-6">
-            <h3 class="text-xl font-semibold mb-4">Informasi Pinjaman</h3>
+            <h3 class="text-xl font-semibold mb-4">Informasi Kredit</h3>
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <p>No. Anggota</p>
-                    <p class="font-bold"><%= pinjaman.id_anggota %></p>
+                    <p class="font-bold">001</p>
                 </div>
                 <div>
                     <p>Nama Anggota</p>
-                    <p class="font-bold"><%= pinjaman.nama_anggota %></p>
+                    <p class="font-bold">Adriani Adnani</p>
                 </div>
                 <div>
-                    <p>Jumlah Pinjaman</p>
-                    <p class="font-bold"><%= pinjaman.jumlah_pinjaman.toLocaleString() %></p>
+                    <p>Harga Pokok</p>
+                    <p class="font-bold">262.500</p>
                 </div>
                 <div>
                     <p>Jangka Waktu (bulan)</p>
-                    <p class="font-bold"><%= pinjaman.jangka_waktu %></p>
+                    <p class="font-bold">9</p>
                 </div>
                 <div>
                     <p>Angsuran Ke</p>
-                    <p class="font-bold"><%= pinjaman.angsuran_ke || 0 %> dari <%= pinjaman.jangka_waktu %></p>
+                    <p class="font-bold">5 dari 9</p>
                 </div>
                 <div>
                     <p>Sisa Piutang</p>
-                    <p class="font-bold"><%= pinjaman.sisa_piutang.toLocaleString() %></p>
+                    <p class="font-bold">105.000</p>
                 </div>
                 <div>
                     <p>Angsuran Per Bulan</p>
-                    <p class="font-bold"><%= pinjaman.total_angsuran.toLocaleString() %></p>
+                    <p class="font-bold">28.000</p>
                 </div>
             </div>
         </div>
 
-        <!-- Form Pembayaran -->
-        <form action="/pinjaman/bayar/<%= pinjaman.id %>" method="POST">
-            <div class="bg-green-100 p-6 rounded-md shadow-md mb-6">
-                <h3 class="text-xl font-semibold mb-4">Detail Pembayaran</h3>
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Tanggal Pembayaran</label>
-                        <input type="date" name="tanggal_bayar" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Jumlah Bayar</label>
-                        <input type="text" name="jumlah_bayar" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" required oninput="validateNumberInput(this)">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Keterangan</label>
-                        <input type="text" name="keterangan" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2">
-                    </div>
+        <!-- Detail Pembayaran -->
+        <div class="bg-green-100 p-6 rounded-md shadow-md mb-6">
+            <h3 class="text-xl font-semibold mb-4">Detail Pembayaran</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Tanggal Pembayaran</label>
+                    <input type="text" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Jumlah Bayar</label>
+                    <input type="text" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Keterangan</label>
+                    <input type="text" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2">
                 </div>
             </div>
+        </div>
 
-            <!-- Rincian Pembayaran -->
-            <div class="bg-white p-6 rounded-md shadow-md mb-6">
-                <h3 class="text-xl font-semibold mb-4">Rincian Pembayaran</h3>
-                <table class="min-w-full divide-y divide-gray-200">
+        <!-- Rincian Pembayaran -->
+        <div class="bg-white p-6 rounded-md shadow-md mb-6">
+            <h3 class="text-xl font-semibold mb-4">Rincian Pembayaran</h3>
+            <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Angsuran Ke</th> <!-- Kolom baru -->
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keterangan</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Angsuran Ke</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keterangan</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    <% if (riwayatPembayaran && riwayatPembayaran.length > 0) { %>
-                    <% riwayatPembayaran.forEach((pembayaran) => { %>
-                        <tr>
-                        <td class="px-6 py-4 whitespace-nowrap"><%= pembayaran.tanggal_bayar.toISOString().split('T')[0] %></td>
-                        <td class="px-6 py-4 whitespace-nowrap"><%= pembayaran.angsuran_ke %></td> 
-                        <td class="px-6 py-4 whitespace-nowrap"><%= pembayaran.jumlah_bayar.toLocaleString() %></td>
-                        <td class="px-6 py-4 whitespace-nowrap"><%= pembayaran.ket %></td>
-                        </tr>
-                    <% }) %>
-                    <% } else { %>
                     <tr>
-                        <td colspan="4" class="px-6 py-4 text-center">Belum ada riwayat pembayaran.</td>
+                        <td class="px-6 py-4 whitespace-nowrap">2023-07-16</td>
+                        <td class="px-6 py-4 whitespace-nowrap">4</td>
+                        <td class="px-6 py-4 whitespace-nowrap">28.000</td>
+                        <td class="px-6 py-4 whitespace-nowrap"></td>
                     </tr>
-                    <% } %>
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">2023-06-16</td>
+                        <td class="px-6 py-4 whitespace-nowrap">3</td>
+                        <td class="px-6 py-4 whitespace-nowrap">28.000</td>
+                        <td class="px-6 py-4 whitespace-nowrap"></td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">2023-05-16</td>
+                        <td class="px-6 py-4 whitespace-nowrap">2</td>
+                        <td class="px-6 py-4 whitespace-nowrap">28.000</td>
+                        <td class="px-6 py-4 whitespace-nowrap"></td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">2023-04-16</td>
+                        <td class="px-6 py-4 whitespace-nowrap">1</td>
+                        <td class="px-6 py-4 whitespace-nowrap">28.000</td>
+                        <td class="px-6 py-4 whitespace-nowrap"></td>
+                    </tr>
                 </tbody>
-                </table>
-            </div>
+            </table>
+        </div>
 
-            <!-- Buttons -->
-            <div class="flex space-x-4 mt-8">
-                <button type="button" onclick="window.history.back()" class="flex-1 border py-2 px-4 rounded-md" style="border-color: #5D8736; color: #5D8736;">Batal</button>
-                <button type="submit" class="flex-1 bg-[#5D8736] text-white py-2 px-4 rounded-md" style="background-color: #5D8736;">Simpan</button>
-            </div>
-        </form>
+        <!-- Buttons -->
+        <div class="flex space-x-4 mt-8">
+            <button class="flex-1 border py-2 px-4 rounded-md" style="border-color: #5D8736; color: #5D8736;">Batal</button>
+            <button class="flex-1 bg-[#5D8736] text-white py-2 px-4 rounded-md" style="background-color: #5D8736;">Simpan</button>
+        </div>
     </div>
 </body>
 </html>

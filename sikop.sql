@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 10, 2025 at 06:15 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.1.25
+-- Waktu pembuatan: 31 Jan 2025 pada 07.41
+-- Versi server: 10.4.32-MariaDB
+-- Versi PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,40 +24,40 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `anggota`
+-- Struktur dari tabel `anggota`
 --
 
 CREATE TABLE `anggota` (
   `id` int(11) NOT NULL,
-  `nip_anggota` varchar(30) DEFAULT NULL,
+  `nip_anggota` varchar(30) DEFAULT NULL, 
   `status` enum('Aktif','Tidak Aktif') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `anggota`
+-- Dumping data untuk tabel `anggota`
 --
 
 INSERT INTO `anggota` (`id`, `nip_anggota`, `status`) VALUES
-(1, '197810092005011002', 'Aktif'),
-(2, '198512102006011003', 'Aktif'),
-(3, '199003152007011004', 'Aktif'),
-(4, '198704202008011005', 'Aktif'),
-(5, '199205252009011006', 'Aktif'),
-(6, '198809302010011007', 'Aktif'),
-(7, '199101052011011008', 'Aktif'),
-(8, '198602152012011009', 'Aktif'),
-(9, '199308202013011010', 'Aktif'),
-(10, '198710252014011011', 'Aktif'),
-(11, '199412302015011012', 'Aktif'),
-(12, '198503052016011013', 'Aktif'),
-(13, '199206102017011014', 'Aktif'),
-(14, '198907152018011015', 'Aktif'),
-(15, '199310202019011016', 'Aktif');
+(1, 197810092005011002, 'Aktif'),
+(2, 198512102006011003, 'Aktif'),
+(3, 199003152007011004, 'Aktif'),
+(4, 198704202008011005, 'Aktif'),
+(5, 199205252009011006, 'Aktif'),
+(6, 198809302010011007, 'Aktif'),
+(7, 199101052011011008, 'Aktif'),
+(8, 198602152012011009, 'Aktif'),
+(9, 199308202013011010, 'Aktif'),
+(10, 198710252014011011, 'Aktif'),
+(11, 199412302015011012, 'Aktif'),
+(12, 198503052016011013, 'Aktif'),
+(13, 199206102017011014, 'Aktif'),
+(14, 198907152018011015, 'Aktif'),
+(15, 199310202019011016, 'Aktif');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `kredit_barang`
+-- Struktur dari tabel `kredit_barang`
 --
 
 CREATE TABLE `kredit_barang` (
@@ -76,7 +76,7 @@ CREATE TABLE `kredit_barang` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `kredit_barang`
+-- Dumping data untuk tabel `kredit_barang`
 --
 
 INSERT INTO `kredit_barang` (`id`, `id_anggota`, `harga_pokok`, `jangka_waktu`, `pokok_dp`, `total_angsuran`, `pokok`, `margin`, `angsuran_ke`, `sisa_piutang`, `tanggal_mulai`, `ket_status`) VALUES
@@ -99,7 +99,7 @@ INSERT INTO `kredit_barang` (`id`, `id_anggota`, `harga_pokok`, `jangka_waktu`, 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `kredit_elektronik`
+-- Struktur dari tabel `kredit_elektronik`
 --
 
 CREATE TABLE `kredit_elektronik` (
@@ -117,7 +117,7 @@ CREATE TABLE `kredit_elektronik` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `kredit_elektronik`
+-- Dumping data untuk tabel `kredit_elektronik`
 --
 
 INSERT INTO `kredit_elektronik` (`id`, `id_anggota`, `jumlah_pinjaman`, `jangka_waktu`, `total_angsuran`, `pokok`, `margin`, `angsuran_ke`, `sisa_piutang`, `tanggal_mulai`, `ket_status`) VALUES
@@ -140,7 +140,7 @@ INSERT INTO `kredit_elektronik` (`id`, `id_anggota`, `jumlah_pinjaman`, `jangka_
 -- --------------------------------------------------------
 
 --
--- Table structure for table `kredit_motor`
+-- Struktur dari tabel `kredit_motor`
 --
 
 CREATE TABLE `kredit_motor` (
@@ -158,7 +158,7 @@ CREATE TABLE `kredit_motor` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `kredit_motor`
+-- Dumping data untuk tabel `kredit_motor`
 --
 
 INSERT INTO `kredit_motor` (`id`, `id_anggota`, `jumlah_pinjaman`, `jangka_waktu`, `total_angsuran`, `pokok`, `margin`, `angsuran_ke`, `sisa_piutang`, `tanggal_mulai`, `ket_status`) VALUES
@@ -181,7 +181,7 @@ INSERT INTO `kredit_motor` (`id`, `id_anggota`, `jumlah_pinjaman`, `jangka_waktu
 -- --------------------------------------------------------
 
 --
--- Table structure for table `kredit_umroh`
+-- Struktur dari tabel `kredit_umroh`
 --
 
 CREATE TABLE `kredit_umroh` (
@@ -199,7 +199,7 @@ CREATE TABLE `kredit_umroh` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `kredit_umroh`
+-- Dumping data untuk tabel `kredit_umroh`
 --
 
 INSERT INTO `kredit_umroh` (`id`, `id_anggota`, `jumlah_pinjaman`, `jangka_waktu`, `total_angsuran`, `pokok`, `margin`, `angsuran_ke`, `sisa_piutang`, `tanggal_mulai`, `ket_status`) VALUES
@@ -222,7 +222,7 @@ INSERT INTO `kredit_umroh` (`id`, `id_anggota`, `jumlah_pinjaman`, `jangka_waktu
 -- --------------------------------------------------------
 
 --
--- Table structure for table `pegawai`
+-- Struktur dari tabel `pegawai`
 --
 
 CREATE TABLE `pegawai` (
@@ -232,30 +232,30 @@ CREATE TABLE `pegawai` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `pegawai`
+-- Dumping data untuk tabel `pegawai`
 --
 
 INSERT INTO `pegawai` (`nip`, `nama`, `wilayah`) VALUES
-('197810092005011002', 'AHMAD HIDAYAT S.Psi', 'Sumatra Barat'),
-('198503052016011013', 'LUKMAN HAKIM', 'Sumatra Barat'),
-('198512102006011003', 'BUDI SANTOSO', 'Sumatra Barat'),
-('198602152012011009', 'HENDRA GUNAWAN', 'Sumatra Barat'),
-('198704202008011005', 'DEDI PRASETYO', 'Jambi'),
-('198710252014011011', 'JOKO SUSILO', 'Sumatra Barat'),
-('198809302010011007', 'FARID HIDAYAT', 'Kep. Riau'),
-('198907152018011015', 'NURHADI', 'Sumatra Barat'),
-('199003152007011004', 'CITRA DEWI', 'Riau'),
-('199101052011011008', 'GITA ANANDA', 'Jambi'),
-('199205252009011006', 'ERNA WATI', 'Jambi'),
-('199206102017011014', 'MIRA WATI', 'Riau'),
-('199308202013011010', 'IRMA YULIANA', 'Jambi'),
-('199310202019011016', 'OKTAVIA DEWI', 'Kep. Riau'),
-('199412302015011012', 'KARTIKA SARI', 'Kep. Riau');
+(197810092005011002, 'AHMAD HIDAYAT S.Psi', 'Sumatra Barat'),
+(198503052016011013, 'LUKMAN HAKIM', 'Sumatra Barat'),
+(198512102006011003, 'BUDI SANTOSO', 'Sumatra Barat'),
+(198602152012011009, 'HENDRA GUNAWAN', 'Sumatra Barat'),
+(198704202008011005, 'DEDI PRASETYO', 'Jambi'),
+(198710252014011011, 'JOKO SUSILO', 'Sumatra Barat'),
+(198809302010011007, 'FARID HIDAYAT', 'Kep. Riau'),
+(198907152018011015, 'NURHADI', 'Sumatra Barat'),
+(199003152007011004, 'CITRA DEWI', 'Riau'),
+(199101052011011008, 'GITA ANANDA', 'Jambi'),
+(199205252009011006, 'ERNA WATI', 'Jambi'),
+(199206102017011014, 'MIRA WATI', 'Riau'),
+(199308202013011010, 'IRMA YULIANA', 'Jambi'),
+(199310202019011016, 'OKTAVIA DEWI', 'Kep. Riau'),
+(199412302015011012, 'KARTIKA SARI', 'Kep. Riau');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `pembayaran`
+-- Struktur dari tabel `pembayaran`
 --
 
 CREATE TABLE `pembayaran` (
@@ -272,7 +272,7 @@ CREATE TABLE `pembayaran` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `pembayaran`
+-- Dumping data untuk tabel `pembayaran`
 --
 
 INSERT INTO `pembayaran` (`id`, `id_kredit_barang`, `id_kredit_motor`, `id_kredit_elektronik`, `id_kredit_umroh`, `id_pinjaman`, `tanggal_bayar`, `angsuran_ke`, `jumlah_bayar`, `ket`) VALUES
@@ -290,23 +290,12 @@ INSERT INTO `pembayaran` (`id`, `id_kredit_barang`, `id_kredit_motor`, `id_kredi
 (12, 12, NULL, NULL, NULL, NULL, '2025-03-20', 1, 300000.00, 'Pembayaran Angsuran Kredit Barang'),
 (13, 13, NULL, NULL, NULL, NULL, '2025-03-25', 1, 225000.00, 'Pembayaran Angsuran Kredit Barang'),
 (14, 14, NULL, NULL, NULL, NULL, '2025-03-30', 1, 225000.00, 'Pembayaran Angsuran Kredit Barang'),
-(15, 15, NULL, NULL, NULL, NULL, '2025-04-01', 1, 262500.00, 'Pembayaran Angsuran Kredit Barang'),
-(38, NULL, NULL, NULL, NULL, 43, '2025-01-31', 1, 1.00, 'belum lunas'),
-(39, NULL, NULL, NULL, NULL, 43, '2025-01-31', 1, 1.00, 'belum lunas'),
-(40, NULL, NULL, NULL, NULL, 43, '2025-01-31', 1, 1.00, 'belum lunas'),
-(41, NULL, NULL, NULL, NULL, 43, '2025-02-01', 1, 1413333.33, ''),
-(42, NULL, NULL, NULL, NULL, 43, '2025-02-02', 2, 1.00, 'belum lunas'),
-(43, NULL, NULL, NULL, NULL, 43, '2025-02-02', 2, 1413333.33, 'belum'),
-(44, NULL, NULL, NULL, NULL, 43, '2025-02-03', 3, 1413333.33, '-'),
-(45, NULL, NULL, NULL, NULL, 43, '2025-02-04', 4, 1413333.33, ''),
-(46, NULL, NULL, NULL, NULL, 43, '2025-02-05', 5, 1413333.33, ''),
-(47, NULL, NULL, NULL, NULL, 43, '2025-02-09', 6, 1413333.33, 'LUNAS'),
-(48, NULL, NULL, NULL, NULL, 50, '2025-02-10', 1, 948600.23, 'langsung semua');
+(15, 15, NULL, NULL, NULL, NULL, '2025-04-01', 1, 262500.00, 'Pembayaran Angsuran Kredit Barang');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `pinjaman`
+-- Struktur dari tabel `pinjaman`
 --
 
 CREATE TABLE `pinjaman` (
@@ -321,29 +310,34 @@ CREATE TABLE `pinjaman` (
   `total_angsuran` decimal(10,2) DEFAULT NULL,
   `sisa_piutang` decimal(10,2) DEFAULT NULL,
   `tanggal_perjanjian` date DEFAULT NULL,
-  `ket_status` varchar(100) DEFAULT 'Belum Lunas',
-  `angsuran_ke` int(11) DEFAULT 0
+  `ket_status` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `pinjaman`
+-- Dumping data untuk tabel `pinjaman`
 --
 
-INSERT INTO `pinjaman` (`id`, `id_anggota`, `kategori`, `jumlah_pinjaman`, `jangka_waktu`, `margin_persen`, `angsuran_pokok`, `margin_per_bulan`, `total_angsuran`, `sisa_piutang`, `tanggal_perjanjian`, `ket_status`, `angsuran_ke`) VALUES
-(42, 8, 'jangka panjang', 24000000.00, 24, 1.00, 1000000.00, 240000.00, 1240000.00, 29760000.00, '2025-01-19', 'Belum Lunas', 0),
-(43, 6, 'jangka pendek', 8000000.00, 6, 1.00, 1333333.33, 80000.00, 1413333.33, 0.00, '2025-01-28', 'Lunas', 6),
-(44, 1, 'jangka panjang', 15000000.00, 18, 1.00, 833333.33, 150000.00, 983333.33, 17699999.94, '2025-01-08', 'Belum Lunas', 0),
-(45, 11, 'jangka panjang', 750000.00, 3, 1.00, 250000.00, 7500.00, 257500.00, 772500.00, '2025-02-07', 'Belum Lunas', 0),
-(47, 4, 'jangka pendek', 870000.00, 2, 1.25, 435000.00, 10875.00, 445875.00, 891750.00, '2025-02-08', 'Belum Lunas', 0),
-(48, 7, 'jangka panjang', 15750000.00, 20, 2.50, 787500.00, 393750.00, 1181250.00, 23625000.00, '2025-01-09', 'Belum Lunas', 0),
-(49, 14, 'jangka pendek', 8000000.00, 6, 1.25, 1333333.33, 100000.00, 1433333.33, 8599999.98, '2025-01-02', 'Belum Lunas', 0),
-(50, 2, 'jangka pendek', 765000.23, 12, 2.23, 63750.46, 15300.12, 79050.32, 0.00, '2025-02-11', 'Lunas', 1),
-(51, 3, 'jangka pendek', 2000000.00, 6, 2.00, 333333.33, 40000.00, 373333.33, 2239999.98, '2025-01-31', 'Belum Lunas', 0);
+INSERT INTO `pinjaman` (`id`, `id_anggota`, `kategori`, `jumlah_pinjaman`, `jangka_waktu`, `margin_persen`, `angsuran_pokok`, `margin_per_bulan`, `total_angsuran`, `sisa_piutang`, `tanggal_perjanjian`, `ket_status`) VALUES
+(1, 1, 'jangka panjang', 5000000.00, 12, 1.50, 416666.67, 75000.00, 491666.67, 5000000.00, '2025-01-30', 'Lunas'),
+(2, 2, 'jangka pendek', 6000000.00, 6, 2.00, 1000000.00, 120000.00, 1120000.00, 6000000.00, '2025-02-01', 'Lunas'),
+(3, 3, 'jangka panjang', 7000000.00, 12, 1.75, 583333.33, 102083.33, 685416.67, 7000000.00, '2025-02-05', 'Lunas'),
+(4, 4, 'jangka pendek', 8000000.00, 6, 2.25, 1333333.33, 150000.00, 1483333.33, 8000000.00, '2025-02-10', 'Lunas'),
+(5, 5, 'jangka panjang', 9000000.00, 12, 1.50, 750000.00, 112500.00, 862500.00, 9000000.00, '2025-02-15', 'Lunas'),
+(6, 6, 'jangka pendek', 10000000.00, 6, 2.00, 1666666.67, 200000.00, 1866666.67, 10000000.00, '2025-02-20', 'Lunas'),
+(7, 7, 'jangka panjang', 11000000.00, 12, 1.75, 916666.67, 160416.67, 1077083.33, 11000000.00, '2025-02-25', 'Lunas'),
+(8, 8, 'jangka pendek', 12000000.00, 6, 2.25, 2000000.00, 225000.00, 2225000.00, 12000000.00, '2025-03-01', 'Lunas'),
+(9, 9, 'jangka panjang', 13000000.00, 12, 1.50, 1083333.33, 162500.00, 1245833.33, 13000000.00, '2025-03-05', 'Lunas'),
+(10, 10, 'jangka pendek', 14000000.00, 6, 2.00, 2333333.33, 280000.00, 2613333.33, 14000000.00, '2025-03-10', 'Lunas'),
+(11, 11, 'jangka panjang', 15000000.00, 12, 1.75, 1250000.00, 218750.00, 1468750.00, 15000000.00, '2025-03-15', 'Lunas'),
+(12, 12, 'jangka pendek', 16000000.00, 6, 2.25, 2666666.67, 300000.00, 2966666.67, 16000000.00, '2025-03-20', 'Lunas'),
+(13, 13, 'jangka panjang', 17000000.00, 12, 1.50, 1416666.67, 212500.00, 1629166.67, 17000000.00, '2025-03-25', 'Lunas'),
+(14, 14, 'jangka pendek', 18000000.00, 6, 2.00, 3000000.00, 360000.00, 3360000.00, 18000000.00, '2025-03-30', 'Lunas'),
+(15, 15, 'jangka panjang', 19000000.00, 12, 1.75, 1583333.33, 277083.33, 1860416.67, 19000000.00, '2025-04-01', 'Lunas');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `simpanan`
+-- Struktur dari tabel `simpanan`
 --
 
 CREATE TABLE `simpanan` (
@@ -357,11 +351,11 @@ CREATE TABLE `simpanan` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `simpanan`
+-- Dumping data untuk tabel `simpanan`
 --
 
 INSERT INTO `simpanan` (`id`, `id_anggota`, `tanggal`, `simpanan_wajib`, `simpanan_pokok`, `simpanan_sukarela`, `metode_bayar`) VALUES
-(1, 1, '2025-01-30', 100000.00, 500001.00, 2500000.00, ''),
+(1, 1, '2025-01-30', 100000.00, 500000.00, 250000.00, 'Transfer'),
 (2, 2, '2025-02-01', 150000.00, 600000.00, 300000.00, 'Tunai'),
 (3, 3, '2025-02-05', 200000.00, 700000.00, 350000.00, 'Transfer'),
 (4, 4, '2025-02-10', 250000.00, 800000.00, 400000.00, 'Tunai'),
@@ -375,8 +369,7 @@ INSERT INTO `simpanan` (`id`, `id_anggota`, `tanggal`, `simpanan_wajib`, `simpan
 (12, 12, '2025-03-20', 650000.00, 1600000.00, 800000.00, 'Tunai'),
 (13, 13, '2025-03-25', 700000.00, 1700000.00, 850000.00, 'Transfer'),
 (14, 14, '2025-03-30', 750000.00, 1800000.00, 900000.00, 'Tunai'),
-(15, 15, '2025-04-01', 800000.00, 1900000.00, 950000.00, 'Transfer'),
-(16, 1, '2025-02-10', 150000.00, 100000.00, 0.00, 'transfer');
+(15, 15, '2025-04-01', 800000.00, 1900000.00, 950000.00, 'Transfer');
 
 -- --------------------------------------------------------
 
@@ -400,14 +393,12 @@ CREATE TABLE `simpanan_history` (
 --
 
 INSERT INTO `simpanan_history` (`id`, `simpanan_id`, `id_anggota`, `action_type`, `old_data`, `new_data`, `changed_by`, `action_date`) VALUES
-(43, 20, 1, 'buat', NULL, '{\"id\":20,\"id_anggota\":\"1\",\"tanggal\":\"2025-02-04\",\"simpanan_wajib\":100000,\"simpanan_pokok\":100000,\"simpanan_sukarela\":0,\"metode_bayar\":\"cash\"}', 'system', '2025-02-04 04:30:58'),
-(0, 1, 1, 'edit', '{\"id\":1,\"id_anggota\":1,\"tanggal\":\"2025-01-29T17:00:00.000Z\",\"simpanan_wajib\":100000,\"simpanan_pokok\":500000,\"simpanan_sukarela\":250000,\"metode_bayar\":\"Transfer\"}', '{\"simpanan_wajib\":100000,\"simpanan_pokok\":500001,\"simpanan_sukarela\":2500000,\"metode_bayar\":\"\"}', 'system', '2025-02-10 02:21:20'),
-(0, 16, 1, 'buat', NULL, '{\"id\":16,\"id_anggota\":\"1\",\"tanggal\":\"2025-02-10\",\"simpanan_wajib\":150000,\"simpanan_pokok\":100000,\"simpanan_sukarela\":0,\"metode_bayar\":\"transfer\"}', 'system', '2025-02-10 08:01:18');
+(43, 20, 1, 'buat', NULL, '{\"id\":20,\"id_anggota\":\"1\",\"tanggal\":\"2025-02-04\",\"simpanan_wajib\":100000,\"simpanan_pokok\":100000,\"simpanan_sukarela\":0,\"metode_bayar\":\"cash\"}', 'system', '2025-02-04 04:30:58');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `users`
+-- Struktur dari tabel `users`
 --
 
 CREATE TABLE `users` (
@@ -419,7 +410,7 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `users`
+-- Dumping data untuk tabel `users`
 --
 
 INSERT INTO `users` (`id`, `nama`, `email`, `password`, `role_user`) VALUES
@@ -432,48 +423,48 @@ INSERT INTO `users` (`id`, `nama`, `email`, `password`, `role_user`) VALUES
 --
 
 --
--- Indexes for table `anggota`
+-- Indeks untuk tabel `anggota`
 --
 ALTER TABLE `anggota`
   ADD PRIMARY KEY (`id`),
   ADD KEY `anggota_ibfk_1` (`nip_anggota`);
 
 --
--- Indexes for table `kredit_barang`
+-- Indeks untuk tabel `kredit_barang`
 --
 ALTER TABLE `kredit_barang`
   ADD PRIMARY KEY (`id`),
   ADD KEY `kredit_barang_ibfk_1` (`id_anggota`);
 
 --
--- Indexes for table `kredit_elektronik`
+-- Indeks untuk tabel `kredit_elektronik`
 --
 ALTER TABLE `kredit_elektronik`
   ADD PRIMARY KEY (`id`),
   ADD KEY `kredit_elektronik_ibfk_1` (`id_anggota`);
 
 --
--- Indexes for table `kredit_motor`
+-- Indeks untuk tabel `kredit_motor`
 --
 ALTER TABLE `kredit_motor`
   ADD PRIMARY KEY (`id`),
   ADD KEY `kredit_motor_ibfk_1` (`id_anggota`);
 
 --
--- Indexes for table `kredit_umroh`
+-- Indeks untuk tabel `kredit_umroh`
 --
 ALTER TABLE `kredit_umroh`
   ADD PRIMARY KEY (`id`),
   ADD KEY `kredit_umroh_ibfk_1` (`id_anggota`);
 
 --
--- Indexes for table `pegawai`
+-- Indeks untuk tabel `pegawai`
 --
 ALTER TABLE `pegawai`
   ADD PRIMARY KEY (`nip`);
 
 --
--- Indexes for table `pembayaran`
+-- Indeks untuk tabel `pembayaran`
 --
 ALTER TABLE `pembayaran`
   ADD PRIMARY KEY (`id`),
@@ -484,120 +475,120 @@ ALTER TABLE `pembayaran`
   ADD KEY `pembayaran_ibfk_5` (`id_pinjaman`);
 
 --
--- Indexes for table `pinjaman`
+-- Indeks untuk tabel `pinjaman`
 --
 ALTER TABLE `pinjaman`
   ADD PRIMARY KEY (`id`),
   ADD KEY `pinjaman_ibfk_1` (`id_anggota`);
 
 --
--- Indexes for table `simpanan`
+-- Indeks untuk tabel `simpanan`
 --
 ALTER TABLE `simpanan`
   ADD PRIMARY KEY (`id`),
   ADD KEY `simpanan_ibfk_1` (`id_anggota`);
 
 --
--- Indexes for table `users`
+-- Indeks untuk tabel `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `email` (`email`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT untuk tabel yang dibuang
 --
 
 --
--- AUTO_INCREMENT for table `anggota`
+-- AUTO_INCREMENT untuk tabel `anggota`
 --
 ALTER TABLE `anggota`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
--- AUTO_INCREMENT for table `kredit_barang`
+-- AUTO_INCREMENT untuk tabel `kredit_barang`
 --
 ALTER TABLE `kredit_barang`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
--- AUTO_INCREMENT for table `kredit_elektronik`
+-- AUTO_INCREMENT untuk tabel `kredit_elektronik`
 --
 ALTER TABLE `kredit_elektronik`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
--- AUTO_INCREMENT for table `kredit_motor`
+-- AUTO_INCREMENT untuk tabel `kredit_motor`
 --
 ALTER TABLE `kredit_motor`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
--- AUTO_INCREMENT for table `kredit_umroh`
+-- AUTO_INCREMENT untuk tabel `kredit_umroh`
 --
 ALTER TABLE `kredit_umroh`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
--- AUTO_INCREMENT for table `pembayaran`
+-- AUTO_INCREMENT untuk tabel `pembayaran`
 --
 ALTER TABLE `pembayaran`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
--- AUTO_INCREMENT for table `pinjaman`
+-- AUTO_INCREMENT untuk tabel `pinjaman`
 --
 ALTER TABLE `pinjaman`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
--- AUTO_INCREMENT for table `simpanan`
+-- AUTO_INCREMENT untuk tabel `simpanan`
 --
 ALTER TABLE `simpanan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
--- AUTO_INCREMENT for table `users`
+-- AUTO_INCREMENT untuk tabel `users`
 --
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- Constraints for dumped tables
+-- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
 --
 
 --
--- Constraints for table `anggota`
+-- Ketidakleluasaan untuk tabel `anggota`
 --
 ALTER TABLE `anggota`
   ADD CONSTRAINT `anggota_ibfk_1` FOREIGN KEY (`nip_anggota`) REFERENCES `pegawai` (`nip`);
 
 --
--- Constraints for table `kredit_barang`
+-- Ketidakleluasaan untuk tabel `kredit_barang`
 --
 ALTER TABLE `kredit_barang`
   ADD CONSTRAINT `kredit_barang_ibfk_1` FOREIGN KEY (`id_anggota`) REFERENCES `anggota` (`id`);
 
 --
--- Constraints for table `kredit_elektronik`
+-- Ketidakleluasaan untuk tabel `kredit_elektronik`
 --
 ALTER TABLE `kredit_elektronik`
   ADD CONSTRAINT `kredit_elektronik_ibfk_1` FOREIGN KEY (`id_anggota`) REFERENCES `anggota` (`id`);
 
 --
--- Constraints for table `kredit_motor`
+-- Ketidakleluasaan untuk tabel `kredit_motor`
 --
 ALTER TABLE `kredit_motor`
   ADD CONSTRAINT `kredit_motor_ibfk_1` FOREIGN KEY (`id_anggota`) REFERENCES `anggota` (`id`);
 
 --
--- Constraints for table `kredit_umroh`
+-- Ketidakleluasaan untuk tabel `kredit_umroh`
 --
 ALTER TABLE `kredit_umroh`
   ADD CONSTRAINT `kredit_umroh_ibfk_1` FOREIGN KEY (`id_anggota`) REFERENCES `anggota` (`id`);
 
 --
--- Constraints for table `pembayaran`
+-- Ketidakleluasaan untuk tabel `pembayaran`
 --
 ALTER TABLE `pembayaran`
   ADD CONSTRAINT `pembayaran_ibfk_1` FOREIGN KEY (`id_kredit_barang`) REFERENCES `kredit_barang` (`id`),
@@ -607,13 +598,13 @@ ALTER TABLE `pembayaran`
   ADD CONSTRAINT `pembayaran_ibfk_5` FOREIGN KEY (`id_pinjaman`) REFERENCES `pinjaman` (`id`);
 
 --
--- Constraints for table `pinjaman`
+-- Ketidakleluasaan untuk tabel `pinjaman`
 --
 ALTER TABLE `pinjaman`
   ADD CONSTRAINT `pinjaman_ibfk_1` FOREIGN KEY (`id_anggota`) REFERENCES `anggota` (`id`);
 
 --
--- Constraints for table `simpanan`
+-- Ketidakleluasaan untuk tabel `simpanan`
 --
 ALTER TABLE `simpanan`
   ADD CONSTRAINT `simpanan_ibfk_1` FOREIGN KEY (`id_anggota`) REFERENCES `anggota` (`id`);

@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<body class="flex bg-white">
+<body class="flex bg-gray-100">
     <!-- Sidebar -->
     <%- include('../../sidebar') %>
 
@@ -17,7 +17,7 @@
             <h1 class="text-2xl"></h1>
             <div class="flex items-center">
                 <span>Admin Keuangan</span>
-                <img src="/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
+                <img src="/public/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
             </div>
         </div>
 
@@ -45,45 +45,29 @@
             <div class="bg-gray-200 p-6 rounded-md shadow-md">
                 <h3 class="text-xl font-semibold mb-4">Data Pinjaman</h3>
                 <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Jumlah Pinjaman</label>
-                    <input type="text" name="jumlah_pinjaman" value="<%= pinjaman.jumlah_pinjaman %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" oninput="validateNumberInput(this)">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Kategori Pinjaman</label>
-                    <select name="kategori" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2">
-                    <option value="jangka panjang" <%= pinjaman.kategori === 'jangka panjang' ? 'selected' : '' %>>Jangka Panjang</option>
-                    <option value="jangka pendek" <%= pinjaman.kategori === 'jangka pendek' ? 'selected' : '' %>>Jangka Pendek</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Jangka Waktu (Bulan)</label>
-                    <input type="number" name="jangka_waktu" value="<%= pinjaman.jangka_waktu %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Margin (%)</label>
-                    <input type="text" name="margin_persen" value="<%= pinjaman.margin_persen %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" oninput="validateNumberInput(this)">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Tanggal Perjanjian</label>
-                    <input type="date" name="tanggal_perjanjian" value="<%= pinjaman.tanggal_perjanjian.toISOString().split('T')[0] %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Angsuran Pokok</label>
-                    <input type="text" name="angsuran_pokok" value="<%= pinjaman.angsuran_pokok %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" oninput="validateNumberInput(this)">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Angsuran Margin</label>
-                    <input type="text" name="margin_per_bulan" value="<%= pinjaman.margin_per_bulan %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" oninput="validateNumberInput(this)">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Total Angsuran</label>
-                    <input type="text" name="total_angsuran" value="<%= pinjaman.total_angsuran %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" oninput="validateNumberInput(this)">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Sisa Piutang</label>
-                    <input type="text" name="sisa_piutang" value="<%= pinjaman.sisa_piutang %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" oninput="validateNumberInput(this)">
-                </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Jumlah Pinjaman</label>
+                        <input type="number" name="jumlah_pinjaman" value="<%= pinjaman.jumlah_pinjaman %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Kategori Pinjaman</label>
+                        <select name="kategori" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2">
+                            <option value="jangka panjang" <%= pinjaman.kategori === 'jangka panjang' ? 'selected' : '' %>>Jangka Panjang</option>
+                            <option value="jangka pendek" <%= pinjaman.kategori === 'jangka pendek' ? 'selected' : '' %>>Jangka Pendek</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Jangka Waktu (Bulan)</label>
+                        <input type="number" name="jangka_waktu" value="<%= pinjaman.jangka_waktu %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Margin (%)</label>
+                        <input type="number" name="margin_persen" value="<%= pinjaman.margin_persen %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Tanggal Perjanjian</label>
+                        <input type="date" name="tanggal_perjanjian" value="<%= pinjaman.tanggal_perjanjian.toISOString().split('T')[0] %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2">
+                    </div>
                 </div>
             </div>
 

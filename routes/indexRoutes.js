@@ -88,6 +88,10 @@ router.get('/api/anggota', kreditController.getAnggotaList);
 // Route untuk menampilkan halaman tambah kredit barang
 router.get("/tambahKreditBarang", kreditController.getTambahKredit);
 
+// Route untuk edit kredit barang
+router.get('/kredit-barang/edit/:id', kreditController.getEditKreditBarang);
+router.put('/kredit-barang/:id', kreditController.updateKreditBarang);
+
 // Route untuk Elektronik
 router.get("/lihatKreditElektronik", kreditElektronikController.lihatKreditElektronik);
 // router.delete("/kreditElektronik/hapus/:id", kreditUmrohController.hapusKreditUmroh);

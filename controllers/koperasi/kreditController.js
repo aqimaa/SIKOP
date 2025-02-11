@@ -299,34 +299,109 @@ exports.getKreditBarangById = async (req, res) => {
 };
 
 // Update Kredit Barang
-exports.updateKreditBarang = async (req, res) => {
+exports.updateKreditBarang = (req, res) => {
     const { id } = req.params;
-    const { id_anggota, harga_pokok, jangka_waktu, pokok_dp, total_angsuran, pokok, margin, angsuran_ke, sisa_piutang, tanggal_mulai, ket_status } = req.body;
+    const { 
+        id_anggota, 
+        harga_pokok, 
+        jangka_waktu, 
+        pokok_dp, 
+        total_angsuran, 
+        ket_status,
+        pokok,
+        margin,
+        angsuran_ke,
+        sisa_piutang,
+        tanggal_mulai
+    } = req.body;
 
-    try {
-        const [result] = await db.query(
-            `UPDATE kredit_barang 
-            SET id_anggota = ?, harga_pokok = ?, jangka_waktu = ?, pokok_dp = ?, total_angsuran = ?, pokok = ?, margin = ?, angsuran_ke = ?, sisa_piutang = ?, tanggal_mulai = ?, ket_status = ?
-            WHERE id = ?`,
-            [id_anggota, harga_pokok, jangka_waktu, pokok_dp, total_angsuran, pokok, margin, angsuran_ke, sisa_piutang, tanggal_mulai, ket_status, id]
-        );
+    // Tambahkan logging untuk debugging
+    console.log('Update Request:', req.body);
 
+    const query = `
+        UPDATE kredit_barang 
+        SET 
+            id_anggota = ?, 
+            harga_pokok = ?, 
+            jangka_waktu = ?, 
+            pokok_dp = ?, 
+            total_angsuran = ?, 
+            ket_status = ?,
+            pokok = ?,
+            margin = ?,
+            angsuran_ke = ?,
+            sisa_piutang = ?,
+            tanggal_mulai = ?
+        WHERE id = ?
+    `;
+
+    const values = [
+        id_anggota, 
+        harga_pokok, 
+        jangka_waktu, 
+        pokok_dp, 
+        total_angsuran, 
+        ket_status,
+        pokok,
+        margin,
+        angsuran_ke,
+        sisa_piutang,
+        tanggal_mulai,
+        id
+    ];
+
+    db.query(query, values, (error, result) => {
+        if (error) {
+            console.error('Error updating kredit barang:', error);
+            return res.status(500).json({
+                success: false,
+                message: 'Gagal memperbarui kredit barang',
+                error: error.message
+            });
+        }
+
+        // Cek apakah ada baris yang terpengaruh
         if (result.affectedRows === 0) {
             return res.status(404).json({
+                success: false,
                 message: 'Kredit barang tidak ditemukan'
             });
         }
 
         res.status(200).json({
-            message: 'Kredit barang berhasil diperbarui',
-            data: result
+            success: true,
+            message: 'Data kredit barang berhasil diperbarui'
         });
-    } catch (error) {
-        res.status(500).json({
-            message: 'Gagal memperbarui kredit barang',
-            error: error.message
+    });
+};
+
+exports.getEditKreditBarang = (req, res) => {
+    const { id } = req.params;
+
+    const kreditQuery = `
+        SELECT 
+            kb.*,
+            p.nama as nama_anggota
+        FROM kredit_barang kb
+        JOIN anggota a ON kb.id_anggota = a.id
+        JOIN pegawai p ON a.nip_anggota = p.nip
+        WHERE kb.id = ?
+    `;
+
+    db.query(kreditQuery, [id], (error, results) => {
+        if (error) {
+            console.error('Error getting kredit barang:', error);
+            return res.status(500).send('Gagal mengambil data kredit barang');
+        }
+
+        if (results.length === 0) {
+            return res.status(404).send('Kredit barang tidak ditemukan');
+        }
+
+        res.render('koperasi/kreditKeuangan/kreditBarang/editKreditBarang', {
+            kredit: results[0]
         });
-    }
+    });
 };
 
 

@@ -37,7 +37,7 @@
                         </div>
                         <div>
                             <label class="block mb-2">Nama Anggota</label>
-                            <input type="text" id="nama_anggota" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Nama anggota akan otomatis ditambahkan">
+                            <input type="text" id="nama_anggota" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Nama anggota akan muncul otomatis">
                         </div>
                     </div>
                 </div>
@@ -55,7 +55,7 @@
                         </div>
                         <div>
                             <label class="block mb-2">Jumlah Pinjaman</label>
-                            <input type="number" id="jumlahPinjaman" name="jumlah_pinjaman" class="w-full border p-2 rounded" placeholder="Masukkan Jumlah Pinjaman" required>
+                            <input type="text" id="jumlahPinjaman" name="jumlah_pinjaman" class="w-full border p-2 rounded" placeholder="Masukkan Jumlah Pinjaman" required oninput="validateNumberInput(this)">
                         </div>
                         <div>
                             <label class="block mb-2">Jangka Waktu (Bulan)</label>
@@ -63,7 +63,7 @@
                         </div>
                         <div>
                             <label class="block mb-2">Margin (%)</label>
-                            <input type="number" id="margin" name="margin_persen" class="w-full border p-2 rounded" placeholder="Masukkan Persen Margin" required>
+                            <input type="text" id="margin" name="margin_persen" class="w-full border p-2 rounded" placeholder="Masukkan Persen Margin per Bulan" required oninput="validateNumberInput(this)">
                         </div>
                         <div>
                             <label class="block mb-2">Tanggal Perjanjian</label>
@@ -120,11 +120,12 @@
                 const jangkaWaktu = parseFloat(jangkaWaktuInput.value) || 0;
                 const margin = parseFloat(marginInput.value) || 0;
 
-                const totalMargin = (jumlahPinjaman * (margin / 100)) * jangkaWaktu;
-                const totalAngsuran = jumlahPinjaman + totalMargin;
-                const marginPerBulan = totalMargin / jangkaWaktu;
-                const totalAngsuranPerBulan = totalAngsuran / jangkaWaktu;
+                const totalMargin = (jumlahPinjaman * margin * jangkaWaktu) / 100;
+                const marginPerBulan = (jumlahPinjaman * margin * jangkaWaktu) / (100 * jangkaWaktu);
                 const angsuranPokokPerBulan = jumlahPinjaman / jangkaWaktu;
+                const totalAngsuranPerBulan = angsuranPokokPerBulan + marginPerBulan;
+                const totalAngsuran = totalAngsuranPerBulan * jangkaWaktu;
+
 
                 totalAngsuranOutput.value = totalAngsuran.toFixed(2); // Total Angsuran Keseluruhan
                 marginPerBulanOutput.value = marginPerBulan.toFixed(2); // Margin per Bulan

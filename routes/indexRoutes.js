@@ -89,25 +89,17 @@ router.get('/api/anggotaKredit', kreditController.getAnggotaListKredit);
 // Route untuk menampilkan halaman tambah kredit barang
 router.get("/tambahKreditBarang", kreditController.getTambahKredit);
 
+<<<<<<< HEAD
 
 // Route untuk edit kredit barang
 router.get('/kredit-barang/edit/:id', kreditController.getEditKreditBarang);
 router.put('/kredit-barang/:id', kreditController.updateKreditBarang);
 
 // Route untuk Kredit Elektronik
+=======
+// Route untuk Elektronik
+>>>>>>> parent of 24861d6 (kreditElektro, sisa tambah kredit baru saat simpan)
 router.get("/lihatKreditElektronik", kreditElektronikController.lihatKreditElektronik);
-router.get("/kreditElektronik/tambah", (req, res) => {
-  res.render("koperasi/kreditKeuangan/kreditElektronik/tambahKreditElektro");
-});
-router.post("/kreditElektronik/tambah", kreditElektronikController.tambahKreditElektronik);
-router.get("/kreditElektronik/edit/:id", kreditElektronikController.tampilkanEditKreditElektronik);
-router.post("/kreditElektronik/edit/:id", kreditElektronikController.simpanEditKreditElektronik);
-router.delete("/kreditElektronik/hapus/:id", kreditElektronikController.hapusKreditElektronik);
-router.get("/kreditElektronik/bayar/:id", kreditElektronikController.tampilkanBayarKreditElektronik);
-router.post("/kreditElektronik/bayar/:id", kreditElektronikController.prosesBayarKreditElektronik);
-router.get("/kreditElektronik/cari", kreditElektronikController.cariKreditElektronik);
-
-
 // router.delete("/kreditElektronik/hapus/:id", kreditUmrohController.hapusKreditUmroh);
 // router.get("/kreditElektronik/edit/:id", kreditUmrohController.tampilkanEditKreditUmroh);
 // router.post("/kreditElektronik/edit/:id", kreditUmrohController.simpanEditKreditUmroh);

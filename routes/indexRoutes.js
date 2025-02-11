@@ -89,16 +89,12 @@ router.get('/api/anggota', kreditController.getAnggotaList);
 // Route untuk menampilkan halaman tambah kredit barang
 router.get("/tambahKreditBarang", kreditController.getTambahKredit);
 
-<<<<<<< HEAD
 
 // Route untuk edit kredit barang
 router.get('/kredit-barang/edit/:id', kreditController.getEditKreditBarang);
 router.put('/kredit-barang/:id', kreditController.updateKreditBarang);
 
 // Route untuk Kredit Elektronik
-=======
-// Route untuk Elektronik
->>>>>>> parent of 24861d6 (kreditElektro, sisa tambah kredit baru saat simpan)
 router.get("/lihatKreditElektronik", kreditElektronikController.lihatKreditElektronik);
 // router.delete("/kreditElektronik/hapus/:id", kreditUmrohController.hapusKreditUmroh);
 // router.get("/kreditElektronik/edit/:id", kreditUmrohController.tampilkanEditKreditUmroh);

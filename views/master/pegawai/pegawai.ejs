@@ -104,8 +104,10 @@
         <div class="bg-white p-8 w-5/6 rounded shadow mx-auto">
             <div class="flex justify-between mb-4">
                 <div class="flex flex-1">
-                    <input type="text" placeholder="Cari Pegawai" class="border border-gray-300 p-2 rounded flex-1" />
-                    <button style="background-color: #3394cc; color: white;" class="ml-2 px-4 py-2 rounded hover:bg-[#4c6e2f]">Cari</button>
+                    <form action="/master/pegawai" method="GET" class="flex flex-1">
+                        <input type="text" name="search" placeholder="Cari Pegawai" class="border border-gray-300 p-2 rounded flex-1" value="<%= search %>" />
+                        <button type="submit" style="background-color: #3394cc; color: white;" class="ml-2 px-4 py-2 rounded hover:bg-[#4c6e2f]">Cari</button>
+                    </form>
                 </div>
                 <a href="/master/pegawai/tambahPegawai" class="ml-4">
                     <button style="background-color: #22c55e; color: white;" class="px-4 py-2 rounded hover:bg-[#4c6e2f]">+ Tambah Pegawai Baru</button>

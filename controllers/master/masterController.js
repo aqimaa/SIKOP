@@ -2,21 +2,20 @@
 
 const db = require('../../config/database');
 
-// Pegawai Fix
-// Mendapatkan semua pegawai
-exports.getPegawai = (req, res) => { 
-  const query = 'SELECT * FROM pegawai';
-  db.query(query, (err, results) => {
+exports.getPegawai = (req, res) => {
+  const search = req.query.search || "";
+  const query = `SELECT * FROM pegawai WHERE nama LIKE ? OR nip LIKE ? OR wilayah LIKE ?`;
+
+  db.query(query, [`%${search}%`, `%${search}%`, `%${search}%`], (err, results) => {
     if (err) {
-      return res.status(500).json({ message: 'Database error', error: err });
+      return res.status(500).json({ message: "Database error", error: err });
     }
-    res.render('master/pegawai/pegawai', { pegawai: results });
+    res.render("master/pegawai/pegawai", { pegawai: results, search });
   });
 };
 
-// Menambahkan pegawai
 exports.createPegawai = (req, res) => {
-  console.log("Data diterima dari frontend:", req.body); // Debugging
+  console.log("Data diterima dari frontend:", req.body);
 
   const { nip, nama, wilayah } = req.body;
 
@@ -36,7 +35,6 @@ exports.createPegawai = (req, res) => {
   });
 };
 
-// 📌 Menampilkan form ubah pegawai dengan data yang benar
 exports.getUbahPegawai = (req, res) => {
   const { nip } = req.params;
   const query = 'SELECT * FROM pegawai WHERE nip = ?';
@@ -52,7 +50,6 @@ exports.getUbahPegawai = (req, res) => {
   });
 };
 
-// 📌 Proses update pegawai
 exports.updatePegawai = (req, res) => {
   const { nip } = req.params;
   const { new_nip, nama, wilayah } = req.body;
@@ -85,7 +82,6 @@ exports.updatePegawai = (req, res) => {
   });
 };
 
-// Menghapus pegawai
 exports.deletePegawai = (req, res) => {
   const { nip } = req.params;
 
@@ -104,16 +100,20 @@ exports.deletePegawai = (req, res) => {
 
 // Anggota
 exports.getAnggota = (req, res) => {
+  const searchQuery = req.query.search ? `%${req.query.search}%` : '%';
+
   const query = `
       SELECT anggota.id, anggota.nip_anggota, anggota.status, pegawai.nama 
       FROM anggota 
       JOIN pegawai ON anggota.nip_anggota = pegawai.nip
+      WHERE anggota.id LIKE ? OR pegawai.nama LIKE ? OR anggota.nip_anggota LIKE ?
   `;
-  db.query(query, (err, results) => {
+
+  db.query(query, [searchQuery, searchQuery, searchQuery], (err, results) => {
       if (err) {
           return res.status(500).json({ message: 'Database error', error: err });
       }
-      res.render('master/anggota/anggotaKoperasi', { anggota: results });
+      res.render('master/anggota/anggotaKoperasi', { anggota: results, searchQuery: req.query.search || '' });
   });
 };
 
@@ -132,18 +132,17 @@ exports.getAnggotaById = (req, res) => {
 
   const query = 'SELECT * FROM anggota WHERE id = ?';
   db.query(query, [id], (err, results) => {
-      if (err) {
-          return res.status(500).json({ error: 'Database error' });
-      }
-      if (results.length === 0) {
-          return res.status(404).json({ message: 'Anggota tidak ditemukan' });
-      }
+    if (err) {
+      return res.status(500).json({ error: 'Database error' });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'Anggota tidak ditemukan' });
+    }
 
-      res.render('master/anggota/ubahAnggota', { anggota: results[0], title: 'Ubah Anggota' });
+    res.render('master/anggota/ubahAnggota', { anggota: results[0], title: 'Ubah Anggota' });
   });
 };
 
-// Mengambil daftar pegawai yang belum menjadi anggota aktif
 exports.getPegawaiYangBisaDipilih = (req, res) => {
   const query = `
         SELECT p.nip, p.nama 
@@ -152,57 +151,54 @@ exports.getPegawaiYangBisaDipilih = (req, res) => {
         WHERE a.nip_anggota IS NULL
     `;
 
-    db.query(query, (err, results) => {
-        if (err) {
-            return res.status(500).json({ success: false, message: "Database error", error: err });
-        }
-        res.json({ success: true, data: results });
-    });
+  db.query(query, (err, results) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: "Database error", error: err });
+    }
+    res.json({ success: true, data: results });
+  });
 };
 
-
-// Menambahkan anggota baru
 exports.tambahAnggota = (req, res) => {
   console.log("Body data diterima:", req.body);
   const { nip_anggota } = req.body; // No need for `status`, since it's always "Aktif"
 
   if (!nip_anggota) {
-      return res.status(400).json({ success: false, message: "Harap pilih pegawai." });
+    return res.status(400).json({ success: false, message: "Harap pilih pegawai." });
   }
 
   // Check if the pegawai exists in the database
   const checkPegawaiQuery = 'SELECT nama FROM pegawai WHERE nip = ?';
   db.query(checkPegawaiQuery, [nip_anggota], (err, pegawaiResults) => {
-      if (err) return res.status(500).json({ success: false, message: 'Database error saat mencari pegawai' });
-      if (pegawaiResults.length === 0) {
-          return res.status(404).json({ success: false, message: 'Pegawai tidak ditemukan di database' });
-      }
+    if (err) return res.status(500).json({ success: false, message: 'Database error saat mencari pegawai' });
+    if (pegawaiResults.length === 0) {
+      return res.status(404).json({ success: false, message: 'Pegawai tidak ditemukan di database' });
+    }
 
-      const nama = pegawaiResults[0].nama;
+    const nama = pegawaiResults[0].nama;
 
-      // Get the current highest ID in the anggota table
-      const getMaxIdQuery = 'SELECT MAX(id) AS max_id FROM anggota';
-      db.query(getMaxIdQuery, (err, result) => {
-          if (err) return res.status(500).json({ success: false, message: 'Gagal mendapatkan ID terakhir' });
+    // Get the current highest ID in the anggota table
+    const getMaxIdQuery = 'SELECT MAX(id) AS max_id FROM anggota';
+    db.query(getMaxIdQuery, (err, result) => {
+      if (err) return res.status(500).json({ success: false, message: 'Gagal mendapatkan ID terakhir' });
 
-          // If there are no entries, start with id 1
-          const newId = result[0].max_id ? result[0].max_id + 1 : 1;
+      // If there are no entries, start with id 1
+      const newId = result[0].max_id ? result[0].max_id + 1 : 1;
 
-          // Insert the new anggota with the next available ID
-          const insertQuery = 'INSERT INTO anggota (id, nip_anggota, status) VALUES (?, ?, "Aktif")';
-          db.query(insertQuery, [newId, nip_anggota], (err, insertResult) => {
-              if (err) return res.status(500).json({ success: false, message: 'Gagal menambahkan anggota ke database' });
+      // Insert the new anggota with the next available ID
+      const insertQuery = 'INSERT INTO anggota (id, nip_anggota, status) VALUES (?, ?, "Aktif")';
+      db.query(insertQuery, [newId, nip_anggota], (err, insertResult) => {
+        if (err) return res.status(500).json({ success: false, message: 'Gagal menambahkan anggota ke database' });
 
-              res.status(201).json({
-                  success: true,
-                  message: 'Anggota berhasil ditambahkan',
-                  data: { id: newId, nip_anggota, nama, status: "Aktif" }
-              });
-          });
+        res.status(201).json({
+          success: true,
+          message: 'Anggota berhasil ditambahkan',
+          data: { id: newId, nip_anggota, nama, status: "Aktif" }
+        });
       });
+    });
   });
 };
-
 
 // Mengubah status anggota (Aktif <-> Tidak Aktif)
 exports.updateAnggota = (req, res) => {
@@ -212,7 +208,6 @@ exports.updateAnggota = (req, res) => {
     return res.status(400).json({ error: "NIP harus disertakan" });
   }
 
-  // Cek status anggota saat ini
   const getStatusQuery = "SELECT status FROM anggota WHERE nip_anggota = ?";
   db.query(getStatusQuery, [nip], (err, results) => {
     if (err) {
@@ -240,7 +235,7 @@ exports.updateAnggota = (req, res) => {
 
 exports.deleteAnggota = (req, res) => {
   const { id } = req.params;
-  console.log("Menghapus anggota dengan ID:", id); // Debugging
+  console.log("Menghapus anggota dengan ID:", id); 
 
   const query = 'DELETE FROM anggota WHERE id = ?';
   db.query(query, [id], (err, results) => {
@@ -253,12 +248,9 @@ exports.deleteAnggota = (req, res) => {
       return res.status(404).json({ message: 'Anggota tidak ditemukan' });
     }
 
-    // Redirect ke halaman daftar anggota dan kirim pesan sukses lewat query parameter
     res.redirect('/master/anggota?message=Anggota berhasil dihapus');
   });
 };
-
-
 
 // User Fix
 exports.getUser = (req, res) => {
@@ -267,7 +259,7 @@ exports.getUser = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
-    res.render('master/user/userKoperasi', { users: results }); 
+    res.render('master/user/userKoperasi', { users: results });
   });
 };
 
@@ -282,7 +274,7 @@ exports.getUserById = (req, res) => {
     if (results.length === 0) {
       return res.status(404).json({ message: 'User not found' });
     }
-    res.render('master/user/editUser', { user: results[0] }); 
+    res.render('master/user/editUser', { user: results[0] });
   });
 };
 
@@ -291,34 +283,33 @@ exports.updateUser = (req, res) => {
   const { nama, email, old_password, new_password } = req.body;
 
   if (!nama || !email || !old_password || !new_password) {
-      return res.send(`<script>alert("Semua field harus diisi!"); window.history.back();</script>`);
+    return res.send(`<script>alert("Semua field harus diisi!"); window.history.back();</script>`);
   }
 
   db.query("SELECT password FROM users WHERE id = ?", [userId], (err, result) => {
-      if (err) {
-          return res.send(`<script>alert("Kesalahan database!"); window.history.back();</script>`);
-      }
+    if (err) {
+      return res.send(`<script>alert("Kesalahan database!"); window.history.back();</script>`);
+    }
 
-      if (result.length === 0) {
-          return res.send(`<script>alert("User tidak ditemukan!"); window.history.back();</script>`);
-      }
+    if (result.length === 0) {
+      return res.send(`<script>alert("User tidak ditemukan!"); window.history.back();</script>`);
+    }
 
-      const storedPassword = result[0].password;
-      if (storedPassword !== old_password) {
-          return res.send(`<script>alert("Password lama salah!"); window.history.back();</script>`);
-      }
+    const storedPassword = result[0].password;
+    if (storedPassword !== old_password) {
+      return res.send(`<script>alert("Password lama salah!"); window.history.back();</script>`);
+    }
 
-      db.query(
-          "UPDATE users SET nama = ?, email = ?, password = ? WHERE id = ?",
-          [nama, email, new_password, userId],
-          (err, result) => {
-              if (err) {
-                  return res.send(`<script>alert("Gagal memperbarui data user!"); window.history.back();</script>`);
-              }
-              
-              // Jika berhasil, munculkan popup lalu redirect
-              res.send(`<script>alert("User berhasil diperbarui!"); window.location.href='/master/user';</script>`);
-          }
-      );
+    db.query(
+      "UPDATE users SET nama = ?, email = ?, password = ? WHERE id = ?",
+      [nama, email, new_password, userId],
+      (err, result) => {
+        if (err) {
+          return res.send(`<script>alert("Gagal memperbarui data user!"); window.history.back();</script>`);
+        }
+
+        res.send(`<script>alert("User berhasil diperbarui!"); window.location.href='/master/user';</script>`);
+      }
+    );
   });
 };

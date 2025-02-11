@@ -35,6 +35,24 @@
                     passwordField.type = type;
                 }
             }
+
+            function toggleExportDropdown() {
+                const dropdown = document.getElementById('exportDropdown');
+                dropdown.classList.toggle('hidden');
+            }
+
+            function closeDropdown() {
+                setTimeout(() => {
+                    document.getElementById('exportDropdown').classList.add('hidden');
+                }, 100);
+            }
+
+            document.addEventListener('click', function(event) {
+                const dropdown = document.getElementById('exportDropdown');
+                if (!event.target.closest('.relative')) {
+                    dropdown.classList.add('hidden');
+                }
+            });
     </script>
 </head>
 <body class="flex bg-gray-100">
@@ -104,9 +122,18 @@
         </header>
         <div class="bg-white p-8 w-5/6 rounded shadow mx-auto">
             <div class="flex justify-between mb-4">
-                <a href="/master/pegawai/tambahPegawai" class="ml-4">
-                    <button style="background-color: #3e5eee; color: white;" class="px-4 py-2 rounded hover:bg-blue-800">Ekspor / Backup Data</button>
-                </a>
+                <div class="relative inline-block text-left">
+                    <button onclick="toggleExportDropdown()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-800">
+                        Ekspor / Backup Data
+                    </button>
+                    <div id="exportDropdown" class="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg hidden">
+                        <a href="/master/user/export/xlsx" class="block px-4 py-2 text-gray-700 hover:bg-gray-200" onclick="closeDropdown()">Ekspor ke XLSX</a>
+                        <a href="/master/user/export/csv" class="block px-4 py-2 text-gray-700 hover:bg-gray-200" onclick="closeDropdown()">Ekspor ke CSV</a>
+                        <a href="/master/user/export/sql" class="block px-4 py-2 text-gray-700 hover:bg-gray-200" onclick="closeDropdown()">Ekspor ke SQL</a>
+                        <a href="/master/user/export/json" class="block px-4 py-2 text-gray-700 hover:bg-gray-200" onclick="closeDropdown()">Ekspor ke JSON</a>
+                        <a href="/master/user/export/pdf" class="block px-4 py-2 text-gray-700 hover:bg-gray-200" onclick="closeDropdown()">Ekspor ke PDF</a>
+                    </div>
+                </div>
             </div>
             <table class="table-auto w-full border-collapse">
                 <thead>

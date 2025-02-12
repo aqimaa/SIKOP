@@ -12,7 +12,7 @@ exports.lihatKreditElektronik = async (req, res) => {
         ke.jangka_waktu,
         ke.total_angsuran,
         ke.pokok,
-        ke.margin,
+        COALESCE(ke.margin, 0) AS margin, -- Memberikan nilai default 0 jika margin null
         ke.angsuran_ke,
         ke.sisa_piutang,
         ke.tanggal_mulai,
@@ -42,13 +42,17 @@ exports.tambahKreditElektronik = async (req, res) => {
     jumlah_pinjaman,
     jangka_waktu,
     margin_persen,
-    tanggal_mulai
+    tanggal_mulai,
+    total_angsuran,
+    total_angsuran_per_bulan,
+    margin_per_bulan,
+    pokok
   } = req.body;
 
   const query = `
     INSERT INTO kredit_elektronik
-    (id_anggota, jumlah_pinjaman, jangka_waktu, margin_persen, tanggal_mulai, ket_status, angsuran_ke, sisa_piutang)
-    VALUES (?, ?, ?, ?, ?, 'Belum Lunas', 0, ?)
+    (id_anggota, jumlah_pinjaman, jangka_waktu, margin_persen, tanggal_mulai, ket_status, angsuran_ke, sisa_piutang, total_angsuran, pokok, margin)
+    VALUES (?, ?, ?, ?, ?, 'Belum Lunas', 0, ?, ?, ?, ?)
   `;
 
   const values = [
@@ -57,7 +61,10 @@ exports.tambahKreditElektronik = async (req, res) => {
     jangka_waktu,
     margin_persen,
     tanggal_mulai,
-    jumlah_pinjaman
+    jumlah_pinjaman,
+    total_angsuran,
+    pokok,
+    margin_per_bulan
   ];
 
   db.query(query, values, (error, results) => {

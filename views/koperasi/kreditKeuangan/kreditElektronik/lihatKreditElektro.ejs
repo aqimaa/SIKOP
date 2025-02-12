@@ -43,15 +43,16 @@
             <tr>
               <th class="p-4">No</th>
               <th class="p-4">No. Anggota</th>
-              <th class="p-4">Nama</th>
-              <th class="p-4">Pinjaman</th>
+              <th class="p-4">Nama Anggota</th>
+              <th class="p-4">Jumlah Pinjaman</th>
               <th class="p-4">Jangka Waktu</th>
+              <th class="p-4">Margin Persen</th>
+              <th class="p-4">Angsuran Pokok</th>
+              <th class="p-4">Angsuran Margin</th>
               <th class="p-4">Total Angsuran</th>
-              <th class="p-4">Pokok</th>
-              <th class="p-4">Margin</th>
               <th class="p-4">Angsuran Ke</th>
               <th class="p-4">Sisa Piutang</th>
-              <th class="p-4">Mulai Perjanjian</th>
+              <th class="p-4">Tanggal Perjanjian</th>
               <th class="p-4">Status</th>
               <th class="p-4">Bayar</th>
               <th class="p-4">Aksi</th>
@@ -60,42 +61,41 @@
           <tbody>
             <% kreditElektronik.forEach((kredit, index)=> { %>
             <tr class="text-left border-b">
-              <td class="p-4 text-center">
+              <td class="px-6 py-4">
                 <%= index + 1 %>
               </td>
-              <td class="p-4 text-center">
+              <td class="px-6 py-4">
                 <%= kredit.id_anggota %>
               </td>
-              <td class="p-4">
+              <td class="px-6 py-4">
                 <%= kredit.nama_anggota %>
               </td>
-              <td class="p-4 text-right">
+              <td class="px-6 py-4">
                 <%= kredit.jumlah_pinjaman.toLocaleString() %>
               </td>
-              <td class="p-4 text-right">
-                <%= kredit.jangka_waktu %>
+              <td class="px-6 py-4">
+                <%= kredit.jangka_waktu %> Bulan
               </td>
-              <td class="p-4 text-right">
+              <td class="px-6 py-4"><%= kredit.margin_persen ? kredit.margin_persen.toFixed(2) : '0.00' %>%</td>
+              <td class="px-6 py-4">
                 <%= kredit.total_angsuran.toLocaleString() %>
               </td>
-              <td class="p-4 text-right">
+              <td class="px-6 py-4">
                 <%= kredit.pokok.toLocaleString() %>
               </td>
-              <td class="p-4 text-right">
-                <%= kredit.margin.toLocaleString() %>
+              <td class="px-6 py-4">
+                <%= kredit.margin ? kredit.margin.toLocaleString() : '0' %>
               </td>
-              <td class="p-4 text-center">
+              <td class="px-6 py-4">
                 <%= kredit.angsuran_ke %>
               </td>
-              <td class="p-4 text-right">
+              <td class="px-6 py-4">
                 <%= kredit.sisa_piutang.toLocaleString() %>
               </td>
-              <td class="p-4 text-center">
+              <td class="px-6 py-4">
                 <%= kredit.tanggal_mulai.toLocaleDateString() %>
               </td>
-              <td class="p-4 text-right">
-                <%= kredit.ket_status %>
-              </td>
+              <td class="px-6 py-4"><%= kredit.ket_status %></td>
               <td class="p-4 text-right">
                 <a href="/kreditElektronik/bayar/<%= kredit.id %>"
                   class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700">

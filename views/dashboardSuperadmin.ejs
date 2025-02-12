@@ -12,7 +12,6 @@
 </head>
 
 <body class="flex">
-
     <!-- Sidebar -->
     <div class="w-72 text-white min-h-screen p-4 fixed" style="background-color: #5D8736;">
         <div class="flex items-center mb-8">
@@ -25,48 +24,55 @@
         <nav>
             <ul>
                 <li class="mb-4">
-                    <a href="/dashboardSuperadmin.ejs" class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
+                    <a href="/dashboardSuperadmin.ejs"
+                        class="flex items-center block p-6 py-3 hover:bg-green-900 rounded">
                         <img src="/images/vectordasbor.png" alt="lihat data icon" class="w=5 h-5 ">
                         <span class="ml-2 text-xl ml-5">Dashboard</span>
                     </a>
                 </li>
                 <li>
-                    <button onclick="toggleDropdown()" class="flex items-center justify-between w-full focus:outline-none">
+                    <button onclick="toggleDropdown()"
+                        class="flex items-center justify-between w-full focus:outline-none">
                         <div class="flex items-center">
                             <a href="#" class="flex items-center block p-6 py-3 hover:">
                                 <img src="/images/lihatdata.png" alt="lihat data icon" class="w=5 h-5 ">
                                 <span class="ml-2 text-xl ml-5">Data Master</span>
                             </a>
                         </div>
-                        <img src="/images/angle-small-down.png" alt="dropdown icon" class="w-6 h-6 transform transition-transform" id="dropdownIcon">
+                        <img src="/images/angle-small-down.png" alt="dropdown icon"
+                            class="w-6 h-6 transform transition-transform" id="dropdownIcon">
                     </button>
                     <ul id="dropdownMenu" class="pl-6 hidden">
                         <li class="mb-2">
-                            <a href="/master/pegawai" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">o Pegawai</a>
+                            <a href="/master/pegawai" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">o
+                                Pegawai</a>
                         </li>
                         <li class="mb-2">
-                            <a href="/master/anggota" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">o Anggota Koperasi</a>
+                            <a href="/master/anggota" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">o
+                                Anggota Koperasi</a>
                         </li>
                         <li class="mb-2">
-                            <a href="/master/user" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">o Admin Area</a>
+                            <a href="/master/user" class="block p-3 py-3 text-lg hover:bg-green-900 rounded">o Admin
+                                Area</a>
                         </li>
                     </ul>
                 </li>
             </ul>
         </nav>
-
         <!-- Log Out Button di Bawah -->
         <div class="absolute bottom-0 left-0 w-full p-4">
-            <button onclick="logout()" class="flex items-center w-full p-6 py-3 hover:bg-green-900 rounded transition duration-300">
+            <button onclick="logout()"
+                class="flex items-center w-full p-6 py-3 hover:bg-green-900 rounded transition duration-300">
                 <span class="material-icons">logout</span>
                 <span class="ml-5 text-xl">Log Out</span>
             </button>
         </div>
-
         <script>
             function logout() {
                 if (confirm("Yakin ingin keluar?")) {
-                    fetch('/logout', { method: 'POST' })
+                    fetch('/logout', {
+                        method: 'POST'
+                    })
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
@@ -80,9 +86,7 @@
                 }
             }
         </script>
-
     </div>
-
     <script>
         function toggleDropdown() {
             const dropdownMenu = document.getElementById('dropdownMenu');
@@ -99,118 +103,153 @@
                 <img src="/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
             </div>
         </div>
-
         <div class="p-8">
             <!-- Stats Cards -->
-            <div class="grid grid-cols-2 gap-6 mb-8" id="stats-cards">
+            <div class="grid grid-cols-3 gap-10 mb-2" id="stats-cards">
                 <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-green-700">
                     <h3 class="text-gray-600">Jumlah Pegawai</h3>
                     <p class="text-3xl font-bold" id="total-pegawai"></p>
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-blue-700">
-                    <h3 class="text-gray-600">Jumlah Anggota</h3>
-                    <p class="text-3xl font-bold" id="total-anggota"></p>
+                    <h3 class="text-gray-600">Jumlah Anggota Aktif</h3>
+                    <p class="text-3xl font-bold" id="total-anggota-aktif"></p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-red-700">
+                    <h3 class="text-gray-600">Jumlah Anggota Tidak Aktif</h3>
+                    <p class="text-3xl font-bold" id="total-anggota-tidak-aktif"></p>
                 </div>
             </div>
-
-            <div class="bg-white p-6 rounded-lg shadow-sm">
-                <canvas id="dashboardChart" width="400" height="200"></canvas>
+            <div class="p-4">
             </div>
-        </div>
+            <div class="grid grid-cols-2 gap-6 mb-2">
+                <!-- LLDIKTI Section -->
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h2 class="text-xl font-semibold mb-4">LLDIKTI Wilayah X</h2>
+                    <img src="/images/dasbor.jpg" class="w-full object-contain rounded mb-4" alt="LLDIKTI Dashboard">
+                    <p class="text-gray-600 mb-4">Lembaga Layanan Pendidikan Tinggi (LLDIKTI) merupakan satuan kerja di
+                        bawah Sekretariat Jenderal, Kementerian Pendidikan, Kebudayaan, Riset, dan Teknologi
+                        (Kemendikbudristek)
+                        yang mempunyai tugas dan fungsi di bidang fasilitasi peningkatan mutu penyelenggaraan pendidikan
+                        tinggi
+                        di berbagai wilayah di seluruh Indonesia.</p>
+                    <a href="https://lldikti10.kemdikbud.go.id/" class="text-green-700 underline">Website Resmi LLDIKTI
+                        Wilayah X</a>
+                </div>
+                <!-- Visi Misi Section -->
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h2 class="text-xl font-semibold mb-4">Visi Misi LLDIKTI Wilayah X</h2>
+                    <div class="mb-6">
+                        <h3 class="font-bold mb-2">Visi</h3>
+                        <ol class="list-decimal pl-4 space-y-2">
+                            LLDIKTI Wilayah X mendukung Visi dan Misi Kementerian Pendidikan, Kebudayaan, Riset dan
+                            Teknologi sesuai Visi dan Misi Presiden
+                            untuk mewujudkan Indonesia Maju yang berdaulat, mandiri, dan berkepribadian melalui
+                            terciptanya
+                            pelajar pancasila yang bernalar kritis, kreatif, mandiri, beriman, bertaqwa kepada Tuhan
+                            YME,
+                            dan
+                            berakhlak mulia, bergotong royong, dan berkebhinekaan global
+                        </ol>
+                    </div>
+                    <div>
+                        <h3 class="font-bold mb-2">Misi</h3>
+                        <ol class="list-decimal pl-4 space-y-2">
+                            <li>Melaksanakan pemetaan mutu penyelenggaraan dan pengelolaan perguruan tinggi</li>
+                            <li>Menyelenggarakan fasilitasi mutu penyelenggaraan pengelolaan perguruan tinggi</li>
+                            <li>Melaksanakan pembinaan pendidik dan tenaga kependidikan perguruan tinggi</li>
+                            <li>Melakukan kerjasama pengembangan mutu perguruan tinggi</li>
+                            <li>Melaksanakan evaluasi penyelenggaraan tri dharma perguruan tinggi</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4">
+            </div>
+            <div class="bg-white p-8 gap-4 mb-10 rounded-lg shadow-sm w-full h-[400px] md:h-[500px] lg:h-[600px]">
+                <canvas id="dashboardChart" class="w-full h-full"></canvas>
+            </div>
+            <script>
+                function formatNumber(value) {
+                    if (value >= 1_000_000_000_000) {
+                        return (value / 1_000_000_000_000).toFixed(1) + ' B';
+                    } else if (value >= 1_000_000_000) {
+                        return (value / 1_000_000_000).toFixed(1) + ' M';
+                    } else if (value >= 1_000_000) {
+                        return (value / 1_000_000).toFixed(1) + ' Jt';
+                    } else if (value >= 1_000) {
+                        return (value / 1_000).toFixed(1) + ' Rb';
+                    }
+                    return value;
+                }
+                fetch('/api/dashboard')
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('total-pegawai').innerText = formatNumber(data.total_pegawai);
+                        document.getElementById('total-anggota-aktif').innerText = formatNumber(data
+                            .total_anggota_aktif);
+                        document.getElementById('total-anggota-tidak-aktif').innerText = formatNumber(data
+                            .total_anggota_tidak_aktif);
 
-        <script>
-            // Fetch dashboard data
-            fetch('/api/dashboard')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('total-pegawai').innerText = data.total_pegawai;
-                    document.getElementById('total-anggota').innerText = data.total_anggota;
-
-                    // Chart.js for displaying data
-                    const ctx = document.getElementById('dashboardChart').getContext('2d');
-                    const dashboardChart = new Chart(ctx, {
-                        type: 'bar', // atau 'line' untuk grafik garis
-                        data: {
-                            labels: ['Simpanan', 'Pinjaman', 'Kredit'],
-                            datasets: [{
-                                label: 'Keuangan Koperasi',
-                                data: [data.total_simpanan, data.total_pinjaman, data.total_kredit],
-                                backgroundColor: [
-                                    'rgba(75, 192, 192, 0.2)',
-                                    'rgba(255, 99, 132, 0.2)',
-                                    'rgba(255, 206, 86, 0.2)'
-                                ],
-                                borderColor: [
-                                    'rgba(75, 192, 192, 1)',
-                                    'rgba(255, 99, 132, 1)',
-                                    'rgba(255, 206, 86, 1)'
-                                ],
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            scales: {
-                                y: {
-                                    beginAtZero: true
+                        const ctx = document.getElementById('dashboardChart').getContext('2d');
+                        const dashboardChart = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: ['Simpanan', 'Pinjaman', 'Kredit'],
+                                datasets: [{
+                                    data: [data.total_simpanan, data.total_pinjaman, data.total_kredit],
+                                    backgroundColor: [
+                                        'rgba(75, 192, 192, 0.2)',
+                                        'rgba(255, 99, 132, 0.2)',
+                                        'rgba(255, 206, 86, 0.2)'
+                                    ],
+                                    borderColor: [
+                                        'rgba(75, 192, 192, 1)',
+                                        'rgba(255, 99, 132, 1)',
+                                        'rgba(255, 206, 86, 1)'
+                                    ],
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false, // Agar ukuran mengikuti parent div
+                                scales: {
+                                    x: {
+                                        title: {
+                                            display: true,
+                                            text: 'Keuangan Koperasi',
+                                            font: {
+                                                size: 14,
+                                                weight: 'bold'
+                                            }
+                                        }
+                                    },
+                                    y: {
+                                        beginAtZero: true,
+                                        ticks: {
+                                            callback: function (value) {
+                                                return formatNumber(value);
+                                            }
+                                        }
+                                    }
+                                },
+                                plugins: {
+                                    datalabels: {
+                                        anchor: 'end',
+                                        align: 'end',
+                                        formatter: formatNumber,
+                                        color: '#000',
+                                    },
+                                    legend: {
+                                        display: false
+                                    }
                                 }
                             },
-                            plugins: {
-                                datalabels: {
-                                    anchor: 'end',
-                                    align: 'end',
-                                    formatter: (value) => {
-                                        return value; // Menampilkan nilai total
-                                    },
-                                    color: '#000', // Warna teks label
-                                }
-                            }
-                        },
-                        plugins: [ChartDataLabels] // Menambahkan plugin datalabels
-                    });
-                })
-                .catch(error => console.error('Error fetching dashboard data:', error));
-        </script>
-
-        <div class="grid grid-cols-2 gap-6">
-            <!-- LLDIKTI Section -->
-            <div class="bg-white p-6 rounded-lg shadow-sm">
-                <h2 class="text-xl font-semibold mb-4">LLDIKTI Wilayah X</h2>
-                <img src="/images/dasbor.jpg" class="w-full object-contain rounded mb-4" alt="LLDIKTI Dashboard">
-                <p class="text-gray-600 mb-4">Lembaga Layanan Pendidikan Tinggi (LLDIKTI) merupakan satuan kerja di
-                    bawah Sekretariat Jenderal, Kementerian Pendidikan, Kebudayaan, Riset, dan Teknologi
-                    (Kemendikbudristek)
-                    yang mempunyai tugas dan fungsi di bidang fasilitasi peningkatan mutu penyelenggaraan pendidikan
-                    tinggi
-                    di berbagai wilayah di seluruh Indonesia.</p>
-                <a href="https://lldikti10.kemdikbud.go.id/" class="text-green-700 underline">Website Resmi LLDIKTI
-                    Wilayah X</a>
-            </div>
-
-            <!-- Visi Misi Section -->
-            <div class="bg-white p-6 rounded-lg shadow-sm">
-                <h2 class="text-xl font-semibold mb-4">Visi Misi LLDIKTI Wilayah X</h2>
-                <div class="mb-6">
-                    <h3 class="font-bold mb-2">Visi</h3>
-                    <ol class="list-decimal pl-4 space-y-2">
-                        LLDIKTI Wilayah X mendukung Visi dan Misi Kementerian Pendidikan, Kebudayaan, Riset dan
-                        Teknologi sesuai Visi dan Misi Presiden
-                        untuk mewujudkan Indonesia Maju yang berdaulat, mandiri, dan berkepribadian melalui terciptanya
-                        pelajar pancasila yang bernalar kritis, kreatif, mandiri, beriman, bertaqwa kepada Tuhan YME,
-                        dan
-                        berakhlak mulia, bergotong royong, dan berkebhinekaan global
-                    </ol>
-                </div>
-                <div>
-                    <h3 class="font-bold mb-2">Misi</h3>
-                    <ol class="list-decimal pl-4 space-y-2">
-                        <li>Melaksanakan pemetaan mutu penyelenggaraan dan pengelolaan perguruan tinggi</li>
-                        <li>Menyelenggarakan fasilitasi mutu penyelenggaraan pengelolaan perguruan tinggi</li>
-                        <li>Melaksanakan pembinaan pendidik dan tenaga kependidikan perguruan tinggi</li>
-                        <li>Melakukan kerjasama pengembangan mutu perguruan tinggi</li>
-                        <li>Melaksanakan evaluasi penyelenggaraan tri dharma perguruan tinggi</li>
-                    </ol>
-                </div>
-            </div>
+                            plugins: [ChartDataLabels]
+                        });
+                    })
+                    .catch(error => console.error('Error fetching dashboard data:', error));
+            </script>
         </div>
     </div>
 </body>

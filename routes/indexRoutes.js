@@ -213,11 +213,7 @@ router.get("/pinjaman/cari", lihatPinjamanController.cariAnggota);
 
 // <!=============================================== Route Master ===============================================> //
 
-// Melakukan ekspor
-router.get('/master/user/export/:format', (req, res) => {
-  const format = req.params.format.toLowerCase();
-  exportData(req, res, format);
-});
+
 
 // 📌 Menampilkan daftar pegawai
 router.get("/master/pegawai", masterController.getPegawai);
@@ -287,6 +283,7 @@ router.delete('/master/anggota/delete/:id', masterController.deleteAnggota);
 router.get('/master/user', masterController.getUser);
 router.get('/master/user/editUser/:id', masterController.getUserById);
 router.post('/master/user/editUser/:id', masterController.updateUser);
+// Melakukan ekspor
 router.get('/master/user/export/:format', (req, res) => {
   const format = req.params.format.toLowerCase();
   exportData(req, res, format);

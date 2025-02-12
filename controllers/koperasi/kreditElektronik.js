@@ -86,8 +86,14 @@ exports.tampilkanEditKreditElektronik = async (req, res) => {
       pg.nama AS nama_anggota,
       ke.jumlah_pinjaman,
       ke.jangka_waktu,
+      ke.total_angsuran,
       ke.margin_persen,
-      ke.tanggal_mulai
+      ke.pokok,
+      ke.margin,
+      ke.angsuran_ke,
+      ke.sisa_piutang,
+      ke.tanggal_mulai,
+      ke.ket_status
     FROM kredit_elektronik ke
     JOIN anggota a ON ke.id_anggota = a.id
     JOIN pegawai pg ON a.nip_anggota = pg.nip
@@ -107,14 +113,29 @@ exports.tampilkanEditKreditElektronik = async (req, res) => {
   });
 };
 
+
+
 exports.simpanEditKreditElektronik = async (req, res) => {
+  // Log seluruh body request untuk debugging
+  console.log('Full Request Body:', req.body);
+  console.log('Request Params:', req.params);
+
   const id = req.params.id;
   const {
     jumlah_pinjaman,
     jangka_waktu,
     margin_persen,
-    tanggal_mulai
+    tanggal_mulai,
+    ket_status
   } = req.body;
+
+  // Validasi input
+  if (!id || !jumlah_pinjaman || !jangka_waktu) {
+    return res.status(400).json({ 
+      success: false, 
+      message: "Data tidak lengkap" 
+    });
+  }
 
   const query = `
     UPDATE kredit_elektronik
@@ -122,7 +143,8 @@ exports.simpanEditKreditElektronik = async (req, res) => {
       jumlah_pinjaman = ?,
       jangka_waktu = ?,
       margin_persen = ?,
-      tanggal_mulai = ?
+      tanggal_mulai = ?,
+      ket_status = ?
     WHERE id = ?
   `;
 
@@ -131,34 +153,40 @@ exports.simpanEditKreditElektronik = async (req, res) => {
     jangka_waktu,
     margin_persen,
     tanggal_mulai,
+    ket_status,
     id
   ];
+
+  // Tambahkan log untuk debug
+  console.log('Update Kredit Elektronik - ID:', id);
+  console.log('Update Values:', values);
 
   db.query(query, values, (error, results) => {
     if (error) {
       console.error("Error saat mengupdate kredit elektronik:", error);
-      return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mengupdate kredit elektronik." });
+      return res.status(500).json({ 
+        success: false, 
+        message: "Terjadi kesalahan saat mengupdate kredit elektronik.",
+        error: error.message 
+      });
     }
-    res.redirect('/lihatKreditElektronik');
-  });
-};
 
-// Hapus Kredit Elektronik
-exports.hapusKreditElektronik = async (req, res) => {
-  const id = req.params.id;
-  const query = 'DELETE FROM kredit_elektronik WHERE id = ?';
-
-  db.query(query, [id], (error, results) => {
-    if (error) {
-      console.error("Error saat menghapus kredit elektronik:", error);
-      return res.status(500).json({ success: false, message: "Terjadi kesalahan saat menghapus kredit elektronik." });
-    }
+    // Periksa apakah ada baris yang terpengaruh
     if (results.affectedRows === 0) {
-      return res.status(404).json({ success: false, message: "Data kredit elektronik tidak ditemukan." });
+      console.warn(`Tidak ada baris yang diupdate untuk ID: ${id}`);
+      return res.status(404).json({ 
+        success: false, 
+        message: "Data kredit elektronik tidak ditemukan" 
+      });
     }
-    res.json({ success: true, message: "Data kredit elektronik berhasil dihapus." });
+
+    res.json({ 
+      success: true, 
+      message: "Data kredit elektronik berhasil diperbarui" 
+    });
   });
 };
+
 
 // Bayar Kredit Elektronik
 exports.tampilkanBayarKreditElektronik = async (req, res) => {
@@ -273,42 +301,6 @@ exports.prosesBayarKreditElektronik = async (req, res) => {
 };
 
 // Cari Kredit Elektronik
-exports.cariKreditElektronik = async (req, res) => {
-  const { keyword } = req.query;
-  try {
-    const query = `
-      SELECT
-        ke.id,
-        ke.id_anggota,
-        pg.nama AS nama_anggota,
-        ke.jumlah_pinjaman,
-        ke.jangka_waktu,
-        ke.total_angsuran,
-        ke.pokok,
-        ke.margin,
-        ke.angsuran_ke,
-        ke.sisa_piutang,
-        ke.tanggal_mulai,
-        ke.ket_status
-      FROM kredit_elektronik ke
-      JOIN anggota a ON ke.id_anggota = a.id
-      JOIN pegawai pg ON a.nip_anggota = pg.nip
-      WHERE pg.nama LIKE ? OR ke.id_anggota LIKE ?
-    `;
-
-    db.query(query, [`%${keyword}%`, `%${keyword}%`], (error, results) => {
-      if (error) {
-        console.error("Error saat mencari data kredit elektronik:", error);
-        return res.status(500).send("Terjadi kesalahan saat mencari data kredit elektronik.");
-      }
-      res.json(results);
-    });
-  } catch (error) {
-    console.error("Error:", error);
-    res.status(500).send("Terjadi kesalahan saat mencari data kredit elektronik.");
-  }
-};
-
 exports.cariKreditElektronik = (req, res) => {
   const { search } = req.query;
   

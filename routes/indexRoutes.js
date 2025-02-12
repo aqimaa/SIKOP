@@ -123,6 +123,7 @@ router.get("/kreditElektronik/cari", kreditElektronikController.cariKreditElektr
 
 // Route untuk Motor
 router.get("/lihatKreditMotor", kreditMotorController.lihatKreditMotor);
+router.get('/kreditMotor/getAnggota/:id', kreditMotorController.getAnggotaById);
 // router.delete("/kreditElektronik/hapus/:id", kreditUmrohController.hapusKreditUmroh);
 // router.get("/kreditElektronik/edit/:id", kreditUmrohController.tampilkanEditKreditUmroh);
 // router.post("/kreditElektronik/edit/:id", kreditUmrohController.simpanEditKreditUmroh);

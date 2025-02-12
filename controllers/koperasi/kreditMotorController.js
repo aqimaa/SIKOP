@@ -59,27 +59,63 @@ exports.tampilkanTambahKreditMotor = async (req, res) => {
   };
 
   exports.tambahKreditMotor = async (req, res) => {
-    const { id_anggota, jumlah_pinjaman, jangka_waktu, margin_persen, tanggal_mulai } = req.body;
-  
+    const {
+        id_anggota,
+        jumlah_pinjaman,
+        jangka_waktu,
+        margin_persen,
+        tanggal_mulai,
+        total_angsuran,
+        pokok,
+        margin,
+        sisa_piutang
+    } = req.body;
+
     try {
-      const query = `
-        INSERT INTO kredit_motor (id_anggota, jumlah_pinjaman, jangka_waktu, margin_persen, tanggal_mulai, ket_status)
-        VALUES (?, ?, ?, ?, ?, 'Belum Lunas')
-      `;
-  
-      db.query(query, [id_anggota, jumlah_pinjaman, jangka_waktu, margin_persen, tanggal_mulai], (error, results) => {
-        if (error) {
-          console.error("Error saat menambahkan kredit motor:", error);
-          return res.status(500).send("Terjadi kesalahan saat menambahkan kredit motor.");
-        }
-  
-        res.redirect("/lihatKreditMotor");
-      });
+        // Format input values
+        const formattedJumlahPinjaman = parseFloat(jumlah_pinjaman.replace(/,/g, ''));
+        const formattedTotalAngsuran = parseFloat(total_angsuran.replace(/,/g, ''));
+        const formattedPokok = parseFloat(pokok.replace(/,/g, ''));
+        const formattedMargin = parseFloat(margin.replace(/,/g, ''));
+        const formattedSisaPiutang = parseFloat(sisa_piutang.replace(/,/g, ''));
+        const formattedMarginPersen = parseFloat(margin_persen);
+
+        const query = `
+            INSERT INTO kredit_motor 
+            (id_anggota, jumlah_pinjaman, jangka_waktu, total_angsuran, 
+             pokok, margin, sisa_piutang, tanggal_mulai, ket_status, 
+             angsuran_ke, margin_persen)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+
+        const values = [
+            id_anggota,
+            formattedJumlahPinjaman,
+            jangka_waktu,
+            formattedTotalAngsuran,
+            formattedPokok,
+            formattedMargin,
+            formattedSisaPiutang,
+            tanggal_mulai,
+            'Belum Lunas',
+            0,
+            formattedMarginPersen
+        ];
+
+        db.query(query, values, (error, results) => {
+            if (error) {
+                console.error("Error saat menambahkan kredit motor:", error);
+                return res.status(500).send("Terjadi kesalahan saat menambahkan kredit motor.");
+            }
+
+            res.redirect('/kreditMotor');
+        });
     } catch (error) {
-      console.error("Error:", error);
-      res.status(500).send("Terjadi kesalahan saat menambahkan kredit motor.");
+        console.error("Error:", error);
+        res.status(500).send("Terjadi kesalahan saat menambahkan kredit motor.");
     }
-  };
+};
+
 
   // Tampilkan Halaman Edit Kredit Motor
 exports.tampilkanEditKreditMotor = async (req, res) => {
@@ -307,3 +343,119 @@ exports.simpanEditKreditMotor = async (req, res) => {
       res.status(500).send("Terjadi kesalahan saat memproses pembayaran kredit motor.");
     }
   };
+
+  exports.getAnggotaById = async (req, res) => {
+    const idAnggota = req.params.id;
+    
+    // Log untuk debugging
+    console.log("Mencari anggota dengan ID:", idAnggota);
+    
+    const query = `
+        SELECT 
+            pg.nama,
+            a.id as id_anggota,
+            a.status
+        FROM anggota a
+        JOIN pegawai pg ON a.nip_anggota = pg.nip
+        WHERE a.id = ?
+    `;
+
+    db.query(query, [idAnggota], (error, results) => {
+        if (error) {
+            console.error("Error saat mengambil data anggota:", error);
+            return res.status(500).json({ 
+                success: false, 
+                message: "Terjadi kesalahan saat mengambil data anggota." 
+            });
+        }
+
+        console.log("Hasil query:", results); // Log hasil query
+
+        if (results.length === 0) {
+            return res.status(404).json({ 
+                success: false, 
+                message: "Anggota tidak ditemukan." 
+            });
+        }
+
+        // Cek status anggota
+        if (results[0].status !== 'Aktif') {
+            return res.status(400).json({
+                success: false,
+                message: "Status anggota tidak aktif."
+            });
+        }
+
+        res.json({ 
+            success: true, 
+            nama: results[0].nama,
+            id_anggota: results[0].id_anggota 
+        });
+    });
+};
+
+exports.tambahKreditMotor = async (req, res) => {
+    try {
+        const {
+            id_anggota,
+            jumlah_pinjaman,
+            jangka_waktu,
+            margin_persen,
+            tanggal_mulai,
+            total_angsuran,
+            pokok,
+            margin,
+            sisa_piutang
+        } = req.body;
+
+        // Hapus koma dan konversi ke float
+        const formattedJumlahPinjaman = parseFloat(jumlah_pinjaman.replace(/,/g, ''));
+        const formattedTotalAngsuran = parseFloat(total_angsuran.replace(/,/g, ''));
+        const formattedPokok = parseFloat(pokok.replace(/,/g, ''));
+        const formattedMargin = parseFloat(margin.replace(/,/g, ''));
+        const formattedSisaPiutang = parseFloat(sisa_piutang.replace(/,/g, ''));
+        const formattedMarginPersen = parseFloat(margin_persen);
+
+        // Validasi input
+        if (!id_anggota || !formattedJumlahPinjaman || !jangka_waktu || !tanggal_mulai) {
+            throw new Error('Semua field wajib diisi');
+        }
+
+        const query = `
+            INSERT INTO kredit_motor 
+            (id_anggota, jumlah_pinjaman, jangka_waktu, total_angsuran, 
+             pokok, margin, sisa_piutang, tanggal_mulai, ket_status, 
+             angsuran_ke, margin_persen)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+
+        const values = [
+            id_anggota,
+            formattedJumlahPinjaman,
+            jangka_waktu,
+            formattedTotalAngsuran,
+            formattedPokok,
+            formattedMargin,
+            formattedSisaPiutang,
+            tanggal_mulai,
+            'Belum Lunas',
+            0,
+            formattedMarginPersen
+        ];
+
+        // Log untuk debugging
+        console.log("Query values:", values);
+
+        db.query(query, values, (error, results) => {
+            if (error) {
+                console.error("Error saat menambahkan kredit motor:", error);
+                return res.status(500).send("Terjadi kesalahan saat menambahkan kredit motor.");
+            }
+
+            res.redirect('/lihatKreditMotor');
+        });
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).send(error.message || "Terjadi kesalahan saat menambahkan kredit motor.");
+    }
+};

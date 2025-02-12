@@ -93,20 +93,20 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    <% if (riwayatPembayaran.length > 0) { %>
-                    <% riwayatPembayaran.forEach(pembayaran => { %>
+                    <% if (riwayatPembayaran.length > 0) { %>                    
+                        <% riwayatPembayaran.forEach(pembayaran => { %>
                         <tr>
-                        <td class="border px-4 py-2"><%= pembayaran.tanggal_bayar.toISOString().split('T')[0] %></td>
-                        <td class="border px-4 py-2"><%= pembayaran.angsuran_ke %></td>
-                        <td class="border px-4 py-2"><%= pembayaran.jumlah_bayar.toLocaleString() %></td>
-                        <td class="border px-4 py-2"><%= pembayaran.ket %></td>
+                            <td class="border px-4 py-2"><%= pembayaran.tanggal_bayar.toISOString().split('T')[0] %></td>
+                            <td class="border px-4 py-2"><%= pembayaran.angsuran_ke %></td>
+                            <td class="border px-4 py-2"><%= pembayaran.jumlah_bayar.toLocaleString() %></td>
+                            <td class="border px-4 py-2"><%= pembayaran.ket %></td>
                         </tr>
-                    <% }) %>
-                    <% } else { %>
-                    <tr>
-                        <td colspan="4" class="px-6 py-4 text-center">Belum ada riwayat pembayaran</td>
-                    </tr>
-                    <% } %>
+                        <% }) %>
+                        <% } else { %>
+                        <tr>
+                            <td colspan="4" class="px-6 py-4 text-center">Belum ada riwayat pembayaran</td>
+                        </tr>
+                        <% } %>
                 </tbody>
                 </table>
             </div>

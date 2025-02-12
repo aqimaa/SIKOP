@@ -16,6 +16,7 @@ const masterController = require('../controllers/master/masterController');
 const kreditUmrohController = require("../controllers/koperasi/kreditUmrohController");
 const kreditElektronikController = require("../controllers/koperasi/kreditElektronik");
 const kreditMotorController = require("../controllers/koperasi/kreditMotorController");
+const { exportData } = require('../controllers/master/eksporBackup');
 
 // Route untuk Login
 router.get("/", (req, res) => {
@@ -134,6 +135,10 @@ router.get("/kreditMotor/bayar/:id", kreditMotorController.tampilkanBayarKreditM
 router.post("/kreditMotor/bayar/:id", kreditMotorController.prosesBayarKreditMotor);
 // router.get("/kreditUmroh/cari", kreditUmrohController.cariAnggota);
 
+//Router edit kredit motor di sini
+router.get('/kreditMotor/edit/:id', kreditMotorController.tampilkanEditKreditMotor);
+router.put('/kredit-motor/:id', kreditMotorController.simpanEditKreditMotor);
+
 // Route untuk Kredit Umroh
 router.get("/lihatKreditUmroh", kreditUmrohController.lihatKreditUmroh);
 router.delete("/kreditUmroh/hapus/:id", kreditUmrohController.hapusKreditUmroh);
@@ -210,6 +215,12 @@ router.post("/pinjaman/bayar/:id", lihatPinjamanController.prosesBayar);
 router.get("/pinjaman/cari", lihatPinjamanController.cariAnggota);
 
 // <!=============================================== Route Master ===============================================> //
+
+// Melakukan ekspor
+router.get('/master/user/export/:format', (req, res) => {
+  const format = req.params.format.toLowerCase();
+  exportData(req, res, format);
+});
 
 // 📌 Menampilkan daftar pegawai
 router.get("/master/pegawai", masterController.getPegawai);

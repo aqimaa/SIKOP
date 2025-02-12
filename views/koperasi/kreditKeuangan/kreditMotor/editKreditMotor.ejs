@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Kredit Motor</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <%- include('../../../sidebar') %>
+
+    <div class="flex-1 ml-72 p-8">
+        <div class="fixed top-0 left-72 right-0 flex justify-between shadow-md p-4 bg-white z-20">
+            <h1 class="text-2xl"></h1>
+            <div class="flex items-center">
+                <span>Admin Keuangan</span>
+                <img src="/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
+            </div>
+        </div>
+
+        <div class="mt-20 text-center">
+            <h1 class="text-2xl font-bold mb-8">Edit Kredit Motor</h1>
+        </div>
+
+        <form id="editKreditMotorForm" action="/kredit-motor/<%= kredit.id %>?_method=PUT" method="POST" class="max-w-2xl mx-auto bg-white shadow-md rounded-lg p-8">
+            <div class="grid grid-cols-2 gap-6">
+                <!-- ID Anggota (Read Only) -->
+                <div class="col-span-2 md:col-span-1">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">
+                        ID Anggota
+                    </label>
+                    <input 
+                        type="text" 
+                        value="<%= kredit.id_anggota %>" 
+                        readonly 
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 bg-gray-200 leading-tight"
+                    >
+                    <input type="hidden" name="id_anggota" value="<%= kredit.id_anggota %>">
+                </div>
+
+                <!-- Nama Anggota (Read Only) -->
+                <div class="col-span-2 md:col-span-1">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">
+                        Nama Anggota
+                    </label>
+                    <input 
+                        type="text" 
+                        value="<%= kredit.nama_anggota || '' %>" 
+                        readonly 
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 bg-gray-200 leading-tight"
+                    >
+                </div>
+        
+                <!-- Jumlah Pinjaman -->
+                <div class="col-span-2 md:col-span-1">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="jumlah_pinjaman">
+                        Jumlah Pinjaman
+                    </label>
+                    <input 
+                        type="number" 
+                        id="jumlah_pinjaman" 
+                        name="jumlah_pinjaman" 
+                        value="<%= kredit.jumlah_pinjaman %>" 
+                        required 
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                </div>
+        
+                <!-- Jangka Waktu -->
+                <div class="col-span-2 md:col-span-1">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="jangka_waktu">
+                        Jangka Waktu (Bulan)
+                    </label>
+                    <input 
+                        type="number" 
+                        id="jangka_waktu" 
+                        name="jangka_waktu" 
+                        value="<%= kredit.jangka_waktu %>" 
+                        required 
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                </div>
+        
+                <!-- Total Angsuran -->
+                <div class="col-span-2 md:col-span-1">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="total_angsuran">
+                        Total Angsuran
+                    </label>
+                    <input 
+                        type="number" 
+                        id="total_angsuran" 
+                        name="total_angsuran" 
+                        value="<%= kredit.total_angsuran %>" 
+                        required 
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                </div>
+
+                <!-- Margin Persen -->
+                <div class="col-span-2 md:col-span-1">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="margin_persen">
+                        Margin (%)
+                    </label>
+                    <input 
+                        type="number" 
+                        id="margin_persen" 
+                        name="margin_persen" 
+                        value="<%= kredit.margin_persen %>" 
+                        step="0.01"
+                        required 
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                </div>
+        
+                <!-- Status -->
+                <div class="col-span-2">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="ket_status">
+                        Status
+                    </label>
+                    <select 
+                        id="ket_status" 
+                        name="ket_status" 
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value="Belum Lunas" <%= kredit.ket_status === 'Belum Lunas' ? 'selected' : '' %>>Belum Lunas</option>
+                        <option value="Lunas" <%= kredit.ket_status === 'Lunas' ? 'selected' : '' %>>Lunas</option>
+                    </select>
+                </div>
+            </div>
+        
+            <!-- Hidden Inputs untuk Data Tambahan -->
+            <input type="hidden" name="pokok" value="<%= kredit.pokok %>">
+            <input type="hidden" name="margin" value="<%= kredit.margin %>">
+            <input type="hidden" name="angsuran_ke" value="<%= kredit.angsuran_ke %>">
+            <input type="hidden" name="sisa_piutang" value="<%= kredit.sisa_piutang %>">
+            <input type="hidden" name="tanggal_mulai" value="<%= new Date(kredit.tanggal_mulai).toISOString().split('T')[0] %>">
+            
+            <!-- Tombol Aksi -->
+            <div class="flex items-center justify-between mt-6">
+                <button 
+                    type="submit" 
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                >
+                    Perbarui Data
+                </button>
+                <a 
+                    href="/lihatKreditMotor" 
+                    class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                >
+                    Batal
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('editKreditMotorForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const formData = new FormData(form);
+
+            const tanggalMulai = formData.get('tanggal_mulai');
+            const tanggalMulaiFormatted = tanggalMulai 
+                ? new Date(tanggalMulai).toISOString().split('T')[0] 
+                : null;
+            
+            // Konversi FormData ke objek, pastikan konversi tipe data
+            const data = {
+                id_anggota: formData.get('id_anggota'),
+                jumlah_pinjaman: parseFloat(formData.get('jumlah_pinjaman')),
+                jangka_waktu: parseInt(formData.get('jangka_waktu')),
+                total_angsuran: parseFloat(formData.get('total_angsuran')),
+                margin_persen: parseFloat(formData.get('margin_persen')),
+                ket_status: formData.get('ket_status'),
+                pokok: parseFloat(formData.get('pokok')),
+                margin: parseFloat(formData.get('margin')),
+                angsuran_ke: parseInt(formData.get('angsuran_ke')),
+                sisa_piutang: parseFloat(formData.get('sisa_piutang')),
+                tanggal_mulai: formData.get('tanggal_mulai')
+            };
+            
+            // Log data yang akan dikirim
+            console.log('Sending data:', data);
+
+            fetch(`/kredit-motor/${<%= kredit.id %>}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                // Log response status
+                console.log('Response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: 'Data kredit motor berhasil diperbarui',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.href = '/lihatKreditMotor';
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: data.message || 'Gagal memperbarui data'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Kesalahan',
+                    text: 'Terjadi kesalahan saat memperbarui data'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

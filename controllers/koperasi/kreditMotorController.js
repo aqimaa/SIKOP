@@ -499,3 +499,49 @@ exports.hapusKreditMotor = (req, res) => {
     });
   });
 };
+
+exports.cariKreditMotor = (req, res) => {
+  const { search } = req.query;
+  
+  // Tambahkan log
+  console.log('Search Query:', search);
+  
+  const sql = `
+      SELECT 
+          km.id,
+          km.id_anggota,
+          pg.nama AS nama_anggota,
+          km.jumlah_pinjaman,
+          km.jangka_waktu,
+          km.total_angsuran,
+          km.pokok,
+          km.margin,
+          km.angsuran_ke,
+          km.sisa_piutang,
+          km.tanggal_mulai,
+          km.ket_status,
+          km.margin_persen
+      FROM kredit_motor km
+      JOIN anggota a ON km.id_anggota = a.id
+      JOIN pegawai pg ON a.nip_anggota = pg.nip
+      WHERE LOWER(pg.nama) LIKE LOWER(?)
+      ORDER BY km.id DESC
+  `;
+
+  // Tambahkan debug log
+  console.log('Running query with search:', `%${search}%`);
+
+  db.query(sql, [`%${search}%`], (err, results) => {
+      if (err) {
+          console.error("Error SQL:", err);
+          return res.status(500).json({ 
+              success: false,
+              message: "Terjadi kesalahan saat mencari data",
+              error: err.message 
+          });
+      }
+      // Log hasil
+      console.log('Search results:', results);
+      res.json(results || []);
+  });
+};

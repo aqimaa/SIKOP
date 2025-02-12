@@ -63,6 +63,8 @@
     <!-- Main Script -->
     <script>
         let monthlySummaries = {};
+        let paginationState = {};
+
         const months = [
             "Januari", "Februari", "Maret", "April", "Mei", "Juni",
             "Juli", "Agustus", "September", "Oktober", "November", "Desember"
@@ -184,26 +186,38 @@ function renderData() {
 
         if (monthData.items.length === 0) return;
 
-        // Filter items berdasarkan tahun yang sesuai
+        // Filter items based on selected year
         const filteredItems = monthData.items.filter(item => {
             const itemYear = new Date(item.tanggal).getFullYear();
-            // Jika "Semua Tahun" dipilih atau tahun sesuai
             return !selectedYear || itemYear.toString() === selectedYear;
         });
 
         if (filteredItems.length === 0) return;
 
-        // Hitung ulang total untuk items yang sudah difilter
-        const totals = filteredItems.reduce((acc, item) => {
-            return {
-                total_wajib: acc.total_wajib + parseFloat(item.simpanan_wajib || 0),
-                total_pokok: acc.total_pokok + parseFloat(item.simpanan_pokok || 0),
-                total_sukarela: acc.total_sukarela + parseFloat(item.simpanan_sukarela || 0)
+        // Initialize pagination state for this month if not exists
+        if (!paginationState[index]) {
+            paginationState[index] = {
+                currentPage: 1,
+                itemsPerPage: 10
             };
-        }, { total_wajib: 0, total_pokok: 0, total_sukarela: 0 });
+        }
+
+        // Calculate totals for filtered items
+        const totals = filteredItems.reduce((acc, item) => ({
+            total_wajib: acc.total_wajib + parseFloat(item.simpanan_wajib || 0),
+            total_pokok: acc.total_pokok + parseFloat(item.simpanan_pokok || 0),
+            total_sukarela: acc.total_sukarela + parseFloat(item.simpanan_sukarela || 0)
+        }), { total_wajib: 0, total_pokok: 0, total_sukarela: 0 });
 
         // Sort items by name
         filteredItems.sort((a, b) => a.nama.localeCompare(b.nama));
+
+        // Pagination calculations
+        const { currentPage, itemsPerPage } = paginationState[index];
+        const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const paginatedItems = filteredItems.slice(startIndex, endIndex);
 
         const monthElement = document.createElement('div');
         monthElement.className = 'bg-white rounded-lg shadow overflow-hidden';
@@ -234,7 +248,6 @@ function renderData() {
                     </div>
                 </div>
             </button>
-            <!-- Table content -->
             <div id="content-${index}" class="hidden border-t">
                 <div class="overflow-x-auto">
                     <table class="w-full">
@@ -251,9 +264,9 @@ function renderData() {
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
-                            ${filteredItems.map((item, idx) => `
+                            ${paginatedItems.map((item, idx) => `
                                 <tr class="hover:bg-gray-50 transition-colors">
-                                    <td class="px-6 py-4 cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${idx + 1}</td>
+                                    <td class="px-6 py-4 cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${startIndex + idx + 1}</td>
                                     <td class="px-6 py-4 cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${item.nip}</td>
                                     <td class="px-6 py-4 cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${item.nama}</td>
                                     <td class="px-6 py-4 cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${new Date(item.tanggal).toLocaleDateString('id-ID')}</td>
@@ -275,13 +288,79 @@ function renderData() {
                         </tbody>
                     </table>
                 </div>
+                ${totalPages > 1 ? `
+                    <div class="flex justify-between items-center px-6 py-4 bg-gray-50">
+                        <div class="text-sm text-gray-600">
+                            Menampilkan ${startIndex + 1}-${Math.min(endIndex, filteredItems.length)} dari ${filteredItems.length} data
+                        </div>
+                        <div class="flex gap-2">
+                            <button 
+                                onclick="changePage(${index}, ${currentPage - 1})"
+                                class="px-3 py-1 rounded border ${currentPage === 1 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'hover:bg-gray-100'}"
+                                ${currentPage === 1 ? 'disabled' : ''}
+                            >
+                                <span class="material-icons text-sm">chevron_left</span>
+                            </button>
+                            ${generatePaginationButtons(index, currentPage, totalPages)}
+                            <button 
+                                onclick="changePage(${index}, ${currentPage + 1})"
+                                class="px-3 py-1 rounded border ${currentPage === totalPages ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'hover:bg-gray-100'}"
+                                ${currentPage === totalPages ? 'disabled' : ''}
+                            >
+                                <span class="material-icons text-sm">chevron_right</span>
+                            </button>
+                        </div>
+                    </div>
+                ` : ''}
             </div>
         `;
 
         container.appendChild(monthElement);
     });
 }
+function generatePaginationButtons(monthIndex, currentPage, totalPages) {
+    const buttons = [];
+    const maxButtons = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+    let endPage = Math.min(totalPages, startPage + maxButtons - 1);
 
+    if (endPage - startPage + 1 < maxButtons) {
+        startPage = Math.max(1, endPage - maxButtons + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+        buttons.push(`
+            <button 
+                onclick="changePage(${monthIndex}, ${i})"
+                class="px-3 py-1 rounded border ${i === currentPage ? 'bg-green-600 text-white' : 'hover:bg-gray-100'}"
+            >
+                ${i}
+            </button>
+        `);
+    }
+
+    return buttons.join('');
+}
+
+function changePage(monthIndex, newPage) {
+    const totalItems = monthlySummaries[monthIndex].items.length;
+    const totalPages = Math.ceil(totalItems / paginationState[monthIndex].itemsPerPage);
+    
+    if (newPage >= 1 && newPage <= totalPages) {
+        paginationState[monthIndex].currentPage = newPage;
+        renderData();
+        
+        // Keep the month expanded after page change
+        const content = document.getElementById(`content-${monthIndex}`);
+        if (content) {
+            content.classList.remove('hidden');
+            const icon = document.getElementById(`icon-${monthIndex}`);
+            if (icon) {
+                icon.textContent = 'expand_less';
+            }
+        }
+    }
+}
         function toggleMonth(index) {
             const content = document.getElementById(`content-${index}`);
             const icon = document.getElementById(`icon-${index}`);

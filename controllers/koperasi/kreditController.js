@@ -318,6 +318,8 @@ exports.updateKreditBarang = (req, res) => {
     // Tambahkan logging untuk debugging
     console.log('Update Request:', req.body);
 
+    const formattedDate = new Date(tanggal_mulai).toISOString().split('T')[0];
+
     const query = `
         UPDATE kredit_barang 
         SET 
@@ -346,7 +348,7 @@ exports.updateKreditBarang = (req, res) => {
         margin,
         angsuran_ke,
         sisa_piutang,
-        tanggal_mulai,
+        formattedDate,
         id
     ];
 
@@ -360,7 +362,6 @@ exports.updateKreditBarang = (req, res) => {
             });
         }
 
-        // Cek apakah ada baris yang terpengaruh
         if (result.affectedRows === 0) {
             return res.status(404).json({
                 success: false,

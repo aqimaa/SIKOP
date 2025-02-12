@@ -136,8 +136,7 @@
             <input type="hidden" name="margin" value="<%= kredit.margin %>">
             <input type="hidden" name="angsuran_ke" value="<%= kredit.angsuran_ke %>">
             <input type="hidden" name="sisa_piutang" value="<%= kredit.sisa_piutang %>">
-            <input type="hidden" name="tanggal_mulai" value="<%= kredit.tanggal_mulai %>">
-        
+            <input type="hidden" name="tanggal_mulai" value="<%= new Date(kredit.tanggal_mulai).toISOString().split('T')[0] %>">        
             <!-- Tombol Aksi -->
             <div class="flex items-center justify-between mt-6">
                 <button 

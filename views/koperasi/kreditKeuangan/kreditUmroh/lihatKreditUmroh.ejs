@@ -28,19 +28,25 @@
             </div>
         </header>
 
-        <div class="flex justify-between items-center mb-18">
-            <div class="bg-white p-10 rounded shadow">
-                <div class="flex mb-4 items-center space-x-2">
+        <div class="flex-1 p-8 mt-16">
+            <!-- Search and Filter Section -->
+            <div class="bg-white p-6 rounded shadow">
+                <div class="flex mb-4 items-center space-x-5">
                     <input type="text" id="searchInput" placeholder="Cari Anggota"
-                        class="px-3 py-1 border rounded-md focus:outline-none">
-                    <button onclick="cariAnggota()" class="text-white px-3 py-1 rounded-md focus:outline-none"
-                        style="background-color: #5D8736;">
-                        <span class="material-icons">search</span>
-                    </button>
+                        class="border border-gray-300 p-2 rounded flex-1" />
+                    <button onclick="cariAnggota()" style="background-color: #5D8736; color: white;"
+                        class="ml-2 px-4 py-2 w-1/6 rounded hover:bg-[#4c6e2f]">Cari</button>
+                    <div class="flex mb-4 items-center space-x-20"></div>
                     <a href="/kreditUmroh/tambah" style="background-color: #5D8736; color: white;"
-                        class="px-4 py-2 rounded hover:bg-[#4c6e2f]">+ Tambah Kredit Baru</a>
+                        class="px-4 py-2 rounded hover:bg-[#4c6e2f] flex items-center space-x-2">
+                        <span class="material-icons">add</span>
+                        <span>Tambah Kredit Baru</span>
+                    </a>
                 </div>
 
+                <!-- Tabel Kredit Motor -->
+                <div class="bg-white rounded-lg shadow overflow-x-auto"
+                    style="max-height: calc(100vh - 220px); overflow-y: auto;">
                 <table class="table-auto w-full border-collapse">
                     <thead style="background-color: #5D8736; position: sticky; top: 0; z-index: 5;">
                         <tr>

@@ -204,47 +204,49 @@
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'Accept': 'application/json' // Tambahkan ini
+                                'Accept': 'application/json'
                             },
                             body: JSON.stringify(formData)
                         });
 
-                        // Tambahkan logging untuk memeriksa respon
-                        console.log('Response status:', response.status);
-                        console.log('Response headers:', Object.fromEntries(response.headers.entries()));
-
-                        // Periksa tipe konten
-                        const contentType = response.headers.get('content-type');
-                        if (!contentType || !contentType.includes('application/json')) {
-                            throw new Error('Respon bukan JSON');
-                        }
-
                         const responseData = await response.json();
-                        
-                        console.log('Response data:', responseData); // Logging data respon
+                        console.log('Response data:', responseData); // Tambahkan log ini untuk debug
 
                         if (responseData.success) {
-                            await Swal.fire({
-                                title: 'Berhasil!',
-                                text: responseData.message,
+                            // Tampilkan SweetAlert2
+                            const result = await Swal.fire({
                                 icon: 'success',
-                                timer: 2000,
-                                showConfirmButton: false
+                                title: 'Pembayaran Berhasil!',
+                                html: `
+                                    <div class="text-left p-4">
+                                        <div class="mb-3">
+                                            <p class="font-semibold">Detail Pembayaran:</p>
+                                            <p class="mb-2">Angsuran ke-${responseData.angsuranKe}</p>
+                                            <p class="mb-2">Jumlah Bayar: Rp ${parseFloat(formData.jumlah_bayar).toLocaleString('id-ID')}</p>
+                                            <p class="mb-2">Sisa Piutang: Rp ${parseFloat(responseData.sisaPiutang).toLocaleString('id-ID')}</p>
+                                            <p class="text-${responseData.status === 'Lunas' ? 'green' : 'blue'}-600">Status: ${responseData.status}</p>
+                                        </div>
+                                    </div>
+                                `,
+                                showConfirmButton: true,
+                                confirmButtonText: 'OK',
+                                confirmButtonColor: '#5D8736',
+                                allowOutsideClick: false
                             });
-                            window.location.reload();
+
+                            if (result.isConfirmed) {
+                                window.location.href = '/kredit-barang';
+                            }
                         } else {
-                            Swal.fire({
-                                title: 'Gagal!',
-                                text: responseData.message || 'Terjadi kesalahan',
-                                icon: 'error'
-                            });   
+                            throw new Error(responseData.message || 'Terjadi kesalahan');
                         }
                     } catch (error) {
-                        console.error('Error detail:', error);
+                        console.error('Error:', error);
                         Swal.fire({
+                            icon: 'error',
                             title: 'Gagal!',
                             text: error.message || 'Terjadi kesalahan saat memproses pembayaran',
-                            icon: 'error'
+                            confirmButtonColor: '#d33'
                         });
                     } finally {
                         submitBtn.disabled = false;

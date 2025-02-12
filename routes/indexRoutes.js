@@ -96,7 +96,16 @@ router.put('/kredit-barang/:id', kreditController.updateKreditBarang);
 
 // Route untuk Kredit Elektronik
 router.get("/lihatKreditElektronik", kreditElektronikController.lihatKreditElektronik);
-// router.delete("/kreditElektronik/hapus/:id", kreditUmrohController.hapusKreditUmroh);
+router.get("/kreditElektronik/tambah", (req, res) => {
+  res.render("koperasi/kreditKeuangan/kreditElektronik/tambahKreditElektro");
+});
+router.post("/kreditElektronik/tambah", kreditElektronikController.tambahKreditElektronik);
+router.get("/kreditElektronik/edit/:id", kreditElektronikController.tampilkanEditKreditElektronik);
+router.post("/kreditElektronik/edit/:id", kreditElektronikController.simpanEditKreditElektronik);
+router.delete("/kreditElektronik/hapus/:id", kreditElektronikController.hapusKreditElektronik);
+router.get("/kreditElektronik/bayar/:id", kreditElektronikController.tampilkanBayarKreditElektronik);
+router.post("/kreditElektronik/bayar/:id", kreditElektronikController.prosesBayarKreditElektronik);
+router.get("/kreditElektronik/cari", kreditElektronikController.cariKreditElektronik);// router.delete("/kreditElektronik/hapus/:id", kreditUmrohController.hapusKreditUmroh);
 // router.get("/kreditElektronik/edit/:id", kreditUmrohController.tampilkanEditKreditUmroh);
 // router.post("/kreditElektronik/edit/:id", kreditUmrohController.simpanEditKreditUmroh);
 // router.get("/kreditUmroh/tambah", (req, res) => {

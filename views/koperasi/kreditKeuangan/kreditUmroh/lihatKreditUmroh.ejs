@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,45 +8,40 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
+
 <body class="flex bg-gray-100">
     <!-- Sidebar -->
     <%- include('../../../sidebar') %>
 
     <!-- Main Content -->
-    <div class="flex-1 ml-72">
-        <div class="fixed top-0 left-72 right-0 flex justify-between shadow-md p-4 bg-white z-20">
-            <h1 class="text-2xl"></h1>
-            <div class="flex items-center">
-                <span>Admin Keuangan</span>
-                <img src="/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
-            </div>
-        </div>
 
-        <div class="flex-1 p-8 mt-12">
-            <!-- Fixed Search and Filter -->
-            <div class="fixed top-16 left-72 right-0 bg-gray-100 z-10 p-4">
-                <div class="text-center mb-4">
-                    <h2 class="text-2xl font-bold mt-4 mb-6">Data Kredit Umroh</h2>
-                </div>
-
-                <div class="flex justify-between mb-3">
-                    <div class="flex space-x-2">
-                        <input type="text" id="searchInput" placeholder="Cari Anggota" class="px-3 py-1 border rounded-md focus:outline-none">
-                        <button onclick="cariAnggota()" class="text-white px-3 py-1 rounded-md focus:outline-none" style="background-color: #5D8736;">
-                            <span class="material-icons">search</span>
-                        </button>
+    <div class="flex-1 p-6 ml-72">
+        <header class="flex justify-between items-center mb-12">
+            <div class="flex-1 ml-72">
+                <div class="fixed top-0 left-72 right-0 flex items-center justify-center shadow-md p-4 bg-white z-20">
+                    <h1 class="text-2xl font-bold flex-grow text-center">Data Kredit Umroh</h1>
+                    <div class="flex items-center">
+                        <span>Admin Keuangan</span>
+                        <img src="/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
                     </div>
-                    <!-- Tombol Tambah Kredit Baru -->
-                    <a href="/kreditUmroh/tambah" class="text-white px-3 py-1 rounded flex items-center space-x-1" style="background-color: #5D8736;">
-                        <span class="material-icons">add</span>
-                        <span>Tambah Kredit Baru</span>
-                    </a>
                 </div>
             </div>
+        </header>
 
-            <!-- Tabel Kredit Umroh -->
-            <div class="bg-white rounded-lg shadow overflow-x-auto mt-36" style="max-height: calc(100vh - 280px); overflow-y: auto;">
-                <table class="w-full">
+        <div class="flex justify-between items-center mb-18">
+            <div class="bg-white p-10 rounded shadow">
+                <div class="flex mb-4 items-center space-x-2">
+                    <input type="text" id="searchInput" placeholder="Cari Anggota"
+                        class="px-3 py-1 border rounded-md focus:outline-none">
+                    <button onclick="cariAnggota()" class="text-white px-3 py-1 rounded-md focus:outline-none"
+                        style="background-color: #5D8736;">
+                        <span class="material-icons">search</span>
+                    </button>
+                    <a href="/kreditUmroh/tambah" style="background-color: #5D8736; color: white;"
+                        class="px-4 py-2 rounded hover:bg-[#4c6e2f]">+ Tambah Kredit Baru</a>
+                </div>
+
+                <table class="table-auto w-full border-collapse">
                     <thead style="background-color: #5D8736; position: sticky; top: 0; z-index: 5;">
                         <tr>
                             <th class="px-6 py-3 text-left text-white">No.</th>
@@ -67,44 +63,58 @@
                     </thead>
                     <tbody id="kreditUmrohTableBody">
                         <% if (kreditUmroh && kreditUmroh.length > 0) { %>
-                            <% kreditUmroh.forEach((kreditUmroh, index) => { %>
-                                <tr class="border-b border-gray-200">
-                                    <td class="px-6 py-4"><%= index + 1 %></td>
-                                    <td class="px-6 py-4"><%= kreditUmroh.id_anggota %></td>
-                                    <td class="px-6 py-4"><%= kreditUmroh.nama_anggota %></td>
-                                    <td class="px-6 py-4"><%= kreditUmroh.jumlah_pinjaman.toLocaleString() %></td>
-                                    <td class="px-6 py-4"><%= kreditUmroh.jangka_waktu %> Bulan</td>
-                                    <td class="px-6 py-4"><%= kreditUmroh.margin_persen ? kreditUmroh.margin_persen.toFixed(2) : '0.00' %>%</td>
-                                    <td class="px-6 py-4"><%= kreditUmroh.pokok ? kreditUmroh.pokok.toLocaleString() : '0' %></td>
-                                    <td class="px-6 py-4"><%= kreditUmroh.margin ? kreditUmroh.margin.toLocaleString() : '0' %></td>
-                                    <td class="px-6 py-4"><%= kreditUmroh.total_angsuran ? kreditUmroh.total_angsuran.toLocaleString() : '0' %></td>
-                                    <td class="px-6 py-4"><%= kreditUmroh.angsuran_ke || 0 %></td>                                    
-                                    <td class="px-6 py-4"><%= kreditUmroh.sisa_piutang.toLocaleString() %></td>
-                                    <td class="px-6 py-4"><%= kreditUmroh.tanggal_mulai.toISOString().split('T')[0] %></td>
-                                    <td class="px-6 py-4">
-                                        <% if (kreditUmroh.ket_status === 'Lunas') { %>
-                                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm whitespace-nowrap">Lunas</span>
-                                        <% } else { %>
-                                            <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm whitespace-nowrap">Belum Lunas</span>
-                                        <% } %>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex space-x-2">
-                                            <button onclick="bayarKreditUmroh('<%= kreditUmroh.id %>')" class="border border-gray-300 px-2 py-1 rounded p-1" style="background-color: #5D8736; color: white;">Bayar</button>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex space-x-2">
-                                            <button onclick="editKreditUmroh('<%= kreditUmroh.id %>')" class="border border-gray-300 rounded p-1"><span class="material-icons">edit</span></button>
-                                            <button onclick="hapusKreditUmroh('<%= kreditUmroh.id %>')" class="border border-gray-300 rounded p-1"><span class="material-icons">delete</span></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            <% }) %>
+                        <% kreditUmroh.forEach((kreditUmroh, index) => { %>
+                        <tr class="border-b border-gray-200">
+                            <td class="px-6 py-4"><%= index + 1 %></td>
+                            <td class="px-6 py-4"><%= kreditUmroh.id_anggota %></td>
+                            <td class="px-6 py-4"><%= kreditUmroh.nama_anggota %></td>
+                            <td class="px-6 py-4"><%= kreditUmroh.jumlah_pinjaman.toLocaleString() %></td>
+                            <td class="px-6 py-4"><%= kreditUmroh.jangka_waktu %> Bulan</td>
+                            <td class="px-6 py-4">
+                                <%= kreditUmroh.margin_persen ? kreditUmroh.margin_persen.toFixed(2) : '0.00' %>%</td>
+                            <td class="px-6 py-4"><%= kreditUmroh.pokok ? kreditUmroh.pokok.toLocaleString() : '0' %>
+                            </td>
+                            <td class="px-6 py-4"><%= kreditUmroh.margin ? kreditUmroh.margin.toLocaleString() : '0' %>
+                            </td>
+                            <td class="px-6 py-4">
+                                <%= kreditUmroh.total_angsuran ? kreditUmroh.total_angsuran.toLocaleString() : '0' %>
+                            </td>
+                            <td class="px-6 py-4"><%= kreditUmroh.angsuran_ke || 0 %></td>
+                            <td class="px-6 py-4"><%= kreditUmroh.sisa_piutang.toLocaleString() %></td>
+                            <td class="px-6 py-4"><%= kreditUmroh.tanggal_mulai.toISOString().split('T')[0] %></td>
+                            <td class="px-6 py-4">
+                                <% if (kreditUmroh.ket_status === 'Lunas') { %>
+                                <span
+                                    class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm whitespace-nowrap">Lunas</span>
+                                <% } else { %>
+                                <span
+                                    class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm whitespace-nowrap">Belum
+                                    Lunas</span>
+                                <% } %>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex space-x-2">
+                                    <button onclick="bayarKreditUmroh('<%= kreditUmroh.id %>')"
+                                        class="border border-gray-300 px-2 py-1 rounded p-1"
+                                        style="background-color: #5D8736; color: white;">Bayar</button>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex space-x-2">
+                                    <button onclick="editKreditUmroh('<%= kreditUmroh.id %>')"
+                                        class="border border-gray-300 rounded p-1"><span
+                                            class="material-icons">edit</span></button>
+                                    <button onclick="hapusKreditUmroh('<%= kreditUmroh.id %>')"
+                                        class="border border-gray-300 rounded p-1"><span
+                                            class="material-icons">delete</span></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <% }) %>
                         <% } else { %>
-                            <tr>
-                                <td colspan="15" class="px-6 py-4 text-center">Tidak ada data kredit umroh.</td>
-                            </tr>
+                        <tr>
+                            <td colspan="15" class="px-6 py-4 text-center">Tidak ada data kredit umroh.</td>
+                        </tr>
                         <% } %>
                     </tbody>
                 </table>
@@ -173,40 +183,41 @@
             function bayarKreditUmroh(id) {
                 window.location.href = `/kreditUmroh/bayar/${id}`;
             }
-        
+
             function editKreditUmroh(id) {
                 window.location.href = `/kreditUmroh/edit/${id}`;
             }
-        
+
             function hapusKreditUmroh(id) {
                 if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
                     fetch(`/kreditUmroh/hapus/${id}`, {
-                    method: 'DELETE',
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                    if (data.success) {
-                        alert(data.message);
-                        // Muat ulang data setelah penghapusan
-                        window.location.reload();
-                    } else {
-                        alert(data.message);
-                    }
-                    })
-                    .catch(error => {
-                    console.error('Error:', error);
-                    alert('Terjadi kesalahan saat menghapus data.');
-                    });
+                            method: 'DELETE',
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert(data.message);
+                                // Muat ulang data setelah penghapusan
+                                window.location.reload();
+                            } else {
+                                alert(data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Terjadi kesalahan saat menghapus data.');
+                        });
                 }
-                }
-          
-            function editKreditUmroh(id) {
-              window.location.href = `/kreditUmroh/edit/${id}`;
             }
-          
+
+            function editKreditUmroh(id) {
+                window.location.href = `/kreditUmroh/edit/${id}`;
+            }
+
             function bayarKreditUmroh(id) {
-              window.location.href = `/kreditUmroh/bayar/${id}`;
+                window.location.href = `/kreditUmroh/bayar/${id}`;
             }
         </script>
 </body>
+
 </html>

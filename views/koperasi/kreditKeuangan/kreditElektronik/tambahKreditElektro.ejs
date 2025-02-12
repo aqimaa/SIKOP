@@ -8,99 +8,122 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 </head>
-<body class="flex">
+<body class="flex bg-white">
     <!-- Sidebar -->
     <%- include('../../../sidebar') %>
 
     <!-- Main Content -->
-    <div class="flex-1 p-8 ml-72">
-        <h1 class="text-2xl mb-6">Form Input Kredit Elektronik</h1>
+    <div class="flex-1 ml-72 p-8">
+      <div class="fixed top-0 left-72 right-0 flex justify-between shadow-md p-4 bg-white z-20">
+          <h1 class="text-2xl"></h1>
+          <div class="flex items-center">
+              <span>Admin Keuangan</span>
+              <img src="/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
+          </div>
+      </div>
 
-        <!-- Form Section -->
-        <form id="tambahKreditForm" class="space-y-6">
-            <div class="bg-gray-100 p-6 rounded-lg">
-              <h2 class="text-lg font-semibold mb-4">Data Anggota</h2>
+      <div class="mt-20 text-center">
+        <h1 class="text-2xl font-bold mb-8">Tambah Kredit Barang Elektronik</h1>
+      </div>
+
+      <form action="/kreditElektronik/tambah" method="POST">
+        <div class="space-y-6">
+            <!-- Data Anggota -->
+            <div class="bg-gray-200 p-6 rounded-lg">
+                <h2 class="text-lg font-semibold mb-4">Data Anggota</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block mb-2">No. Anggota</label>
+                        <input type="text" id="id_anggota" name="id_anggota" class="w-full border p-2 rounded" placeholder="Masukkan No. Anggota" required oninput="getNamaAnggota(this.value)">
+                    </div>
+                    <div>
+                        <label class="block mb-2">Nama Anggota</label>
+                        <input type="text" id="nama_anggota" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Nama anggota akan muncul otomatis">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Kredit Umroh -->
+            <div class="bg-gray-200 p-6 rounded-lg">
+              <h2 class="text-lg font-semibold mb-4">Data Kredit Umroh</h2>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label class="block mb-2">No. Anggota</label>
-                  <input type="text" name="id_anggota" class="w-full border p-2 rounded" placeholder="Masukkan No. Anggota" required>
-                </div>
-                <div>
-                  <label class="block mb-2">Nama Anggota</label>
-                  <input type="text" name="nama_anggota" class="w-full border p-2 rounded" placeholder="Masukkan Nama Anggota" required>
-                </div>
+                  <div>
+                      <label class="block mb-2">Jumlah Pinjaman</label>
+                      <input type="text" id="jumlah_pinjaman" name="jumlah_pinjaman" class="w-full border p-2 rounded" placeholder="Masukkan Jumlah Pinjaman" required oninput="validateNumberInput(this)">
+                  </div>
+                  <div>
+                      <label class="block mb-2">Jangka Waktu (Bulan)</label>
+                      <input type="number" id="jangka_waktu" name="jangka_waktu" class="w-full border p-2 rounded" placeholder="Masukkan Jangka Waktu" required>
+                  </div>
+                  <div>
+                      <label class="block mb-2">Margin (%)</label>
+                      <input type="text" id="margin" name="margin_persen" class="w-full border p-2 rounded" placeholder="Masukkan Persen Margin per Bulan" required oninput="validateNumberInput(this)">
+                  </div>
+                  <div>
+                      <label class="block mb-2">Tanggal Mulai</label>
+                      <input type="date" name="tanggal_mulai" class="w-full border p-2 rounded" required>
+                  </div>
               </div>
+          </div>
+
+          <!-- Hasil Perhitungan -->
+          <div class="bg-blue-100 p-6 rounded-lg">
+            <h2 class="text-lg font-semibold mb-4">Hasil Perhitungan</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block mb-2">Total Angsuran Keseluruhan</label>
+                    <input type="text" id="totalAngsuran" name="sisa_piutang" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Dihitung otomatis">
+                </div>
+                <div>
+                    <label class="block mb-2">Total Angsuran per Bulan</label>
+                    <input type="text" id="totalAngsuranPerBulan" name="total_angsuran" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Dihitung otomatis">
+                </div>
+                <div>
+                    <label class="block mb-2">Margin per Bulan</label>
+                    <input type="text" id="marginPerBulan" name="margin" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Dihitung otomatis">
+                </div>
+                <div>
+                    <label class="block mb-2">Angsuran Pokok per Bulan</label>
+                    <input type="text" id="pokok" name="pokok" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Dihitung otomatis">
+                </div>
             </div>
-            <div class="bg-gray-100 p-6 rounded-lg">
-              <h2 class="text-lg font-semibold mb-4">Data Kredit Elektronik</h2>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label class="block mb-2">Pinjaman</label>
-                  <input type="number" name="jumlah_pinjaman" class="w-full border p-2 rounded" placeholder="Masukkan Harga Pokok" required>
-                </div>
-                <div>
-                  <label class="block mb-2">Jangka Waktu (Bulan)</label>
-                  <input type="number" name="jangka_waktu" class="w-full border p-2 rounded" placeholder="Masukkan Jangka Waktu" required>
-                </div>
-                <div>
-                  <label class="block mb-2">Margin (%)</label>
-                  <input type="number" name="margin_persen" class="w-full border p-2 rounded" placeholder="Masukkan Margin" required>
-                </div>
-                <div>
-                  <label class="block mb-2">Tanggal Perjanjian</label>
-                  <input type="date" name="tanggal_mulai" class="w-full border p-2 rounded" required>
-                </div>
-              </div>
-            </div>
-            <div class="flex justify-end space-x-4">
-              <button type="reset" class="bg-gray-400 text-white px-4 py-2 rounded">Batal</button>
-              <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Simpan</button>
-            </div>
-          </form>
-          
-          <!-- SweetAlert2 Script -->
-          <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-          <script>
-            document.getElementById('tambahKreditForm').addEventListener('submit', function (e) {
-              e.preventDefault(); // Mencegah form submit secara default
-          
-              const formData = new FormData(this);
-          
-              fetch('/kreditElektronik/tambah', {
-                method: 'POST',
-                body: formData
-              })
-                .then(response => response.json())
-                .then(data => {
-                  if (data.success) {
-                    Swal.fire({
-                      icon: 'success',
-                      title: 'Sukses!',
-                      text: data.message,
-                      confirmButtonText: 'OK'
-                    }).then(() => {
-                      window.location.href = '/lihatKreditElektronik'; // Redirect ke halaman lihat kredit elektronik
-                    });
-                  } else {
-                    Swal.fire({
-                      icon: 'error',
-                      title: 'Gagal!',
-                      text: data.message,
-                      confirmButtonText: 'OK'
-                    });
-                  }
-                })
-                .catch(error => {
-                  console.error('Error:', error);
-                  Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Terjadi kesalahan saat mengirim data.',
-                    confirmButtonText: 'OK'
-                  });
-                });
-            });
-          </script>
-    </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex space-x-4">
+            <button type="button" id="batalButton" class="flex-1 border border-green-800 text-green-800 py-2 px-4 rounded-md mt-4" style="border-color: #5D8736; color: #5D8736;">Batal</button>
+            <button type="submit" class="flex-1 text-white py-2 px-4 rounded-md mt-4" style="background-color: #5D8736;">Simpan</button>
+        </div>
+      </div>  
+    </form>
+  </div>      
+  
+  <script>
+    function hitungAngsuran() {
+      const jumlahPinjaman = parseFloat(document.getElementById('jumlah_pinjaman').value) || 0;
+      const jangkaWaktu = parseFloat(document.getElementById('jangka_waktu').value) || 0;
+      const marginPersen = parseFloat(document.getElementById('margin_persen').value) || 0;
+
+      const marginPerBulan = (jumlahPinjaman * (marginPersen / 100)) / jangkaWaktu;
+      const pokokPerBulan = jumlahPinjaman / jangkaWaktu;
+      const totalAngsuranPerBulan = pokokPerBulan + marginPerBulan;
+      const totalAngsuran = totalAngsuranPerBulan * jangkaWaktu;
+
+      document.getElementById('totalAngsuran').value = totalAngsuran.toLocaleString();
+      document.getElementById('totalAngsuranPerBulan').value = totalAngsuranPerBulan.toLocaleString();
+      document.getElementById('marginPerBulan').value = marginPerBulan.toLocaleString();
+      document.getElementById('pokok').value = pokokPerBulan.toLocaleString();
+    }
+
+    function getNamaAnggota(idAnggota) {
+      // Implementasikan fungsi untuk mengambil nama anggota berdasarkan ID
+      // Contoh:
+      // fetch(`/api/anggota/${idAnggota}`)
+      //   .then(response => response.json())
+      //   .then(data => {
+      //     document.getElementById('nama_anggota').value = data.nama;
+      //   });
+    }
+  </script>
 </body>
 </html>

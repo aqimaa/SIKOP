@@ -325,3 +325,43 @@ exports.cariKreditElektronik = (req, res) => {
       res.json(results || []);
   });
 };
+
+exports.hapusKreditElektronik = (req, res) => {
+  const id = req.params.id;
+
+  // Hapus data pembayaran terkait terlebih dahulu
+  db.query("DELETE FROM pembayaran WHERE id_kredit_elektronik = ?", [id], (errPembayaran) => {
+    if (errPembayaran) {
+      console.error("Error saat menghapus pembayaran:", errPembayaran);
+      return res.status(500).json({
+        success: false,
+        message: "Terjadi kesalahan saat menghapus pembayaran"
+      });
+    }
+
+    // Kemudian hapus data kredit elektronik
+    db.query("DELETE FROM kredit_elektronik WHERE id = ?", [id], (error, result) => {
+      if (error) {
+        console.error("Error saat menghapus kredit elektronik:", error);
+        return res.status(500).json({
+          success: false,
+          message: "Terjadi kesalahan saat menghapus kredit elektronik"
+        });
+      }
+
+      // Periksa apakah data berhasil dihapus
+      if (result.affectedRows === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "Data kredit elektronik tidak ditemukan"
+        });
+      }
+
+      // Kirim respons sukses
+      res.json({
+        success: true,
+        message: "Data kredit elektronik berhasil dihapus"
+      });
+    });
+  });
+};

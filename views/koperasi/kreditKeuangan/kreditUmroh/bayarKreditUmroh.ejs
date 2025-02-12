@@ -39,7 +39,7 @@
                 </div>
                 <div>
                     <p>Jumlah Pinjaman</p>
-                    <p class="font-bold"><%= kreditUmroh.jumlah_pinjaman %></p>
+                    <p class="font-bold"><%= kreditUmroh.jumlah_pinjaman.toLocaleString() %></p>
                 </div>
                 <div>
                     <p>Jangka Waktu (bulan)</p>
@@ -47,15 +47,14 @@
                 </div>
                 <div>
                     <p>Angsuran Ke</p>
-                    <p class="font-bold"><%= kreditUmroh.angsuran_ke %> dari <%= kreditUmroh.jangka_waktu %></p>
+                    <p class="font-bold"><%= kreditUmroh.angsuran_ke || 0 %> dari <%= kreditUmroh.jangka_waktu %></p>
                 </div>
                 <div>
                     <p>Sisa Piutang</p>
-                    <p class="font-bold"><%= kreditUmroh.sisa_piutang %></p>
-                </div>
+                    <p class="font-bold"><%= kreditUmroh.sisa_piutang.toLocaleString() %></p>
                 <div>
                     <p>Angsuran Per Bulan</p>
-                    <p class="font-bold"><%= kreditUmroh.total_angsuran %></p>
+                    <p class="font-bold"><%= kreditUmroh.total_angsuran.toLocaleString() %></p>
                 </div>
             </div>
         </div>

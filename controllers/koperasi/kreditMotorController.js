@@ -38,3 +38,172 @@ exports.lihatKreditMotor = async (req, res) => {
     res.status(500).send("Terjadi kesalahan saat mengambil data kredit motor.");
   }
 };
+
+exports.tampilkanTambahKreditMotor = async (req, res) => {
+    try {
+      // Ambil data anggota dari database jika diperlukan
+      const queryAnggota = "SELECT id, nama FROM anggota";
+      db.query(queryAnggota, (error, results) => {
+        if (error) {
+          console.error("Error saat mengambil data anggota:", error);
+          return res.status(500).send("Terjadi kesalahan saat mengambil data anggota.");
+        }
+  
+        // Render halaman tambah kredit motor dengan data anggota
+        res.render("koperasi/kreditKeuangan/kreditMotor/tambahKreditMotor", { anggota: results });
+      });
+    } catch (error) {
+      console.error("Error:", error);
+      res.status(500).send("Terjadi kesalahan saat menampilkan halaman tambah kredit motor.");
+    }
+  };
+
+  exports.tambahKreditMotor = async (req, res) => {
+    const { id_anggota, jumlah_pinjaman, jangka_waktu, margin_persen, tanggal_mulai } = req.body;
+  
+    try {
+      const query = `
+        INSERT INTO kredit_motor (id_anggota, jumlah_pinjaman, jangka_waktu, margin_persen, tanggal_mulai, ket_status)
+        VALUES (?, ?, ?, ?, ?, 'Belum Lunas')
+      `;
+  
+      db.query(query, [id_anggota, jumlah_pinjaman, jangka_waktu, margin_persen, tanggal_mulai], (error, results) => {
+        if (error) {
+          console.error("Error saat menambahkan kredit motor:", error);
+          return res.status(500).send("Terjadi kesalahan saat menambahkan kredit motor.");
+        }
+  
+        res.redirect("/lihatKreditMotor");
+      });
+    } catch (error) {
+      console.error("Error:", error);
+      res.status(500).send("Terjadi kesalahan saat menambahkan kredit motor.");
+    }
+  };
+
+  exports.tampilkanBayarKreditMotor = async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      const query = `
+        SELECT 
+          km.id,
+          km.id_anggota,
+          pg.nama AS nama_anggota,
+          km.jumlah_pinjaman,
+          km.jangka_waktu,
+          km.total_angsuran,
+          km.pokok,
+          km.margin,
+          km.angsuran_ke,
+          km.sisa_piutang,
+          km.tanggal_mulai,
+          km.ket_status,
+          km.margin_persen
+        FROM kredit_motor km
+        JOIN anggota a ON km.id_anggota = a.id
+        JOIN pegawai pg ON a.nip_anggota = pg.nip
+        WHERE km.id = ?
+      `;
+  
+      db.query(query, [id], (error, results) => {
+        if (error) {
+          console.error("Error saat mengambil data kredit motor:", error);
+          return res.status(500).send("Terjadi kesalahan saat mengambil data kredit motor.");
+        }
+        if (results.length === 0) {
+          return res.status(404).send("Data kredit motor tidak ditemukan.");
+        }
+  
+        const kreditMotor = results[0];
+  
+        // Ambil riwayat pembayaran
+        const queryPembayaran = `
+          SELECT * FROM pembayaran
+          WHERE id_kredit_motor = ?
+          ORDER BY tanggal_bayar DESC
+        `;
+  
+        db.query(queryPembayaran, [id], (error, pembayaranResults) => {
+          if (error) {
+            console.error("Error saat mengambil data pembayaran:", error);
+            return res.status(500).send("Terjadi kesalahan saat mengambil data pembayaran.");
+          }
+  
+          res.render("koperasi/kreditKeuangan/kreditMotor/bayarKreditMotor", { 
+            kreditMotor: kreditMotor,
+            pembayaran: pembayaranResults
+          });
+        });
+      });
+    } catch (error) {
+      console.error("Error:", error);
+      res.status(500).send("Terjadi kesalahan saat menampilkan halaman pembayaran kredit motor.");
+    }
+  };
+  
+  exports.prosesBayarKreditMotor = async (req, res) => {
+    const { id } = req.params;
+    const { tanggal_bayar, jumlah_bayar, keterangan } = req.body;
+  
+    try {
+      // Ambil data kredit motor
+      const queryKreditMotor = `
+        SELECT * FROM kredit_motor
+        WHERE id = ?
+      `;
+  
+      db.query(queryKreditMotor, [id], (error, results) => {
+        if (error) {
+          console.error("Error saat mengambil data kredit motor:", error);
+          return res.status(500).send("Terjadi kesalahan saat mengambil data kredit motor.");
+        }
+        if (results.length === 0) {
+          return res.status(404).send("Data kredit motor tidak ditemukan.");
+        }
+  
+        const kreditMotor = results[0];
+  
+        // Hitung angsuran ke
+        const angsuranKe = kreditMotor.angsuran_ke + 1;
+  
+        // Hitung sisa piutang
+        const sisaPiutang = kreditMotor.sisa_piutang - jumlah_bayar;
+  
+        // Update status jika sisa piutang sudah lunas
+        const ketStatus = sisaPiutang <= 0 ? 'Lunas' : 'Belum Lunas';
+  
+        // Simpan pembayaran ke tabel pembayaran
+        const queryInsertPembayaran = `
+          INSERT INTO pembayaran (id_kredit_motor, tanggal_bayar, angsuran_ke, jumlah_bayar, ket)
+          VALUES (?, ?, ?, ?, ?)
+        `;
+  
+        db.query(queryInsertPembayaran, [id, tanggal_bayar, angsuranKe, jumlah_bayar, keterangan], (error, results) => {
+          if (error) {
+            console.error("Error saat menyimpan data pembayaran:", error);
+            return res.status(500).send("Terjadi kesalahan saat menyimpan data pembayaran.");
+          }
+  
+          // Update data kredit motor
+          const queryUpdateKreditMotor = `
+            UPDATE kredit_motor
+            SET angsuran_ke = ?, sisa_piutang = ?, ket_status = ?
+            WHERE id = ?
+          `;
+  
+          db.query(queryUpdateKreditMotor, [angsuranKe, sisaPiutang, ketStatus, id], (error, results) => {
+            if (error) {
+              console.error("Error saat mengupdate data kredit motor:", error);
+              return res.status(500).send("Terjadi kesalahan saat mengupdate data kredit motor.");
+            }
+  
+            res.redirect(`/kreditMotor/bayar/${id}`);
+          });
+        });
+      });
+    } catch (error) {
+      console.error("Error:", error);
+      res.status(500).send("Terjadi kesalahan saat memproses pembayaran kredit motor.");
+    }
+  };

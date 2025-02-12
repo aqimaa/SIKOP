@@ -700,7 +700,8 @@ exports.prosesBayarKreditBarang = (req, res) => {
                                     sisaPiutang: newSisaPiutang,
                                     status: isLunas ? 'Lunas' : 'Belum Lunas'
                                 });
-                            });                        }
+                            });                        
+                        }
                     );
                 }
             );

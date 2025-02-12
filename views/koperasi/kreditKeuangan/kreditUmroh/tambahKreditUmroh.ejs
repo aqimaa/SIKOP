@@ -133,6 +133,26 @@
                 window.location.href = '/lihatKreditUmroh'; // Redirect ke halaman lihatKreditUmroh
             });
         });
+
+        function getNamaAnggota(idAnggota) {
+            if (idAnggota) {
+                fetch(`/kreditUmroh/getAnggota/${idAnggota}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById('nama_anggota').value = data.nama;
+                        } else {
+                            document.getElementById('nama_anggota').value = '';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById('nama_anggota').value = '';
+                    });
+            } else {
+                document.getElementById('nama_anggota').value = '';
+            }
+        }
     </script>
 </body>
 </html>

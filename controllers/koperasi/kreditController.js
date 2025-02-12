@@ -442,6 +442,54 @@ exports.deleteKreditBarang = async (req, res) => {
     }
 };
 
+//Method searvh untuk cari kredit barang
+exports.searchKreditBarang = (req, res) => {
+    const { search } = req.query;
+    
+    // Tambahkan log
+    console.log('Search Query:', search);
+    
+    const sql = `
+        SELECT
+            kb.id,
+            kb.id_anggota,
+            p.nama AS nama_anggota,  
+            kb.harga_pokok,
+            kb.jangka_waktu,
+            kb.pokok_dp,
+            kb.total_angsuran,
+            kb.pokok,
+            kb.margin,
+            kb.angsuran_ke,
+            kb.sisa_piutang,
+            kb.tanggal_mulai,
+            kb.ket_status
+        FROM kredit_barang kb
+        JOIN anggota a ON kb.id_anggota = a.id
+        JOIN pegawai p ON a.nip_anggota = p.nip
+        WHERE LOWER(p.nama) LIKE LOWER(?)
+        ORDER BY kb.id DESC
+    `;
+
+    // Tambahkan debug log
+    console.log('Running query with search:', `%${search}%`);
+
+    db.query(sql, [`%${search}%`], (err, results) => {
+        if (err) {
+            console.error("Error SQL:", err);
+            return res.status(500).json({ 
+                success: false,
+                message: "Terjadi kesalahan saat mencari data",
+                error: err.message 
+            });
+        }
+        // Log hasil
+        console.log('Search results:', results);
+        res.json(results || []);
+    });
+};
+
+
 
 // Menampilkan halaman pembayaran kredit barang
 exports.getBayarKreditBarang = async (req, res) => {

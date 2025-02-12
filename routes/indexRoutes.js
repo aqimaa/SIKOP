@@ -94,6 +94,9 @@ router.get("/tambahKreditBarang", kreditController.getTambahKredit);
 router.get('/kredit-barang/edit/:id', kreditController.getEditKreditBarang);
 router.put('/kredit-barang/:id', kreditController.updateKreditBarang);
 
+//Route untuk ari kredit barang
+router.get("/api/kredit-barang/search", kreditController.searchKreditBarang);
+
 // Route untuk Kredit Elektronik
 router.get("/lihatKreditElektronik", kreditElektronikController.lihatKreditElektronik);
 // router.delete("/kreditElektronik/hapus/:id", kreditUmrohController.hapusKreditUmroh);

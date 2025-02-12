@@ -77,10 +77,9 @@
 
         <div class="bg-white p-4 rounded shadow">
             <div class="flex mb-4">
-                <input type="text" placeholder="Cari Anggota" class="border border-gray-300 p-2 rounded flex-1" />
-                <button style="background-color: #5D8736; color: white;" class="ml-2 px-4 py-2 rounded hover:bg-[#4c6e2f]">Cari</button>
+                <input type="text" id="searchInput" placeholder="Cari Anggota" class="border border-gray-300 p-2 rounded flex-1" />
+                <button id="searchButton" style="background-color: #5D8736; color: white;" class="ml-2 px-4 py-2 rounded hover:bg-[#4c6e2f]">Cari</button>
             </div>
-
 
             <table class="table-auto w-full border-collapse shadow-lg rounded-lg overflow-hidden">
                 <thead style="background-color: #5D8736; color: white;">
@@ -101,8 +100,7 @@
                         <th class="p-4">Aksi</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <% if (data && data.length > 0) { %>
+                <tbody id="tableBody">                    <% if (data && data.length > 0) { %>
                         <% data.forEach((item, index) => { %>
                             <tr id="row-<%= item.id %>" class="border-b hover:bg-[#A4C68C] transition duration-200">
                                 <td class="p-4 text-center"><%= index + 1 %></td>
@@ -249,6 +247,112 @@
                         ? 'p-4 text-center font-semibold text-[#5D8736]'
                         : 'p-4 text-center font-semibold text-red-700';
                 }
+            }
+        });
+    </script>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        const tableBody = document.getElementById('tableBody');
+
+        // Fungsi untuk format tanggal
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            return new Date(dateString).toLocaleDateString('id-ID');
+        }
+
+        // Fungsi untuk format angka ke rupiah
+        function formatRupiah(angka) {
+            if (!angka) return 'Rp 0';
+            return `Rp ${parseInt(angka).toLocaleString('id-ID')}`;
+        }
+
+        // Fungsi untuk melakukan pencarian
+        function performSearch() {
+            const searchValue = searchInput.value;
+            
+            fetch(`/api/kredit-barang/search?search=${searchValue}`)
+                .then(response => response.json())
+                .then(data => {
+                    tableBody.innerHTML = '';
+                    
+                    if (data.length > 0) {
+                        data.forEach((item, index) => {
+                            const row = `
+                                <tr id="row-${item.id}" class="border-b hover:bg-[#A4C68C] transition duration-200">
+                                    <td class="p-4 text-center">${index + 1}</td>
+                                    <td class="p-4">${item.nama_anggota}</td>
+                                    <td class="p-4 text-right">${formatRupiah(item.harga_pokok)}</td>
+                                    <td class="p-4 text-center">${item.jangka_waktu} Bulan</td>
+                                    <td class="p-4 text-right">${formatRupiah(item.pokok_dp)}</td>
+                                    <td class="p-4 text-right">${formatRupiah(item.total_angsuran)}</td>
+                                    <td class="p-4 text-right">${formatRupiah(item.pokok)}</td>
+                                    <td class="p-4 text-right">${formatRupiah(item.margin)}</td>
+                                    <td class="p-4 text-center">${item.angsuran_ke || 0}</td>
+                                    <td class="p-4 text-right">${formatRupiah(item.sisa_piutang)}</td>
+                                    <td class="p-4 text-center">${formatDate(item.tanggal_mulai)}</td>
+                                    <td class="p-4 text-center font-semibold ${item.ket_status === 'Lunas' ? 'text-[#5D8736]' : 'text-red-700'}">
+                                        ${item.ket_status || '-'}
+                                    </td>
+                                    <td class="p-4">
+                                        <button onclick="openBayarModal('${item.id}')" 
+                                                class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700">
+                                            Bayar
+                                        </button>
+                                    </td>
+                                    <td class="p-4">
+                                        <div class="flex space-x-2">
+                                            <a href="/kredit-barang/edit/${item.id}" 
+                                            class="flex items-center px-3 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition duration-300">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path d="M17.293 3.293a1 1 0 010 1.414L8.414 13.586a1 1 0 01-.293.207l-4 2a1 1 0 01-1.414-1.414l2-4a1 1 0 01.207-.293L15.293 3.293a1 1 0 011.414 0z"/>
+                                                </svg>
+                                                Edit
+                                            </a>
+                                            <button onclick="deleteKreditBarang('${item.id}')"
+                                                class="flex items-center px-3 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition duration-300">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M7 4a1 1 0 011-1h4a1 1 0 011 1h4a1 1 0 110 2H4a1 1 0 110-2h3zM5 7a1 1 0 011-1h8a1 1 0 011 1v8a1 1 0 01-1 1H6a1 1 0 01-1-1V7z" clip-rule="evenodd"/>
+                                                </svg>
+                                                Hapus
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `;
+                            tableBody.innerHTML += row;
+                        });
+                    } else {
+                        tableBody.innerHTML = `
+                            <tr>
+                                <td colspan="14" class="p-4 text-center">Data tidak ditemukan</td>
+                            </tr>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat mencari data');
+                });
+        }
+
+        // Event listener untuk tombol cari
+        searchButton.addEventListener('click', performSearch);
+
+        // Event listener untuk pencarian saat menekan Enter
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+
+        // Event listener untuk real-time search
+        searchInput.addEventListener('input', function() {
+            if (this.value.length >= 1) {
+                performSearch();
+            } else {
+                window.location.reload();
             }
         });
     </script>

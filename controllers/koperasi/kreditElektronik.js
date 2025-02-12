@@ -279,3 +279,49 @@ exports.cariKreditElektronik = async (req, res) => {
     res.status(500).send("Terjadi kesalahan saat mencari data kredit elektronik.");
   }
 };
+
+exports.cariKreditElektronik = (req, res) => {
+  const { search } = req.query;
+  
+  // Tambahkan log
+  console.log('Search Query:', search);
+  
+  const sql = `
+      SELECT
+          ke.id,
+          ke.id_anggota,
+          pg.nama AS nama_anggota,
+          ke.jumlah_pinjaman,
+          ke.jangka_waktu,
+          ke.total_angsuran,
+          ke.pokok,
+          ke.margin,
+          ke.angsuran_ke,
+          ke.sisa_piutang,
+          ke.tanggal_mulai,
+          ke.ket_status,
+          ke.margin_persen
+      FROM kredit_elektronik ke
+      JOIN anggota a ON ke.id_anggota = a.id
+      JOIN pegawai pg ON a.nip_anggota = pg.nip
+      WHERE LOWER(pg.nama) LIKE LOWER(?)
+      ORDER BY ke.id DESC
+  `;
+
+  // Tambahkan debug log
+  console.log('Running query with search:', `%${search}%`);
+
+  db.query(sql, [`%${search}%`], (err, results) => {
+      if (err) {
+          console.error("Error SQL:", err);
+          return res.status(500).json({ 
+              success: false,
+              message: "Terjadi kesalahan saat mencari data",
+              error: err.message 
+          });
+      }
+      // Log hasil
+      console.log('Search results:', results);
+      res.json(results || []);
+  });
+};

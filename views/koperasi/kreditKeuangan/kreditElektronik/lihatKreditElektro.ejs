@@ -7,6 +7,7 @@
   <title>Data Kredit Elektronik</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="flex bg-gray-100">
@@ -135,80 +136,194 @@
 
     <!-- Script untuk Hapus -->
     <script>
-      function hapusKreditElektronik(id) {
-        if (confirm("Apakah Anda yakin ingin menghapus data ini?")) {
-          fetch(`/kreditElektronik/hapus/${id}`, {
-              method: 'DELETE'
-            })
-            .then(response => response.json())
-            .then(data => {
-              if (data.success) {
-                alert("Data berhasil dihapus");
-                window.location.reload();
-              } else {
-                alert("Gagal menghapus data");
-              }
-            })
-            .catch(error => console.error("Error:", error));
-        }
-      }
-    </script>
-    <script>
-      function cariKreditElektronik() {
-        const keyword = document.getElementById('searchInput').value;
-        fetch(`/kreditElektronik/cari?keyword=${keyword}`)
-          .then(response => response.json())
-          .then(data => {
-            const tableBody = document.querySelector('tbody');
-            tableBody.innerHTML = ''; // Kosongkan tabel sebelum menambahkan hasil pencarian
+        // Event listener untuk pencarian real-time
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const keyword = this.value;
+            
+            // Hanya cari jika panjang keyword minimal 1 karakter
+            if (keyword.length > 0) {
+                fetch(`/kreditElektronik/cari?search=${encodeURIComponent(keyword)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const tableBody = document.querySelector('tbody');
+                        tableBody.innerHTML = ''; // Kosongkan tabel sebelum menambahkan data baru
 
-            if (data.length > 0) {
-              data.forEach((kredit, index) => {
-                const row = `
-                  <tr class="text-left border-b">
-                    <td class="p-4 text-center">${index + 1}</td>
-                    <td class="p-4 text-center">${kredit.id_anggota}</td>
-                    <td class="p-4">${kredit.nama_anggota}</td>
-                    <td class="p-4 text-right">${kredit.jumlah_pinjaman.toLocaleString()}</td>
-                    <td class="p-4 text-right">${kredit.jangka_waktu}</td>
-                    <td class="p-4 text-right">${kredit.total_angsuran.toLocaleString()}</td>
-                    <td class="p-4 text-right">${kredit.pokok.toLocaleString()}</td>
-                    <td class="p-4 text-right">${kredit.margin.toLocaleString()}</td>
-                    <td class="p-4 text-center">${kredit.angsuran_ke}</td>
-                    <td class="p-4 text-right">${kredit.sisa_piutang.toLocaleString()}</td>
-                    <td class="p-4 text-center">${new Date(kredit.tanggal_mulai).toLocaleDateString()}</td>
-                    <td class="p-4 text-right">${kredit.ket_status}</td>
-                    <td class="p-4 text-right">
-                      <a href="/kreditElektronik/bayar/${kredit.id}" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700">Bayar</a>
-                    </td>
-                    <td class="p-4 flex space-x-2">
-                      <a href="/kreditElektronik/edit/${kredit.id}" class="flex items-center px-3 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition duration-300">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                          <path d="M17.293 3.293a1 1 0 010 1.414L8.414 13.586a1 1 0 01-.293.207l-4 2a1 1 0 01-1.414-1.414l2-4a1 1 0 01.207-.293L15.293 3.293a1 1 0 011.414 0z"/>
-                        </svg>
-                        Edit
-                      </a>
-                      <button onclick="hapusKreditElektronik(${kredit.id})" class="flex items-center px-3 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition duration-300">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                          <path fill-rule="evenodd" d="M7 4a1 1 0 011-1h4a1 1 0 011 1h4a1 1 0 110 2H4a1 1 0 110-2h3zM5 7a1 1 0 011-1h8a1 1 0 011 1v8a1 1 0 01-1 1H6a1 1 0 01-1-1V7z" clip-rule="evenodd"/>
-                        </svg>
-                        Hapus
-                      </button>
-                    </td>
-                  </tr>
-                `;
-                tableBody.innerHTML += row;
-              });
+                        if (data.length > 0) {
+                            data.forEach((kredit, index) => {
+                                const row = `
+                                    <tr class="text-left border-b">
+                                        <td class="p-4 text-center">${index + 1}</td>
+                                        <td class="p-4 text-center">${kredit.id_anggota}</td>
+                                        <td class="p-4">${kredit.nama_anggota}</td>
+                                        <td class="p-4 text-right">${kredit.jumlah_pinjaman.toLocaleString()}</td>
+                                        <td class="p-4 text-right">${kredit.jangka_waktu}</td>
+                                        <td class="p-4 text-right">${kredit.total_angsuran.toLocaleString()}</td>
+                                        <td class="p-4 text-right">${kredit.pokok.toLocaleString()}</td>
+                                        <td class="p-4 text-right">${kredit.margin.toLocaleString()}</td>
+                                        <td class="p-4 text-center">${kredit.angsuran_ke}</td>
+                                        <td class="p-4 text-right">${kredit.sisa_piutang.toLocaleString()}</td>
+                                        <td class="p-4 text-center">${new Date(kredit.tanggal_mulai).toLocaleDateString()}</td>
+                                        <td class="p-4 text-right">${kredit.ket_status}</td>
+                                        <td class="p-4 text-right">
+                                            <a href="/kreditElektronik/bayar/${kredit.id}" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700">
+                                                Bayar
+                                            </a>
+                                        </td>
+                                        <td class="p-4 text-right">
+                                            <div class="flex justify-end space-x-2">
+                                                <a href="/kreditElektronik/edit/${kredit.id}" 
+                                                  class="flex items-center px-3 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition duration-300">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path d="M17.293 3.293a1 1 0 010 1.414L8.414 13.586a1 1 0 01-.293.207l-4 2a1 1 0 01-1.414-1.414l2-4a1 1 0 01.207-.293L15.293 3.293a1 1 0 011.414 0z"/>
+                                                    </svg>
+                                                    Edit
+                                                </a>
+                                                <button onclick="hapusKreditElektronik(${kredit.id})" 
+                                                        class="flex items-center px-3 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition duration-300">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fill-rule="evenodd" d="M7 4a1 1 0 011-1h4a1 1 0 011 1h4a1 1 0 110 2H4a1 1 0 110-2h3zM5 7a1 1 0 011-1h8a1 1 0 011 1v8a1 1 0 01-1 1H6a1 1 0 01-1-1V7z" clip-rule="evenodd"/>
+                                                    </svg>
+                                                    Hapus
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `;
+                                tableBody.innerHTML += row;
+                            });
+                        } else {
+                            tableBody.innerHTML = `
+                                <tr>
+                                    <td colspan="14" class="p-4 text-center">Tidak ada data ditemukan.</td>
+                                </tr>
+                            `;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Kesalahan',
+                            text: 'Terjadi kesalahan saat mencari data'
+                        });
+                    });
             } else {
-              tableBody.innerHTML = `
-                <tr>
-                  <td colspan="14" class="p-4 text-center">Tidak ada data ditemukan.</td>
-                </tr>
-              `;
+                // Jika keyword kosong, muat ulang tabel default
+                location.reload();
             }
-          })
-          .catch(error => console.error("Error:", error));
-      }
+        });
+
+        function cariKreditElektronik() {
+            const keyword = document.getElementById('searchInput').value;
+            fetch(`/kreditElektronik/cari?search=${encodeURIComponent(keyword)}`)
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.querySelector('tbody');
+                    tableBody.innerHTML = ''; // Kosongkan tabel sebelum menambahkan data baru
+
+                    if (data.length > 0) {
+                        data.forEach((kredit, index) => {
+                            const row = `
+                                <tr class="text-left border-b">
+                                    <td class="p-4 text-center">${index + 1}</td>
+                                    <td class="p-4 text-center">${kredit.id_anggota}</td>
+                                    <td class="p-4">${kredit.nama_anggota}</td>
+                                    <td class="p-4 text-right">${kredit.jumlah_pinjaman.toLocaleString()}</td>
+                                    <td class="p-4 text-right">${kredit.jangka_waktu}</td>
+                                    <td class="p-4 text-right">${kredit.total_angsuran.toLocaleString()}</td>
+                                    <td class="p-4 text-right">${kredit.pokok.toLocaleString()}</td>
+                                    <td class="p-4 text-right">${kredit.margin.toLocaleString()}</td>
+                                    <td class="p-4 text-center">${kredit.angsuran_ke}</td>
+                                    <td class="p-4 text-right">${kredit.sisa_piutang.toLocaleString()}</td>
+                                    <td class="p-4 text-center">${new Date(kredit.tanggal_mulai).toLocaleDateString()}</td>
+                                    <td class="p-4 text-right">${kredit.ket_status}</td>
+                                    <td class="p-4 text-right">
+                                        <a href="/kreditElektronik/bayar/${kredit.id}" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700">Bayar</a>
+                                    </td>
+                                    <td class="p-4 text-right">
+                                        <div class="flex justify-end space-x-2">
+                                            <a href="/kreditElektronik/edit/${kredit.id}" 
+                                              class="flex items-center px-3 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition duration-300">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path d="M17.293 3.293a1 1 0 010 1.414L8.414 13.586a1 1 0 01-.293.207l-4 2a1 1 0 01-1.414-1.414l2-4a1 1 0 01.207-.293L15.293 3.293a1 1 0 011.414 0z"/>
+                                                </svg>
+                                                Edit
+                                            </a>
+                                            <button onclick="hapusKreditElektronik(${kredit.id})" 
+                                                    class="flex items-center px-3 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition duration-300">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M7 4a1 1 0 011-1h4a1 1 0 011 1h4a1 1 0 110 2H4a1 1 0 110-2h3zM5 7a1 1 0 011-1h8a1 1 0 011 1v8a1 1 0 01-1 1H6a1 1 0 01-1-1V7z" clip-rule="evenodd"/>
+                                                </svg>
+                                                Hapus
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `;
+                            tableBody.innerHTML += row;
+                        });
+                    } else {
+                        tableBody.innerHTML = `
+                            <tr>
+                                <td colspan="14" class="p-4 text-center">Tidak ada data ditemukan.</td>
+                            </tr>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Kesalahan',
+                        text: 'Terjadi kesalahan saat mencari data'
+                    });
+                });
+        }
+
+        function hapusKreditElektronik(id) {
+            Swal.fire({
+                title: 'Konfirmasi Hapus',
+                text: 'Apakah Anda yakin ingin menghapus data kredit elektronik ini?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/kreditElektronik/hapus/${id}`, {
+                        method: 'DELETE'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                title: 'Berhasil!',
+                                text: data.message,
+                                icon: 'success'
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Gagal!',
+                                text: data.message,
+                                icon: 'error'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            title: 'Kesalahan',
+                            text: 'Terjadi kesalahan saat menghapus data',
+                            icon: 'error'
+                        });
+                    });
+                }
+            });
+        }
     </script>
 </body>
 

@@ -6,6 +6,7 @@
     <title>Lihat Kredit Motor</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="flex bg-gray-100">
     <!-- Sidebar -->
@@ -94,11 +95,23 @@
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex space-x-2">
-                                            <button onclick="editKreditMotor('<%= motor.id %>')" class="border border-gray-300 rounded p-1"><span class="material-icons">edit</span></button>
-                                            <button onclick="hapusKreditMotor('<%= motor.id %>')" class="border border-gray-300 rounded p-1"><span class="material-icons">delete</span></button>
+                                            <a href="/kreditMotor/edit/<%= motor.id %>" class="bg-blue-600 text-white p-2 rounded hover:bg-blue-700" title="Edit">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M12 20h9" />
+                                                    <path d="M16.5 3.5a2.121 2.121 0 113 3L7 19l-4 1 1-4 12.5-12.5z" />
+                                                </svg>
+                                            </a>
+                                            <button 
+                                                onclick="hapusKreditMotor(<%= motor.id %>)" 
+                                                class="bg-red-600 text-white p-2 rounded hover:bg-red-700" 
+                                                title="Hapus"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                            </button>
                                         </div>
-                                    </td>
-                                </tr>
+                                    </td>                                </tr>
                             <% }) %>
                         <% } else { %>
                             <tr>
@@ -178,24 +191,48 @@
             }
 
             function hapusKreditMotor(id) {
-                if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-                    fetch(`/kreditMotor/hapus/${id}`, {
-                        method: 'DELETE',
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert(data.message);
-                            window.location.reload();
-                        } else {
-                            alert(data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Terjadi kesalahan saat menghapus data.');
-                    });
-                }
+                Swal.fire({
+                    title: 'Konfirmasi Hapus',
+                    text: 'Apakah Anda yakin ingin menghapus data kredit motor ini?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, Hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/kreditMotor/hapus/${id}`, {
+                            method: 'DELETE'
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire({
+                                    title: 'Berhasil!',
+                                    text: data.message,
+                                    icon: 'success'
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Gagal!',
+                                    text: data.message,
+                                    icon: 'error'
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire({
+                                title: 'Kesalahan',
+                                text: 'Terjadi kesalahan saat menghapus data',
+                                icon: 'error'
+                            });
+                        });
+                    }
+                });
             }
         </script>
     </div>

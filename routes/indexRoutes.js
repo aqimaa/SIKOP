@@ -130,6 +130,9 @@ router.post("/kreditMotor/bayar/:id", kreditMotorController.prosesBayarKreditMot
 router.get('/kreditMotor/edit/:id', kreditMotorController.tampilkanEditKreditMotor);
 router.put('/kredit-motor/:id', kreditMotorController.simpanEditKreditMotor);
 
+//Route hapus kredit motor
+router.delete("/kreditMotor/hapus/:id", kreditMotorController.hapusKreditMotor);
+
 // Route untuk Kredit Umroh
 router.get("/lihatKreditUmroh", kreditUmrohController.lihatKreditUmroh);
 router.delete("/kreditUmroh/hapus/:id", kreditUmrohController.hapusKreditUmroh);

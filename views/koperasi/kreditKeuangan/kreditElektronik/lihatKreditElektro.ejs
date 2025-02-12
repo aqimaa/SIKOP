@@ -1,109 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Kredit Elektronik</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Kredit Elektronik</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
+
 <body class="flex bg-gray-100">
-    <!-- Sidebar -->
-    <%- include('../../../sidebar') %>
+  <!-- Sidebar -->
+  <%- include('../../../sidebar') %>
 
-    <!-- Main Content -->
-    <div class="flex-1 p-6 ml-72">
-        <header class="flex justify-between items-center mb-8">
-            <button class="text-gray-600">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                    <path d="M19 12H5" />
-                    <path d="M12 5l-7 7 7 7" />
-                </svg>
-            </button>
-            <div class="flex items-center space-x-4">
-                <span>admin</span>
-                <img src="/images/profile-user.png" alt="User" class="rounded-full w-10 h-10">
-            </div>
-    
-        </header>
-        <div class="flex justify-between items-center mb-4">
-            <h1 class="text-2xl font-bold">Data Kredit Barang Elektronik</h1>
-            <a href="/kreditElektronik/tambah" style="background-color: #5D8736; color: white;" class="px-4 py-2 rounded hover:bg-[#4c6e2f]">+ Tambah Kredit Baru</a>        </div>
-
-        <div class="bg-white p-4 rounded shadow">
-            <div class="flex mb-4">
-                <input type="text" id="searchInput" placeholder="Cari Anggota" class="border border-gray-300 p-2 rounded flex-1" />
-                <button onclick="cariKreditElektronik()" style="background-color: #5D8736; color: white;" class="ml-2 px-4 py-2 rounded hover:bg-[#4c6e2f]">Cari</button>
-              </div>
-
-            <table class="table-auto w-full border-collapse">
-                <thead style="background-color: #5D8736; color: white;">
-                    <tr>
-                        <th class="p-4">No</th>
-                        <th class="p-4">No. Anggota</th>
-                        <th class="p-4">Nama</th>
-                        <th class="p-4">Pinjaman</th>
-                        <th class="p-4">Jangka Waktu</th>
-                        <th class="p-4">Total Angsuran</th>
-                        <th class="p-4">Pokok</th>
-                        <th class="p-4">Margin</th>
-                        <th class="p-4">Angsuran Ke</th>
-                        <th class="p-4">Sisa Piutang</th>
-                        <th class="p-4">Mulai Perjanjian</th>
-                        <th class="p-4">Status</th>
-                        <th class="p-4">Bayar</th>
-                        <th class="p-4">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% kreditElektronik.forEach((kredit, index) => { %>
-                    <tr class="text-left border-b">
-                        <td class="p-4 text-center"><%= index + 1 %></td>
-                        <td class="p-4 text-center"><%= kredit.id_anggota %></td>
-                        <td class="p-4"><%= kredit.nama_anggota %></td>
-                        <td class="p-4 text-right"><%= kredit.jumlah_pinjaman.toLocaleString() %></td>
-                        <td class="p-4 text-right"><%= kredit.jangka_waktu %></td>
-                        <td class="p-4 text-right"><%= kredit.total_angsuran.toLocaleString() %></td>
-                        <td class="p-4 text-right"><%= kredit.pokok.toLocaleString() %></td>
-                        <td class="p-4 text-right"><%= kredit.margin.toLocaleString() %></td>
-                        <td class="p-4 text-center"><%= kredit.angsuran_ke %></td>
-                        <td class="p-4 text-right"><%= kredit.sisa_piutang.toLocaleString() %></td>
-                        <td class="p-4 text-center"><%= kredit.tanggal_mulai.toLocaleDateString() %></td>
-                        <td class="p-4 text-right"><%= kredit.ket_status %></td>
-                        <td class="p-4 text-right">
-                            <a href="/kreditElektronik/bayar/<%= kredit.id %>" 
-                                class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700">
-                                Bayar
-                            </a>
-                        </td>
-                        <td class="p-4 flex space-x-2">
-                            <a href="/kreditElektronik/edit/<%= kredit.id %>" 
-                                class="flex items-center px-3 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition duration-300">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                                <path d="M17.293 3.293a1 1 0 010 1.414L8.414 13.586a1 1 0 01-.293.207l-4 2a1 1 0 01-1.414-1.414l2-4a1 1 0 01.207-.293L15.293 3.293a1 1 0 011.414 0z"/>
-                                            </svg>
-                                            Edit
-                            </a>
-                            <button onclick="hapusKreditElektronik(<%= kredit.id %>)" 
-                                class="flex items-center px-3 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition duration-300">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                                <path fill-rule="evenodd" d="M7 4a1 1 0 011-1h4a1 1 0 011 1h4a1 1 0 110 2H4a1 1 0 110-2h3zM5 7a1 1 0 011-1h8a1 1 0 011 1v8a1 1 0 01-1 1H6a1 1 0 01-1-1V7z" clip-rule="evenodd"/>
-                                            </svg>
-                                            Hapus
-                            </button>
-                        </td>
-                    </tr>
-                    <% }) %>
-                </tbody>
-            </table>
+  <!-- Main Content -->
+  <div class="flex-1 p-6 ml-72">
+    <header class="flex justify-between items-center mb-12">
+      <div class="flex-1 ml-72">
+        <div class="fixed top-0 left-72 right-0 flex items-center justify-center shadow-md p-4 bg-white z-20">
+          <h1 class="text-2xl font-bold flex-grow text-center">Data Kredit Elektronik</h1>
+          <div class="flex items-center">
+            <span>Admin Keuangan</span>
+            <img src="/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
+          </div>
         </div>
+    </header>
+    <div class="flex justify-between items-center mb-18">
+
+      <div class="bg-white p-10 rounded shadow">
+        <div class="flex mb-4 items-center space-x-2">
+          <input type="text" id="searchInput" placeholder="Cari Anggota"
+            class="border border-gray-300 p-2 rounded flex-1" />
+          <button onclick="cariKreditElektronik()" style="background-color: #5D8736; color: white;"
+            class="px-4 py-2 rounded hover:bg-[#4c6e2f]">Cari</button>
+          <a href="/kreditElektronik/tambah" style="background-color: #5D8736; color: white;"
+            class="px-4 py-2 rounded hover:bg-[#4c6e2f]">+ Tambah Kredit Baru</a>
+        </div>
+
+
+        <table class="table-auto w-full border-collapse">
+          <thead style="background-color: #5D8736; color: white;">
+            <tr>
+              <th class="p-4">No</th>
+              <th class="p-4">No. Anggota</th>
+              <th class="p-4">Nama</th>
+              <th class="p-4">Pinjaman</th>
+              <th class="p-4">Jangka Waktu</th>
+              <th class="p-4">Total Angsuran</th>
+              <th class="p-4">Pokok</th>
+              <th class="p-4">Margin</th>
+              <th class="p-4">Angsuran Ke</th>
+              <th class="p-4">Sisa Piutang</th>
+              <th class="p-4">Mulai Perjanjian</th>
+              <th class="p-4">Status</th>
+              <th class="p-4">Bayar</th>
+              <th class="p-4">Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% kreditElektronik.forEach((kredit, index)=> { %>
+            <tr class="text-left border-b">
+              <td class="p-4 text-center">
+                <%= index + 1 %>
+              </td>
+              <td class="p-4 text-center">
+                <%= kredit.id_anggota %>
+              </td>
+              <td class="p-4">
+                <%= kredit.nama_anggota %>
+              </td>
+              <td class="p-4 text-right">
+                <%= kredit.jumlah_pinjaman.toLocaleString() %>
+              </td>
+              <td class="p-4 text-right">
+                <%= kredit.jangka_waktu %>
+              </td>
+              <td class="p-4 text-right">
+                <%= kredit.total_angsuran.toLocaleString() %>
+              </td>
+              <td class="p-4 text-right">
+                <%= kredit.pokok.toLocaleString() %>
+              </td>
+              <td class="p-4 text-right">
+                <%= kredit.margin.toLocaleString() %>
+              </td>
+              <td class="p-4 text-center">
+                <%= kredit.angsuran_ke %>
+              </td>
+              <td class="p-4 text-right">
+                <%= kredit.sisa_piutang.toLocaleString() %>
+              </td>
+              <td class="p-4 text-center">
+                <%= kredit.tanggal_mulai.toLocaleDateString() %>
+              </td>
+              <td class="p-4 text-right">
+                <%= kredit.ket_status %>
+              </td>
+              <td class="p-4 text-right">
+                <a href="/kreditElektronik/bayar/<%= kredit.id %>"
+                  class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700">
+                  Bayar
+                </a>
+              </td>
+              <td class="p-4 text-right">
+                <div class="flex justify-end space-x-2">
+                  <a href="/kreditElektronik/edit/<%= kredit.id %>"
+                    class="flex items-center px-3 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20"
+                      fill="currentColor">
+                      <path
+                        d="M17.293 3.293a1 1 0 010 1.414L8.414 13.586a1 1 0 01-.293.207l-4 2a1 1 0 01-1.414-1.414l2-4a1 1 0 01.207-.293L15.293 3.293a1 1 0 011.414 0z" />
+                    </svg>
+                    Edit
+                  </a>
+                  <button onclick="hapusKreditElektronik(<%= kredit.id %>)"
+                    class="flex items-center px-3 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20"
+                      fill="currentColor">
+                      <path fill-rule="evenodd"
+                        d="M7 4a1 1 0 011-1h4a1 1 0 011 1h4a1 1 0 110 2H4a1 1 0 110-2h3zM5 7a1 1 0 011-1h8a1 1 0 011 1v8a1 1 0 01-1 1H6a1 1 0 01-1-1V7z"
+                        clip-rule="evenodd" />
+                    </svg>
+                    Hapus
+                  </button>
+                </div>
+              </td>
+
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <!-- Script untuk Hapus -->
     <script>
       function hapusKreditElektronik(id) {
         if (confirm("Apakah Anda yakin ingin menghapus data ini?")) {
-          fetch(`/kreditElektronik/hapus/${id}`, { method: 'DELETE' })
+          fetch(`/kreditElektronik/hapus/${id}`, {
+              method: 'DELETE'
+            })
             .then(response => response.json())
             .then(data => {
               if (data.success) {
@@ -125,7 +161,7 @@
           .then(data => {
             const tableBody = document.querySelector('tbody');
             tableBody.innerHTML = ''; // Kosongkan tabel sebelum menambahkan hasil pencarian
-    
+
             if (data.length > 0) {
               data.forEach((kredit, index) => {
                 const row = `
@@ -175,4 +211,5 @@
       }
     </script>
 </body>
+
 </html>

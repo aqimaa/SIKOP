@@ -460,3 +460,42 @@ exports.tambahKreditMotor = async (req, res) => {
         res.status(500).send(error.message || "Terjadi kesalahan saat menambahkan kredit motor.");
     }
 };
+
+exports.hapusKreditMotor = (req, res) => {
+  const id = req.params.id;
+
+  // Hapus data pembayaran terkait terlebih dahulu
+  db.query("DELETE FROM pembayaran WHERE id_kredit_motor = ?", [id], (err) => {
+    if (err) {
+      console.error("Error saat menghapus pembayaran:", err);
+      return res.status(500).json({
+        success: false,
+        message: "Terjadi kesalahan saat menghapus data pembayaran"
+      });
+    }
+
+    // Kemudian hapus data kredit motor
+    db.query("DELETE FROM kredit_motor WHERE id = ?", [id], (error, result) => {
+      if (error) {
+        console.error("Error saat menghapus kredit motor:", error);
+        return res.status(500).json({
+          success: false,
+          message: "Terjadi kesalahan saat menghapus data kredit motor"
+        });
+      }
+
+      // Periksa jumlah baris yang terpengaruh
+      if (result.affectedRows === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "Data kredit motor tidak ditemukan"
+        });
+      }
+
+      res.json({
+        success: true,
+        message: "Data kredit motor berhasil dihapus"
+      });
+    });
+  });
+};

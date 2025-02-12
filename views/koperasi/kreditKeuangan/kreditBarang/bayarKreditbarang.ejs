@@ -155,10 +155,10 @@
     <script>
         // Definisikan kreditId secara eksplisit menggunakan EJS
         const kreditId = '<%= kredit.id %>';
-        const sisaPiutang = '<%= kredit.sisa_piutang %>';
-
+        const sisaPiutang = <%= kredit.sisa_piutang %>;
+    
         document.addEventListener('DOMContentLoaded', () => {
-            // Set default date to today
+            // Set default tanggal hari ini
             document.getElementById('tanggal_bayar').valueAsDate = new Date();
             
             // Handle form submission
@@ -172,7 +172,7 @@
                     jumlah_bayar: parseFloat(document.getElementById('jumlah_bayar').value),
                     keterangan: document.getElementById('keterangan').value || '-'
                 };
-
+    
                 // Validasi jumlah bayar sebelum konfirmasi
                 if (formData.jumlah_bayar > sisaPiutang) {
                     Swal.fire({
@@ -182,8 +182,8 @@
                     });
                     return;
                 }
-
-                // Show confirmation dialog
+    
+                // Konfirmasi pembayaran dengan SweetAlert2
                 const result = await Swal.fire({
                     title: 'Konfirmasi Pembayaran',
                     text: `Anda akan melakukan pembayaran sebesar Rp ${formData.jumlah_bayar.toLocaleString('id-ID')}. Lanjutkan?`,
@@ -194,7 +194,7 @@
                     confirmButtonText: 'Ya, Bayar',
                     cancelButtonText: 'Batal'
                 });
-
+    
                 if (result.isConfirmed) {
                     const submitBtn = document.getElementById('submitBtn');
                     submitBtn.disabled = true;
@@ -208,12 +208,11 @@
                             },
                             body: JSON.stringify(formData)
                         });
-
+    
                         const responseData = await response.json();
-                        console.log('Response data:', responseData); // Tambahkan log ini untuk debug
-
+    
                         if (responseData.success) {
-                            // Tampilkan SweetAlert2
+                            // Tampilkan SweetAlert2 untuk konfirmasi sukses
                             const result = await Swal.fire({
                                 icon: 'success',
                                 title: 'Pembayaran Berhasil!',
@@ -233,7 +232,7 @@
                                 confirmButtonColor: '#5D8736',
                                 allowOutsideClick: false
                             });
-
+    
                             if (result.isConfirmed) {
                                 window.location.href = '/kredit-barang';
                             }
@@ -253,8 +252,8 @@
                     }
                 }
             });
-
-            // Validate payment amount on input
+    
+            // Validasi jumlah bayar saat input
             document.getElementById('jumlah_bayar').addEventListener('input', function(e) {
                 const value = parseFloat(e.target.value) || 0;
                 

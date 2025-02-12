@@ -6,6 +6,7 @@
     <title>Data Kredit Barang</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         @keyframes popIn {
             0% { transform: scale(0.7); opacity: 0; }
@@ -152,28 +153,56 @@
 
     <script>
         function deleteKreditBarang(id) {
-            if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+            // Tambahan sweetalert untuk konfirmasi yang lebih menarik
+            Swal.fire({
+                title: 'Konfirmasi Hapus',
+                text: 'Apakah Anda yakin ingin menghapus data kredit barang ini?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
                     fetch(`/kredit-barang/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert(data.message);
-                        // Hapus row dari tabel tanpa refresh
-                        document.getElementById(`row-${id}`).remove();
-                    } else {
-                        alert(data.message || 'Gagal menghapus data');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Terjadi kesalahan saat menghapus data');
-                });
-            }
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Tambahkan sweetalert untuk notifikasi sukses
+                            Swal.fire({
+                                title: 'Berhasil!',
+                                text: data.message,
+                                icon: 'success',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                            
+                            // Hapus row dari tabel tanpa refresh
+                            document.getElementById(`row-${id}`).remove();
+                        } else {
+                            Swal.fire({
+                                title: 'Gagal!',
+                                text: data.message || 'Gagal menghapus data',
+                                icon: 'error'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Terjadi kesalahan saat menghapus data',
+                            icon: 'error'
+                        });
+                    });
+                }
+            });
         }
     </script>
 

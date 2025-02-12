@@ -407,38 +407,58 @@ exports.getEditKreditBarang = (req, res) => {
 
 
 // Delete Kredit Barang
-exports.deleteKreditBarang = async (req, res) => {
+exports.hapusKreditElektronik = async (req, res) => {
+    const connection = await db.getConnection(); // Dapatkan koneksi untuk transaksi
+    
     try {
-      const { id } = req.params;
-      console.log(`🔹 Mencoba menghapus kredit barang dengan ID: ${id}`);
+      const id = req.params.id;
   
-      // Hapus data pembayaran dulu
-      await db.query("DELETE FROM pembayaran WHERE id_kredit_barang = ?", [id]);
+      // Mulai transaksi
+      await connection.beginTransaction();
   
-      // Hapus data kredit_barang
-      const [result] = await db.query("DELETE FROM kredit_barang WHERE id = ?", [id]);
+      // Hapus data pembayaran terkait terlebih dahulu
+      const [deletePembayaranResult] = await connection.query(
+        "DELETE FROM pembayaran WHERE id_kredit_elektronik = ?", 
+        [id]
+      );
   
-      // Cek hasil query
-      if (!result || result.affectedRows === 0) {
-        console.log("⚠️ Kredit barang tidak ditemukan atau gagal dihapus");
+      // Kemudian hapus data kredit elektronik
+      const [deleteKreditElektronikResult] = await connection.query(
+        "DELETE FROM kredit_elektronik WHERE id = ?", 
+        [id]
+      );
+  
+      // Commit transaksi
+      await connection.commit();
+  
+      // Periksa apakah data berhasil dihapus
+      if (deleteKreditElektronikResult.affectedRows === 0) {
         return res.status(404).json({
           success: false,
-          message: "Data tidak ditemukan"
+          message: "Data kredit elektronik tidak ditemukan"
         });
       }
   
-      console.log("✅ Kredit barang berhasil dihapus");
-      return res.status(200).json({
+      // Kirim respons sukses
+      res.json({
         success: true,
-        message: "Data berhasil dihapus"
+        message: "Data kredit elektronik berhasil dihapus"
       });
   
     } catch (error) {
-      console.error("❌ Gagal menghapus kredit barang:", error);
+      // Rollback transaksi jika terjadi error
+      if (connection) await connection.rollback();
+  
+      console.error("Error saat menghapus kredit elektronik:", error);
       return res.status(500).json({
         success: false,
-        message: "Gagal menghapus data"
+        message: "Terjadi kesalahan saat menghapus kredit elektronik",
+        error: error.message
       });
+  
+    } finally {
+      // Pastikan koneksi ditutup
+      if (connection) connection.release();
     }
 };
 
@@ -489,7 +509,52 @@ exports.searchKreditBarang = (req, res) => {
     });
 };
 
+// Delete Kredit Barang
+exports.deleteKreditBarang = async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log(`🔹 Mencoba menghapus kredit barang dengan ID: ${id}`);
 
+        // Hapus data pembayaran terkait dulu
+        await new Promise((resolve, reject) => {
+            db.query("DELETE FROM pembayaran WHERE id_kredit_barang = ?", [id], (err) => {
+                if (err) return reject(err);
+                resolve();
+            });
+        });
+
+        // Hapus data kredit_barang
+        const result = await new Promise((resolve, reject) => {
+            db.query("DELETE FROM kredit_barang WHERE id = ?", [id], (err, result) => {
+                if (err) return reject(err);
+                resolve(result);
+            });
+        });
+
+        // Cek hasil query
+        if (result.affectedRows === 0) {
+            console.log("⚠️ Kredit barang tidak ditemukan atau gagal dihapus");
+            return res.status(404).json({
+                success: false,
+                message: "Data tidak ditemukan"
+            });
+        }
+
+        console.log("✅ Kredit barang berhasil dihapus");
+        return res.status(200).json({
+            success: true,
+            message: "Data berhasil dihapus"
+        });
+
+    } catch (error) {
+        console.error("❌ Gagal menghapus kredit barang:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Gagal menghapus data",
+            error: error.message
+        });
+    }
+};
 
 // Menampilkan halaman pembayaran kredit barang
 exports.getBayarKreditBarang = async (req, res) => {

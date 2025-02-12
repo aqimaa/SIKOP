@@ -163,32 +163,61 @@ exports.hapusKreditElektronik = async (req, res) => {
 // Bayar Kredit Elektronik
 exports.tampilkanBayarKreditElektronik = async (req, res) => {
   const id = req.params.id;
-  const query = `
-    SELECT
-      ke.id,
-      ke.id_anggota,
-      pg.nama AS nama_anggota,
-      ke.jumlah_pinjaman,
-      ke.jangka_waktu,
-      ke.sisa_piutang,
-      ke.total_angsuran,
-      ke.angsuran_ke
-    FROM kredit_elektronik ke
-    JOIN anggota a ON ke.id_anggota = a.id
-    JOIN pegawai pg ON a.nip_anggota = pg.nip
-    WHERE ke.id = ?
+  
+  // Query untuk mengambil data kredit elektronik
+  const queryKreditElektronik = `
+      SELECT
+          ke.id,
+          ke.id_anggota,
+          pg.nama AS nama_anggota,
+          ke.jumlah_pinjaman,
+          ke.jangka_waktu,
+          ke.sisa_piutang,
+          ke.total_angsuran,
+          ke.angsuran_ke
+      FROM kredit_elektronik ke
+      JOIN anggota a ON ke.id_anggota = a.id
+      JOIN pegawai pg ON a.nip_anggota = pg.nip
+      WHERE ke.id = ?
   `;
 
-  db.query(query, [id], (error, results) => {
-    if (error) {
-      console.error("Error saat mengambil data kredit elektronik:", error);
-      return res.status(500).send("Terjadi kesalahan saat mengambil data kredit elektronik.");
-    }
-    if (results.length === 0) {
-      return res.status(404).send("Data kredit elektronik tidak ditemukan.");
-    }
-    const kredit = results[0];
-    res.render("koperasi/kreditKeuangan/kreditElektronik/bayarKreditElektro", { kredit });
+  // Query untuk mengambil riwayat pembayaran
+  const queryPembayaran = `
+      SELECT
+          tanggal_bayar,
+          angsuran_ke,
+          jumlah_bayar,
+          ket
+      FROM pembayaran
+      WHERE id_kredit_elektronik = ?
+      ORDER BY tanggal_bayar DESC
+  `;
+
+  db.query(queryKreditElektronik, [id], (error, resultsKreditElektronik) => {
+      if (error) {
+          console.error("Error saat mengambil data kredit elektronik:", error);
+          return res.status(500).send("Terjadi kesalahan saat mengambil data kredit elektronik.");
+      }
+
+      if (resultsKreditElektronik.length === 0) {
+          return res.status(404).send("Data kredit elektronik tidak ditemukan.");
+      }
+
+      const kreditElektronik = resultsKreditElektronik[0];
+
+      // Mengambil riwayat pembayaran
+      db.query(queryPembayaran, [id], (error, resultsPembayaran) => {
+          if (error) {
+              console.error("Error saat mengambil riwayat pembayaran:", error);
+              return res.status(500).send("Terjadi kesalahan saat mengambil riwayat pembayaran.");
+          }
+
+          // Render view dengan data kredit dan riwayat pembayaran
+          res.render("koperasi/kreditKeuangan/kreditElektronik/bayarKreditElektro", {
+              kredit: kreditElektronik,
+              riwayatPembayaran: resultsPembayaran,
+          });
+      });
   });
 };
 
@@ -365,3 +394,4 @@ exports.hapusKreditElektronik = (req, res) => {
     });
   });
 };
+

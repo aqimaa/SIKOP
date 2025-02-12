@@ -81,6 +81,106 @@ exports.tampilkanTambahKreditMotor = async (req, res) => {
     }
   };
 
+  // Tampilkan Halaman Edit Kredit Motor
+exports.tampilkanEditKreditMotor = async (req, res) => {
+  const id = req.params.id;
+  const query = `
+    SELECT
+      km.id,
+      km.id_anggota,
+      pg.nama AS nama_anggota,
+      km.jumlah_pinjaman,
+      km.jangka_waktu,
+      km.total_angsuran,
+      km.margin_persen,
+      km.pokok,
+      km.margin,
+      km.angsuran_ke,
+      km.sisa_piutang,
+      km.tanggal_mulai,
+      km.ket_status
+    FROM kredit_motor km
+    JOIN anggota a ON km.id_anggota = a.id
+    JOIN pegawai pg ON a.nip_anggota = pg.nip
+    WHERE km.id = ?
+  `;
+
+  db.query(query, [id], (error, results) => {
+    if (error) {
+      console.error("Error saat mengambil data kredit motor:", error);
+      return res.status(500).send("Terjadi kesalahan saat mengambil data kredit motor.");
+    }
+    if (results.length === 0) {
+      return res.status(404).send("Data kredit motor tidak ditemukan.");
+    }
+    const kredit = results[0];
+    res.render("koperasi/kreditKeuangan/kreditMotor/editKreditMotor", { kredit });
+  });
+};
+
+// Simpan Perubahan Kredit Motor
+exports.simpanEditKreditMotor = async (req, res) => {
+  const id = req.params.id;
+  const {
+    jumlah_pinjaman,
+    jangka_waktu,
+    total_angsuran,
+    margin_persen,
+    pokok,
+    margin,
+    angsuran_ke,
+    sisa_piutang,
+    tanggal_mulai,
+    ket_status,
+    id_anggota
+  } = req.body;
+
+  const query = `
+    UPDATE kredit_motor
+    SET
+      jumlah_pinjaman = ?,
+      jangka_waktu = ?,
+      total_angsuran = ?,
+      margin_persen = ?,
+      pokok = ?,
+      margin = ?,
+      angsuran_ke = ?,
+      sisa_piutang = ?,
+      tanggal_mulai = ?,
+      ket_status = ?
+    WHERE id = ?
+  `;
+
+  const values = [
+    jumlah_pinjaman,
+    jangka_waktu,
+    total_angsuran,
+    margin_persen,
+    pokok,
+    margin,
+    angsuran_ke,
+    sisa_piutang,
+    tanggal_mulai,
+    ket_status,
+    id
+  ];
+
+  db.query(query, values, (error, results) => {
+    if (error) {
+      console.error("Error saat mengupdate kredit motor:", error);
+      return res.status(500).json({ 
+        success: false, 
+        message: "Terjadi kesalahan saat mengupdate kredit motor." 
+      });
+    }
+
+    res.json({ 
+      success: true, 
+      message: "Data kredit motor berhasil diperbarui" 
+    });
+  });
+};
+
   exports.tampilkanBayarKreditMotor = async (req, res) => {
     const { id } = req.params;
   

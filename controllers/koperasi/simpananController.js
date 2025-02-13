@@ -98,8 +98,6 @@ const filterSimpanan = (req, res) => {
     });
 };
 
-
-
 const getAvailableYears = (req, res) => {
     const query = `
         SELECT DISTINCT YEAR(tanggal) as year 
@@ -359,23 +357,12 @@ const deleteSimpanan = (req, res) => {
         const month = new Date(tanggal).getMonth() + 1;
         const year = new Date(tanggal).getFullYear();
 
-        const historyQuery = `
-            INSERT INTO simpanan_history
-            (simpanan_id, id_anggota, action_type, old_data, new_data, changed_by)
-            VALUES (?, ?, ?, ?, ?, ?)`;
+        const deleteHistoryQuery = `DELETE FROM simpanan_history WHERE simpanan_id = ?`;
 
-        const historyValues = [
-            id,
-            id_anggota,
-            'delete',
-            JSON.stringify(simpananData),
-            null,
-            req.session?.email || 'system'
-        ];
-
-        db.query(historyQuery, historyValues, (historyError) => {
+        db.query(deleteHistoryQuery, [id], (historyError) => {
             if (historyError) {
-                console.error("Error recording history:", historyError);
+                console.error("Error deleting history:", historyError);
+                return res.status(500).json({ message: historyError.message });
             }
 
             const deleteQuery = `

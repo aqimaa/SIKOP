@@ -115,29 +115,30 @@
             </div>
             <table class="table-auto w-full border-collapse">
                 <thead>
-                    <tr class="text-center", style="background-color: #22c55e; color : white"">
-                        <th class="p-4">Nip</th>
+                    <tr class="text-center" style="background-color: #22c55e; color: white;">
+                        <th class="p-4">No</th> <!-- Kolom No ditambahkan -->
+                        <th class="p-4">NIP</th>
                         <th class="p-4">Nama</th>
                         <th class="p-4">Wilayah</th>
                         <th class="p-4">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <% pegawai.forEach(function(pegawai) { %>
+                    <% pegawai.forEach(function(pegawai, index) { %>
                         <tr class="text-center border-b">
+                            <td class="p-4"><%= index + 1 %></td> <!-- Nomor otomatis bertambah -->
                             <td class="p-4"><%= pegawai.nip %></td>
                             <td class="p-4"><%= pegawai.nama %></td>
                             <td class="p-4"><%= pegawai.wilayah %></td>
                             <td class="p-4">
                                 <form action="/master/pegawai/ubahPegawai/<%= pegawai.nip %>" method="GET" class="inline">
-                                    <button type="submit" class="bg-blue-600 text-white p-2 rounded hover:bg-blue-700" title="Tambah Pegawai">
-                                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M12 20h9" />
-                                        <path d="M16.5 3.5a2.121 2.121 0 113 3L7 19l-4 1 1-4 12.5-12.5z" />
-                                      </svg>
+                                    <button type="submit" class="bg-blue-600 text-white p-2 rounded hover:bg-blue-700" title="Edit Pegawai">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M12 20h9" />
+                                            <path d="M16.5 3.5a2.121 2.121 0 113 3L7 19l-4 1 1-4 12.5-12.5z" />
+                                        </svg>
                                     </button>
-                                  </form>
-                                
+                                </form>
                                 <form action="/master/pegawai/<%= pegawai.nip %>?_method=DELETE" method="POST" class="inline">
                                     <button type="submit" class="bg-red-600 text-white p-2 rounded hover:bg-red-700" title="Hapus" onclick="return confirm('Apakah Anda yakin ingin menghapus?');">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -145,7 +146,6 @@
                                         </svg>
                                     </button>
                                 </form>
-
                             </td>
                         </tr>
                     <% }); %>

@@ -14,7 +14,8 @@ const masterController = require('../controllers/master/masterController');
 const kreditUmrohController = require("../controllers/koperasi/kreditUmrohController");
 const kreditElektronikController = require("../controllers/koperasi/kreditElektronik");
 const kreditMotorController = require("../controllers/koperasi/kreditMotorController");
-const { exportData } = require('../controllers/master/eksporBackup');
+const { exportDatabase} = require('../controllers/master/eksporBackup');
+const { exportData} = require('../controllers/master/eksporBackup');
 
 router.get("/", (req, res) => {
   res.redirect("/login");
@@ -167,6 +168,10 @@ router.get("/master/user", masterController.getUser);
 router.get("/master/user/editUser/:id", masterController.getUserById);
 router.post("/master/user/editUser/:id", masterController.updateUser);
 router.get('/master/user/export/:format', (req, res) => {
+  const format = req.params.format.toLowerCase();
+  exportDatabase(req, res, format);
+});
+router.get('/master/user/exportTable/:format', (req, res) => {
   const format = req.params.format.toLowerCase();
   exportData(req, res, format);
 });

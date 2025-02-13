@@ -147,13 +147,16 @@ exports.getAnggota = (req, res) => {
   const searchQuery = req.query.search ? `%${req.query.search}%` : '%';
 
   const query = `
-      SELECT anggota.id, anggota.nip_anggota, anggota.status, pegawai.nama 
+      SELECT anggota.id, anggota.nip_anggota, pegawai.nama, pegawai.wilayah, anggota.status 
       FROM anggota 
       JOIN pegawai ON anggota.nip_anggota = pegawai.nip
-      WHERE anggota.id LIKE ? OR pegawai.nama LIKE ? OR anggota.nip_anggota LIKE ?
+      WHERE anggota.id LIKE ? 
+        OR pegawai.nama LIKE ? 
+        OR anggota.nip_anggota LIKE ? 
+        OR pegawai.wilayah LIKE ?
   `;
 
-  db.query(query, [searchQuery, searchQuery, searchQuery], (err, results) => {
+  db.query(query, [searchQuery, searchQuery, searchQuery, searchQuery], (err, results) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }

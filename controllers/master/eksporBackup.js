@@ -5,7 +5,6 @@ const ExcelJS = require('exceljs');
 const PDFDocument = require('pdfkit');
 const db = require('../../config/database');
 
-// Controller untuk ekspor data dalam berbagai format
 const exportData = (req, res, format) => {
     const tables = ['users', 'anggota', 'kredit_barang', 'kredit_elektronik', 'kredit_motor', 'kredit_umroh', 'pegawai', 'pembayaran', 'pinjaman', 'simpanan', 'simpanan_history'];
 
@@ -109,5 +108,4 @@ const exportData = (req, res, format) => {
         });
 };
 
-// Ekspor fungsi
 module.exports = { exportData };

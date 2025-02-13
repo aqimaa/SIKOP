@@ -1,8 +1,7 @@
 const db = require('../../config/database');
 
-
 exports.getKreditPimpinan = (req, res) => {
-    console.log("Session Data:", req.session); // Debug session
+    console.log("Session Data:", req.session);
 
     if (req.session.role !== 'Pimpinan') {
         console.log("Redirecting to /auth/login because role is:", req.session.role);
@@ -11,7 +10,6 @@ exports.getKreditPimpinan = (req, res) => {
 
     console.log("User is Pimpinan, fetching data...");
 
-    // Ambil tahun unik dari database
     const queryTahun = `
         SELECT DISTINCT YEAR(tanggal_mulai) AS tahun 
         FROM (
@@ -26,7 +24,6 @@ exports.getKreditPimpinan = (req, res) => {
         ORDER BY tahun DESC
     `;
 
-    // Ambil bulan unik dari database
     const queryBulan = `
         SELECT DISTINCT MONTH(tanggal_mulai) AS bulan 
         FROM (
@@ -81,7 +78,6 @@ exports.filterData = async (req, res) => {
             });
         };
 
-        // Updated query to join with pegawai table
         const query = `
             SELECT 
                 p.nip,
@@ -97,7 +93,6 @@ exports.filterData = async (req, res) => {
             LIMIT ? OFFSET ?
         `;
 
-        // Updated count query
         const countQuery = `
             SELECT COUNT(*) AS total
             FROM ${jenis} k

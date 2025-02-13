@@ -1,5 +1,3 @@
-// controllers/master/masterController.js
-
 const db = require('../../config/database');
 
 exports.getDashboardData = (req, res) => {
@@ -19,33 +17,33 @@ exports.getDashboardData = (req, res) => {
   `;
 
   db.query(queryPegawai, (err, pegawaiResult) => {
+    if (err) throw err;
+    db.query(queryAnggotaAktif, (err, anggotaAktifResult) => {
       if (err) throw err;
-      db.query(queryAnggotaAktif, (err, anggotaAktifResult) => {
+      db.query(queryAnggotaTidakAktif, (err, anggotaTidakAktifResult) => {
+        if (err) throw err;
+        db.query(querySimpanan, (err, simpananResult) => {
           if (err) throw err;
-          db.query(queryAnggotaTidakAktif, (err, anggotaTidakAktifResult) => {
+          db.query(queryPinjaman, (err, pinjamanResult) => {
+            if (err) throw err;
+            db.query(queryKredit, (err, kreditResult) => {
               if (err) throw err;
-              db.query(querySimpanan, (err, simpananResult) => {
-                  if (err) throw err;
-                  db.query(queryPinjaman, (err, pinjamanResult) => {
-                      if (err) throw err;
-                      db.query(queryKredit, (err, kreditResult) => {
-                          if (err) throw err;
 
-                          const totalKredit = kreditResult.reduce((acc, curr) => acc + (curr.total_kredit || 0), 0);
+              const totalKredit = kreditResult.reduce((acc, curr) => acc + (curr.total_kredit || 0), 0);
 
-                          res.json({
-                              total_pegawai: pegawaiResult[0].total_pegawai,
-                              total_anggota_aktif: anggotaAktifResult[0].total_anggota_aktif,
-                              total_anggota_tidak_aktif: anggotaTidakAktifResult[0].total_anggota_tidak_aktif,
-                              total_simpanan: simpananResult[0].total_simpanan,
-                              total_pinjaman: pinjamanResult[0].total_pinjaman,
-                              total_kredit: totalKredit
-                          });
-                      });
-                  });
+              res.json({
+                total_pegawai: pegawaiResult[0].total_pegawai,
+                total_anggota_aktif: anggotaAktifResult[0].total_anggota_aktif,
+                total_anggota_tidak_aktif: anggotaTidakAktifResult[0].total_anggota_tidak_aktif,
+                total_simpanan: simpananResult[0].total_simpanan,
+                total_pinjaman: pinjamanResult[0].total_pinjaman,
+                total_kredit: totalKredit
               });
+            });
           });
+        });
       });
+    });
   });
 };
 
@@ -145,7 +143,6 @@ exports.deletePegawai = (req, res) => {
   });
 };
 
-// Anggota
 exports.getAnggota = (req, res) => {
   const searchQuery = req.query.search ? `%${req.query.search}%` : '%';
 
@@ -157,10 +154,10 @@ exports.getAnggota = (req, res) => {
   `;
 
   db.query(query, [searchQuery, searchQuery, searchQuery], (err, results) => {
-      if (err) {
-          return res.status(500).json({ message: 'Database error', error: err });
-      }
-      res.render('master/anggota/anggotaKoperasi', { anggota: results, searchQuery: req.query.search || '' });
+    if (err) {
+      return res.status(500).json({ message: 'Database error', error: err });
+    }
+    res.render('master/anggota/anggotaKoperasi', { anggota: results, searchQuery: req.query.search || '' });
   });
 };
 
@@ -208,13 +205,12 @@ exports.getPegawaiYangBisaDipilih = (req, res) => {
 
 exports.tambahAnggota = (req, res) => {
   console.log("Body data diterima:", req.body);
-  const { nip_anggota } = req.body; // No need for `status`, since it's always "Aktif"
+  const { nip_anggota } = req.body;
 
   if (!nip_anggota) {
     return res.status(400).json({ success: false, message: "Harap pilih pegawai." });
   }
 
-  // Check if the pegawai exists in the database
   const checkPegawaiQuery = 'SELECT nama FROM pegawai WHERE nip = ?';
   db.query(checkPegawaiQuery, [nip_anggota], (err, pegawaiResults) => {
     if (err) return res.status(500).json({ success: false, message: 'Database error saat mencari pegawai' });
@@ -224,15 +220,12 @@ exports.tambahAnggota = (req, res) => {
 
     const nama = pegawaiResults[0].nama;
 
-    // Get the current highest ID in the anggota table
     const getMaxIdQuery = 'SELECT MAX(id) AS max_id FROM anggota';
     db.query(getMaxIdQuery, (err, result) => {
       if (err) return res.status(500).json({ success: false, message: 'Gagal mendapatkan ID terakhir' });
 
-      // If there are no entries, start with id 1
       const newId = result[0].max_id ? result[0].max_id + 1 : 1;
 
-      // Insert the new anggota with the next available ID
       const insertQuery = 'INSERT INTO anggota (id, nip_anggota, status) VALUES (?, ?, "Aktif")';
       db.query(insertQuery, [newId, nip_anggota], (err, insertResult) => {
         if (err) return res.status(500).json({ success: false, message: 'Gagal menambahkan anggota ke database' });
@@ -247,7 +240,6 @@ exports.tambahAnggota = (req, res) => {
   });
 };
 
-// Mengubah status anggota (Aktif <-> Tidak Aktif)
 exports.updateAnggota = (req, res) => {
   const { nip } = req.body;
 
@@ -268,7 +260,7 @@ exports.updateAnggota = (req, res) => {
     const currentStatus = results[0].status;
     const newStatus = currentStatus === "Aktif" ? "Tidak Aktif" : "Aktif";
 
-    // Update status anggota
+
     const updateQuery = "UPDATE anggota SET status = ? WHERE nip_anggota = ?";
     db.query(updateQuery, [newStatus, nip], (err, result) => {
       if (err) {
@@ -282,7 +274,7 @@ exports.updateAnggota = (req, res) => {
 
 exports.deleteAnggota = (req, res) => {
   const { id } = req.params;
-  console.log("Menghapus anggota dengan ID:", id); 
+  console.log("Menghapus anggota dengan ID:", id);
 
   const query = 'DELETE FROM anggota WHERE id = ?';
   db.query(query, [id], (err, results) => {
@@ -299,7 +291,7 @@ exports.deleteAnggota = (req, res) => {
   });
 };
 
-// User Fix
+
 exports.getUser = (req, res) => {
   const query = 'SELECT * FROM users';
   db.query(query, (err, results) => {

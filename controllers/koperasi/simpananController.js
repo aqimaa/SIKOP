@@ -9,7 +9,6 @@ const lihatSimpanan = (req, res) => {
     }
 };
 
-// Get data simpanan
 const getSimpananData = (req, res) => {
     const query = `
         SELECT 
@@ -35,7 +34,6 @@ const getSimpananData = (req, res) => {
     });
 };
 
-// Get data anggota untuk dropdown
 const getAnggotaListSimpanan = (req, res) => {
     const query = `
         SELECT 
@@ -47,7 +45,7 @@ const getAnggotaListSimpanan = (req, res) => {
         WHERE a.status = 'aktif'
         ORDER BY p.nama ASC
     `;
-    
+
     db.query(query, (error, results) => {
         if (error) {
             console.error("Error:", error);
@@ -57,7 +55,6 @@ const getAnggotaListSimpanan = (req, res) => {
     });
 };
 
-// Filter data simpanan
 const filterSimpanan = (req, res) => {
     const { anggota, tahun } = req.query;
     let query = `
@@ -84,7 +81,6 @@ const filterSimpanan = (req, res) => {
         params.push(anggota);
     }
 
-    // Modifikasi kondisi tahun
     if (tahun && tahun !== '') {
         query += ` AND YEAR(s.tanggal) = ?`;
         params.push(tahun);
@@ -110,7 +106,7 @@ const getAvailableYears = (req, res) => {
         FROM simpanan 
         ORDER BY year ASC
     `;
-    
+
     db.query(query, (error, results) => {
         if (error) {
             console.error("Error:", error);
@@ -122,26 +118,23 @@ const getAvailableYears = (req, res) => {
 
 const createPeriode = async (req, res) => {
     const { tahun, bulan } = req.body;
-    
+
     try {
-        // Get all active members
         const getActiveMembers = `
             SELECT id 
             FROM anggota 
             WHERE status = 'aktif'
         `;
-        
+
         db.query(getActiveMembers, async (error, members) => {
             if (error) {
                 console.error("Error getting members:", error);
                 return res.status(500).json({ message: error.message });
             }
 
-            // Set tanggal ke awal bulan yang dipilih
             const tanggal = new Date(tahun, bulan - 1, 1);
             const formattedDate = tanggal.toISOString().split('T')[0];
 
-            // Create records for each active member
             for (const member of members) {
                 const createQuery = `
                     INSERT INTO simpanan 
@@ -157,7 +150,6 @@ const createPeriode = async (req, res) => {
                         });
                     });
 
-                    // Save to history
                     const historyQuery = `
                         INSERT INTO simpanan_history
                         (simpanan_id, id_anggota, action_type, new_data, changed_by)
@@ -182,7 +174,6 @@ const createPeriode = async (req, res) => {
                     });
                 } catch (err) {
                     console.error("Error creating record for member:", member.id, err);
-                    // Continue with next member even if one fails
                 }
             }
 
@@ -199,8 +190,6 @@ const createPeriode = async (req, res) => {
     }
 };
 
-
-// Create new simpanan
 const createSimpanan = async (req, res) => {
     const { anggota, simpanan_wajib, simpanan_pokok, simpanan_sukarela, metode_bayar } = req.body;
     const tanggal = new Date().toISOString().slice(0, 10);
@@ -214,7 +203,7 @@ const createSimpanan = async (req, res) => {
             WHERE s.id_anggota = ?
             AND YEAR(s.tanggal) = ?
             AND MONTH(s.tanggal) = ?`;
-        
+
         db.query(checkQuery, [anggota, tahun, bulan], (checkError, checkResults) => {
             if (checkError) {
                 console.error("Error checking existing simpanan:", checkError);
@@ -222,7 +211,6 @@ const createSimpanan = async (req, res) => {
             }
 
             if (checkResults.length > 0) {
-                // Update existing record
                 const existingRecord = checkResults[0];
                 const oldData = {
                     id: existingRecord.id,
@@ -277,7 +265,7 @@ const createSimpanan = async (req, res) => {
                     const historyValues = [
                         existingRecord.id,
                         anggota,
-                        'tambah', // Changed from 'update' to 'tambah'
+                        'tambah',
                         JSON.stringify(oldData),
                         JSON.stringify(newData),
                         req.session?.email || 'system'
@@ -291,7 +279,7 @@ const createSimpanan = async (req, res) => {
                     });
                 });
             } else {
-                // Insert new record
+
                 const insertQuery = `
                     INSERT INTO simpanan
                     (id_anggota, tanggal, simpanan_wajib, simpanan_pokok, simpanan_sukarela, metode_bayar)
@@ -351,19 +339,17 @@ const createSimpanan = async (req, res) => {
     }
 };
 
-// Delete simpanan
 const deleteSimpanan = (req, res) => {
     const { id } = req.params;
-    
-    // First get info about the simpanan to be deleted
+
     const getInfoQuery = 'SELECT * FROM simpanan WHERE id = ?';
-    
+
     db.query(getInfoQuery, [id], (error, results) => {
         if (error) {
             console.error("Error:", error);
             return res.status(500).json({ message: error.message });
         }
-        
+
         if (results.length === 0) {
             return res.status(404).json({ message: 'Simpanan tidak ditemukan' });
         }
@@ -373,7 +359,6 @@ const deleteSimpanan = (req, res) => {
         const month = new Date(tanggal).getMonth() + 1;
         const year = new Date(tanggal).getFullYear();
 
-        // Record the delete action in history before deleting
         const historyQuery = `
             INSERT INTO simpanan_history
             (simpanan_id, id_anggota, action_type, old_data, new_data, changed_by)
@@ -391,10 +376,8 @@ const deleteSimpanan = (req, res) => {
         db.query(historyQuery, historyValues, (historyError) => {
             if (historyError) {
                 console.error("Error recording history:", historyError);
-                // Continue with deletion even if history recording fails
             }
 
-            // Delete all simpanan records for this member in the same month and year
             const deleteQuery = `
                 DELETE FROM simpanan
                 WHERE id_anggota = ?
@@ -413,10 +396,9 @@ const deleteSimpanan = (req, res) => {
     });
 };
 
-// Get single simpanan data
 const getSimpananById = (req, res) => {
     const { id } = req.params;
-    
+
     const query = `
         SELECT 
             s.id,
@@ -432,17 +414,17 @@ const getSimpananById = (req, res) => {
         JOIN pegawai p ON a.nip_anggota = p.nip
         WHERE s.id = ?
     `;
-    
+
     db.query(query, [id], (error, results) => {
         if (error) {
             console.error("Error:", error);
             return res.status(500).json({ message: error.message });
         }
-        
+
         if (results.length === 0) {
             return res.status(404).json({ message: 'Data simpanan tidak ditemukan' });
         }
-        
+
         res.json(results[0]);
     });
 };
@@ -450,13 +432,12 @@ const getSimpananById = (req, res) => {
 const updateSimpanan = async (req, res) => {
     const { id } = req.params;
     const { simpanan_wajib, simpanan_pokok, simpanan_sukarela, metode_bayar } = req.body;
-    
+
     try {
-        // First get the old data
         const getOldDataQuery = `
             SELECT * FROM simpanan WHERE id = ?
         `;
-        
+
         db.query(getOldDataQuery, [id], async (error, oldResults) => {
             if (error) {
                 console.error("Error fetching old data:", error);
@@ -471,7 +452,6 @@ const updateSimpanan = async (req, res) => {
                 metode_bayar
             };
 
-            // Update the simpanan
             const updateQuery = `
                 UPDATE simpanan
                 SET
@@ -496,7 +476,6 @@ const updateSimpanan = async (req, res) => {
                     return res.status(500).json({ message: updateError.message });
                 }
 
-                // Record the change in history
                 const historyQuery = `
                     INSERT INTO simpanan_history 
                     (simpanan_id, id_anggota, action_type, old_data, new_data, changed_by)
@@ -506,7 +485,7 @@ const updateSimpanan = async (req, res) => {
                 const historyValues = [
                     id,
                     oldData.id_anggota,
-                    'edit', // Ubah dari 'update' menjadi 'edit'
+                    'edit',
                     JSON.stringify(oldData),
                     JSON.stringify(newData),
                     req.session?.email || 'system'
@@ -515,7 +494,6 @@ const updateSimpanan = async (req, res) => {
                 db.query(historyQuery, historyValues, (historyError) => {
                     if (historyError) {
                         console.error("Error recording history:", historyError);
-                        // Don't return error to client as the main update succeeded
                     }
 
                     res.json({ message: 'Simpanan berhasil diperbarui' });
@@ -530,7 +508,7 @@ const updateSimpanan = async (req, res) => {
 
 const getHistorySimpanan = (req, res) => {
     const { id_anggota } = req.params;
-    
+
     const query = `
         SELECT 
             sh.simpanan_id as id,
@@ -573,13 +551,11 @@ const getHistorySimpanan = (req, res) => {
             return res.status(500).json({ message: error.message });
         }
 
-        // Map the results to ensure proper data formatting
         const formattedResults = results.map(item => ({
             ...item,
             simpanan_wajib: parseFloat(item.simpanan_wajib || 0),
             simpanan_pokok: parseFloat(item.simpanan_pokok || 0),
             simpanan_sukarela: parseFloat(item.simpanan_sukarela || 0),
-            // Convert JSON strings to objects if needed
             old_data: item.old_data ? JSON.parse(item.old_data) : null,
             new_data: item.new_data ? JSON.parse(item.new_data) : null
         }));

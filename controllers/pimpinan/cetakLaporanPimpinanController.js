@@ -7,7 +7,6 @@ exports.cetakLaporan = (req, res) => {
     const { tahun, bulan, jenis, tipe } = req.query;
     let query, tableName, jenisField;
 
-    // Tentukan query dan field berdasarkan tipe laporan
     switch (tipe) {
         case 'simpanan':
             tableName = 'simpanan';
@@ -44,7 +43,7 @@ exports.cetakLaporan = (req, res) => {
             break;
 
         case 'kredit':
-            tableName = jenis; // menggunakan jenis kredit yang dipilih
+            tableName = jenis;
             query = `
                 SELECT 
                     p.nip, 
@@ -69,11 +68,10 @@ exports.cetakLaporan = (req, res) => {
             return res.status(500).json({ message: 'Database error', error: err });
         }
 
-        const bulanList = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
-                          'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        const bulanList = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
         const bulanNama = bulanList[bulan - 1];
 
-        // Prepare data for the template
         const data = {
             tahun: tahun,
             bulan: bulanNama,
@@ -84,16 +82,14 @@ exports.cetakLaporan = (req, res) => {
 
         const filePath = path.join(__dirname, '../../views/koperasi/pimpinan/templateLaporan.ejs');
 
-        // Render EJS template
         ejs.renderFile(filePath, data, (err, html) => {
             if (err) {
-                return res.status(500).json({ 
-                    message: 'Error rendering template', 
-                    error: err 
+                return res.status(500).json({
+                    message: 'Error rendering template',
+                    error: err
                 });
             }
 
-            // PDF generation options
             const options = {
                 format: 'A4',
                 border: {
@@ -104,20 +100,17 @@ exports.cetakLaporan = (req, res) => {
                 }
             };
 
-            // Create PDF
             pdf.create(html, options).toStream((err, stream) => {
                 if (err) {
-                    return res.status(500).json({ 
-                        message: 'Error generating PDF', 
-                        error: err 
+                    return res.status(500).json({
+                        message: 'Error generating PDF',
+                        error: err
                     });
                 }
 
-                // Set response headers
                 res.setHeader('Content-Type', 'application/pdf');
                 res.setHeader('Content-Disposition', `attachment; filename=laporan-${tipe}-${tahun}-${bulan}.pdf`);
-                
-                // Pipe the PDF stream to the response
+
                 stream.pipe(res);
             });
         });

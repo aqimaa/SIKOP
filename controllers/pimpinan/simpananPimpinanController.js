@@ -1,7 +1,7 @@
 const db = require('../../config/database');
 
 exports.getSimpananPimpinan = (req, res) => {
-    console.log("Session Data:", req.session); // Debug session
+    console.log("Session Data:", req.session);
 
     if (req.session.role !== 'Pimpinan') {
         console.log("Redirecting to /auth/login because role is:", req.session.role);
@@ -10,10 +10,8 @@ exports.getSimpananPimpinan = (req, res) => {
 
     console.log("User is Pimpinan, fetching data...");
 
-    // Ambil tahun unik dari database
     const queryTahun = `SELECT DISTINCT YEAR(tanggal) AS tahun FROM simpanan ORDER BY tahun DESC`;
 
-    // Ambil bulan unik dari database
     const queryBulan = `SELECT DISTINCT MONTH(tanggal) AS bulan FROM simpanan ORDER BY bulan ASC`;
 
     db.query(queryTahun, (err, tahunResults) => {
@@ -47,7 +45,6 @@ exports.filterData = async (req, res) => {
     try {
         const offset = (page - 1) * limit;
 
-        // Helper function for database queries
         const executeQuery = (query, params) => {
             return new Promise((resolve, reject) => {
                 db.query(query, params, (err, results) => {
@@ -57,7 +54,6 @@ exports.filterData = async (req, res) => {
             });
         };
 
-        // Modified query to join with pegawai table
         const query = `
             SELECT 
                 p.nip,
@@ -71,7 +67,6 @@ exports.filterData = async (req, res) => {
             LIMIT ? OFFSET ?
         `;
 
-        // Modified count query
         const countQuery = `
             SELECT COUNT(*) AS total
             FROM simpanan s
@@ -81,7 +76,6 @@ exports.filterData = async (req, res) => {
             AND MONTH(s.tanggal) = ?
         `;
 
-        // Execute both queries
         const [data, totalResults] = await Promise.all([
             executeQuery(query, [tahun, bulan, parseInt(limit), offset]),
             executeQuery(countQuery, [tahun, bulan])

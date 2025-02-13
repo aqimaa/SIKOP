@@ -1,6 +1,5 @@
 const db = require("../../config/database");
 
-// Lihat Kredit Elektronik
 exports.lihatKreditElektronik = async (req, res) => {
   try {
     const query = `
@@ -35,7 +34,6 @@ exports.lihatKreditElektronik = async (req, res) => {
   }
 };
 
-// Tambah Kredit Elektronik
 exports.tambahKreditElektronik = async (req, res) => {
   const {
     id_anggota,
@@ -76,7 +74,6 @@ exports.tambahKreditElektronik = async (req, res) => {
   });
 };
 
-// Edit Kredit Elektronik
 exports.tampilkanEditKreditElektronik = async (req, res) => {
   const id = req.params.id;
   const query = `
@@ -116,7 +113,7 @@ exports.tampilkanEditKreditElektronik = async (req, res) => {
 
 
 exports.simpanEditKreditElektronik = async (req, res) => {
-  // Log seluruh body request untuk debugging
+
   console.log('Full Request Body:', req.body);
   console.log('Request Params:', req.params);
 
@@ -129,11 +126,10 @@ exports.simpanEditKreditElektronik = async (req, res) => {
     ket_status
   } = req.body;
 
-  // Validasi input
   if (!id || !jumlah_pinjaman || !jangka_waktu) {
-    return res.status(400).json({ 
-      success: false, 
-      message: "Data tidak lengkap" 
+    return res.status(400).json({
+      success: false,
+      message: "Data tidak lengkap"
     });
   }
 
@@ -157,42 +153,37 @@ exports.simpanEditKreditElektronik = async (req, res) => {
     id
   ];
 
-  // Tambahkan log untuk debug
   console.log('Update Kredit Elektronik - ID:', id);
   console.log('Update Values:', values);
 
   db.query(query, values, (error, results) => {
     if (error) {
       console.error("Error saat mengupdate kredit elektronik:", error);
-      return res.status(500).json({ 
-        success: false, 
+      return res.status(500).json({
+        success: false,
         message: "Terjadi kesalahan saat mengupdate kredit elektronik.",
-        error: error.message 
+        error: error.message
       });
     }
 
-    // Periksa apakah ada baris yang terpengaruh
     if (results.affectedRows === 0) {
       console.warn(`Tidak ada baris yang diupdate untuk ID: ${id}`);
-      return res.status(404).json({ 
-        success: false, 
-        message: "Data kredit elektronik tidak ditemukan" 
+      return res.status(404).json({
+        success: false,
+        message: "Data kredit elektronik tidak ditemukan"
       });
     }
 
-    res.json({ 
-      success: true, 
-      message: "Data kredit elektronik berhasil diperbarui" 
+    res.json({
+      success: true,
+      message: "Data kredit elektronik berhasil diperbarui"
     });
   });
 };
 
-
-// Bayar Kredit Elektronik
 exports.tampilkanBayarKreditElektronik = async (req, res) => {
   const id = req.params.id;
-  
-  // Query untuk mengambil data kredit elektronik
+
   const queryKreditElektronik = `
       SELECT
           ke.id,
@@ -209,7 +200,6 @@ exports.tampilkanBayarKreditElektronik = async (req, res) => {
       WHERE ke.id = ?
   `;
 
-  // Query untuk mengambil riwayat pembayaran
   const queryPembayaran = `
       SELECT
           tanggal_bayar,
@@ -222,30 +212,28 @@ exports.tampilkanBayarKreditElektronik = async (req, res) => {
   `;
 
   db.query(queryKreditElektronik, [id], (error, resultsKreditElektronik) => {
+    if (error) {
+      console.error("Error saat mengambil data kredit elektronik:", error);
+      return res.status(500).send("Terjadi kesalahan saat mengambil data kredit elektronik.");
+    }
+
+    if (resultsKreditElektronik.length === 0) {
+      return res.status(404).send("Data kredit elektronik tidak ditemukan.");
+    }
+
+    const kreditElektronik = resultsKreditElektronik[0];
+
+    db.query(queryPembayaran, [id], (error, resultsPembayaran) => {
       if (error) {
-          console.error("Error saat mengambil data kredit elektronik:", error);
-          return res.status(500).send("Terjadi kesalahan saat mengambil data kredit elektronik.");
+        console.error("Error saat mengambil riwayat pembayaran:", error);
+        return res.status(500).send("Terjadi kesalahan saat mengambil riwayat pembayaran.");
       }
 
-      if (resultsKreditElektronik.length === 0) {
-          return res.status(404).send("Data kredit elektronik tidak ditemukan.");
-      }
-
-      const kreditElektronik = resultsKreditElektronik[0];
-
-      // Mengambil riwayat pembayaran
-      db.query(queryPembayaran, [id], (error, resultsPembayaran) => {
-          if (error) {
-              console.error("Error saat mengambil riwayat pembayaran:", error);
-              return res.status(500).send("Terjadi kesalahan saat mengambil riwayat pembayaran.");
-          }
-
-          // Render view dengan data kredit dan riwayat pembayaran
-          res.render("koperasi/kreditKeuangan/kreditElektronik/bayarKreditElektro", {
-              kredit: kreditElektronik,
-              riwayatPembayaran: resultsPembayaran,
-          });
+      res.render("koperasi/kreditKeuangan/kreditElektronik/bayarKreditElektro", {
+        kredit: kreditElektronik,
+        riwayatPembayaran: resultsPembayaran,
       });
+    });
   });
 };
 
@@ -300,13 +288,11 @@ exports.prosesBayarKreditElektronik = async (req, res) => {
   });
 };
 
-// Cari Kredit Elektronik
 exports.cariKreditElektronik = (req, res) => {
   const { search } = req.query;
-  
-  // Tambahkan log
+
   console.log('Search Query:', search);
-  
+
   const sql = `
       SELECT
           ke.id,
@@ -329,28 +315,26 @@ exports.cariKreditElektronik = (req, res) => {
       ORDER BY ke.id DESC
   `;
 
-  // Tambahkan debug log
   console.log('Running query with search:', `%${search}%`);
 
   db.query(sql, [`%${search}%`], (err, results) => {
-      if (err) {
-          console.error("Error SQL:", err);
-          return res.status(500).json({ 
-              success: false,
-              message: "Terjadi kesalahan saat mencari data",
-              error: err.message 
-          });
-      }
-      // Log hasil
-      console.log('Search results:', results);
-      res.json(results || []);
+    if (err) {
+      console.error("Error SQL:", err);
+      return res.status(500).json({
+        success: false,
+        message: "Terjadi kesalahan saat mencari data",
+        error: err.message
+      });
+    }
+
+    console.log('Search results:', results);
+    res.json(results || []);
   });
 };
 
 exports.hapusKreditElektronik = (req, res) => {
   const id = req.params.id;
 
-  // Hapus data pembayaran terkait terlebih dahulu
   db.query("DELETE FROM pembayaran WHERE id_kredit_elektronik = ?", [id], (errPembayaran) => {
     if (errPembayaran) {
       console.error("Error saat menghapus pembayaran:", errPembayaran);
@@ -360,7 +344,6 @@ exports.hapusKreditElektronik = (req, res) => {
       });
     }
 
-    // Kemudian hapus data kredit elektronik
     db.query("DELETE FROM kredit_elektronik WHERE id = ?", [id], (error, result) => {
       if (error) {
         console.error("Error saat menghapus kredit elektronik:", error);
@@ -370,7 +353,6 @@ exports.hapusKreditElektronik = (req, res) => {
         });
       }
 
-      // Periksa apakah data berhasil dihapus
       if (result.affectedRows === 0) {
         return res.status(404).json({
           success: false,
@@ -378,7 +360,6 @@ exports.hapusKreditElektronik = (req, res) => {
         });
       }
 
-      // Kirim respons sukses
       res.json({
         success: true,
         message: "Data kredit elektronik berhasil dihapus"
@@ -386,4 +367,3 @@ exports.hapusKreditElektronik = (req, res) => {
     });
   });
 };
-

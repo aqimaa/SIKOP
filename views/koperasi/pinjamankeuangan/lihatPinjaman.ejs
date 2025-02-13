@@ -13,39 +13,39 @@
      <%- include('../../sidebar') %>
 
     <!-- Main Content -->
-    <div class="flex-1 ml-72">
-        <div class="fixed top-0 left-72 right-0 flex justify-between shadow-md p-4 bg-white z-20">
-            <h1 class="text-2xl"></h1>
-            <div class="flex items-center">
-                <span>Admin Keuangan</span>
-                <img src="/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
+    <div class="flex-1 p-6 ml-72">
+        <header class="flex justify-between items-center mb-12">
+            <!-- Header dengan posisi fixed dan teks di tengah -->
+            <div class="fixed top-0 left-72 right-0 flex items-center justify-center shadow-md p-4 bg-white z-20">
+                <h1 class="text-2xl font-bold flex-grow text-center">Data Pinjaman</h1>
+                <div class="flex items-center">
+                    <span>Admin Keuangan</span>
+                    <img src="/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
+                </div>
             </div>
-        </div>
+        </header>
 
-        <div class="flex-1 p-8 mt-12">
-            <!-- Fixed Search and Filter -->
-            <div class="fixed top-16 left-72 right-0 bg-gray-100 z-10 p-4">
-                <div class="text-center mb-4">
-                    <h2 class="text-2xl font-bold mt-4 mb-6">Data Pinjaman</h2>
+        <!-- Search Bar + Tambah Button dalam satu baris -->
+        <div class="bg-white p-6 rounded shadow"> 
+            <div class="flex items-center space-x-8 justify-between mb-4">
+                <!-- Search Bar -->
+                <div class="flex items-center space-x-2 flex-1">
+                    <input type="text" id="searchInput" placeholder="Cari Anggota" class="border border-gray-300 p-2 rounded flex-1">
+                    <button onclick="cariAnggota()" class="text-white px-3 py-2 rounded-md focus:outline-none flex items-center justify-center" style="background-color: #5D8736;">
+                        <span class="material-icons">search</span>
+                    </button>               
+                    <button id="searchButton" class="px-4 py-2 rounded text-white hover:bg-[#4c6e2f]" style="background-color: #5D8736;">Cari</button>
                 </div>
-
-                <div class="flex justify-between mb-3">
-                    <div class="flex space-x-2">
-                        <input type="text" id="searchInput" placeholder="Cari Anggota" class="px-3 py-1 border rounded-md focus:outline-none">
-                        <button onclick="cariAnggota()" class="text-white px-3 py-1 rounded-md focus:outline-none" style="background-color: #5D8736;">
-                            <span class="material-icons">search</span>
-                        </button>
-                    </div>
-                    <!-- Tombol Tambah Pinjaman Baru -->
-                    <a href="/pinjaman/tambah" class="text-white px-3 py-1 rounded flex items-center space-x-1" style="background-color: #5D8736;">
-                        <span class="material-icons">add</span>
-                        <span>Pinjaman Baru</span>
-                    </a>
-                </div>
+        
+                <!-- Tambah Button -->
+                <a href="/pinjaman/tambah" class="px-4 py-2 rounded text-white flex items-center space-x-2 hover:bg-[#4c6e2f]" style="background-color: #5D8736;">
+                    <span class="material-icons text-white">add</span>
+                    <span>Pinjaman Baru</span>
+                </a>
             </div>
 
             <!-- Scrollable Table -->
-            <div class="bg-white rounded-lg shadow overflow-x-auto mt-36" style="max-height: calc(100vh - 280px); overflow-y: auto;">
+            <div class="bg-white rounded-lg shadow overflow-x-auto mt-8" style="max-height: calc(100vh - 280px); overflow-y: auto;">
                 <table class="w-full">
                     <thead style="position: sticky; top: 0; z-index: 5; background-color: #5D8736;">
                         <tr>

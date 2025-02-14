@@ -15,6 +15,7 @@ exports.lihatPinjaman = async (req, res) => {
         COALESCE(p.margin_per_bulan, 0) AS margin_per_bulan,
         COALESCE(p.total_angsuran, 0) AS total_angsuran,
         COALESCE(p.sisa_piutang, 0) AS sisa_piutang,
+        COALESCE(p.sisa_piutang_margin, 0) AS sisa_piutang_margin,
         p.tanggal_perjanjian,
         p.ket_status,
         COALESCE(p.angsuran_ke, 0) AS angsuran_ke
@@ -78,13 +79,14 @@ exports.tambahPinjaman = async (req, res) => {
     angsuran_pokok,
     margin_per_bulan,
     total_angsuran,
-    tanggal_perjanjian
+    tanggal_perjanjian,
+    total_margin_keseluruhan
   } = req.body;
 
   const query = `
     INSERT INTO pinjaman 
-    (id_anggota, kategori, jumlah_pinjaman, jangka_waktu, margin_persen, angsuran_pokok, margin_per_bulan, total_angsuran, sisa_piutang, tanggal_perjanjian, ket_status, angsuran_ke)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    (id_anggota, kategori, jumlah_pinjaman, jangka_waktu, margin_persen, angsuran_pokok, margin_per_bulan, total_angsuran, sisa_piutang, sisa_piutang_margin, tanggal_perjanjian, ket_status, angsuran_ke)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   const values = [
@@ -96,7 +98,8 @@ exports.tambahPinjaman = async (req, res) => {
     angsuran_pokok,
     margin_per_bulan,
     total_angsuran,
-    total_angsuran * jangka_waktu,
+    jumlah_pinjaman, 
+    total_margin_keseluruhan, 
     tanggal_perjanjian,
     'Belum Lunas',
     0
@@ -184,7 +187,9 @@ exports.tampilkanBayarPinjaman = async (req, res) => {
       p.jangka_waktu,
       p.sisa_piutang,
       p.total_angsuran,
-      p.angsuran_ke
+      p.angsuran_ke,
+      p.margin_per_bulan,
+      p.angsuran_pokok
     FROM pinjaman p
     JOIN anggota a ON p.id_anggota = a.id
     JOIN pegawai pg ON a.nip_anggota = pg.nip
@@ -229,53 +234,81 @@ exports.tampilkanBayarPinjaman = async (req, res) => {
 
 exports.prosesBayar = async (req, res) => {
   const idPinjaman = req.params.id;
-  const { tanggal_bayar, jumlah_bayar, keterangan } = req.body;
+  const { tanggal_bayar, pembayaran_pokok, pembayaran_margin, keterangan } = req.body;
 
-  const getAngsuranKeQuery = `
-    SELECT angsuran_ke, sisa_piutang
+  // Konversi nilai pembayaran ke angka
+  const jumlahBayarPokok = parseFloat(pembayaran_pokok.replace(/[^0-9,]/g, '').replace(',', '.'));
+  const jumlahBayarMargin = parseFloat(pembayaran_margin.replace(/[^0-9,]/g, '').replace(',', '.'));
+
+  // Query untuk mengambil data pinjaman
+  const getPinjamanQuery = `
+    SELECT 
+      sisa_piutang,
+      sisa_piutang_margin,
+      angsuran_ke
     FROM pinjaman
     WHERE id = ?
   `;
 
-  db.query(getAngsuranKeQuery, [idPinjaman], (error, results) => {
+  db.query(getPinjamanQuery, [idPinjaman], (error, results) => {
     if (error) {
-      console.error("Error saat mengambil angsuran_ke:", error);
-      return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mengambil angsuran_ke." });
+      console.error("Error saat mengambil data pinjaman:", error);
+      return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mengambil data pinjaman." });
     }
 
-    const angsuranKe = results[0].angsuran_ke + 1;
-    const sisaPiutangBaru = results[0].sisa_piutang - jumlah_bayar;
+    if (results.length === 0) {
+      return res.status(404).json({ success: false, message: "Data pinjaman tidak ditemukan." });
+    }
 
-    const statusPinjaman = sisaPiutangBaru <= 0 ? 'Lunas' : 'Belum Lunas';
+    const pinjaman = results[0];
+    const sisaPiutangBaru = pinjaman.sisa_piutang - jumlahBayarPokok;
+    const sisaPiutangMarginBaru = pinjaman.sisa_piutang_margin - jumlahBayarMargin;
+    const angsuranKeBaru = pinjaman.angsuran_ke + 1;
 
+    // Cek apakah pinjaman sudah lunas
+    const statusPinjaman = sisaPiutangBaru <= 0 && sisaPiutangMarginBaru <= 0 ? 'Lunas' : 'Belum Lunas';
+
+    // Query untuk mencatat pembayaran
     const insertPembayaranQuery = `
-      INSERT INTO pembayaran (id_pinjaman, tanggal_bayar, jumlah_bayar, ket, angsuran_ke)
-      VALUES (?, ?, ?, ?, ?)
+      INSERT INTO pembayaran 
+        (id_pinjaman, tanggal_bayar, jumlah_bayar, ket, angsuran_ke, pembayaran_margin)
+      VALUES (?, ?, ?, ?, ?, ?)
     `;
 
-    db.query(insertPembayaranQuery, [idPinjaman, tanggal_bayar, jumlah_bayar, keterangan, angsuranKe], (error, results) => {
-      if (error) {
-        console.error("Error saat mencatat pembayaran:", error);
-        return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mencatat pembayaran." });
-      }
-
-      const updatePinjamanQuery = `
-        UPDATE pinjaman
-        SET sisa_piutang = ?,
-            angsuran_ke = ?,
-            ket_status = ?
-        WHERE id = ?
-      `;
-
-      db.query(updatePinjamanQuery, [sisaPiutangBaru, angsuranKe, statusPinjaman, idPinjaman], (updateError, updateResults) => {
-        if (updateError) {
-          console.error("Error saat mengupdate sisa piutang dan angsuran_ke:", updateError);
-          return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mengupdate sisa piutang dan angsuran_ke." });
+    db.query(
+      insertPembayaranQuery,
+      [idPinjaman, tanggal_bayar, jumlahBayarPokok, keterangan, angsuranKeBaru, jumlahBayarMargin],
+      (error, results) => {
+        if (error) {
+          console.error("Error saat mencatat pembayaran:", error);
+          return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mencatat pembayaran." });
         }
 
-        res.redirect('/lihatPinjaman');
-      });
-    });
+        // Query untuk mengupdate sisa piutang dan status pinjaman
+        const updatePinjamanQuery = `
+          UPDATE pinjaman
+          SET 
+            sisa_piutang = ?,
+            sisa_piutang_margin = ?,
+            angsuran_ke = ?,
+            ket_status = ?
+          WHERE id = ?
+        `;
+
+        db.query(
+          updatePinjamanQuery,
+          [sisaPiutangBaru, sisaPiutangMarginBaru, angsuranKeBaru, statusPinjaman, idPinjaman],
+          (updateError, updateResults) => {
+            if (updateError) {
+              console.error("Error saat mengupdate sisa piutang dan angsuran_ke:", updateError);
+              return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mengupdate sisa piutang dan angsuran_ke." });
+            }
+
+            res.redirect('/lihatPinjaman');
+          }
+        );
+      }
+    );
   });
 };
 

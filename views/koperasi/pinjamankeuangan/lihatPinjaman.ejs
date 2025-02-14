@@ -57,12 +57,13 @@
                                     <th class="px-6 py-3 text-left text-white">Kategori</th>
                                     <th class="px-6 py-3 text-left text-white">Jumlah Pinjaman</th>
                                     <th class="px-6 py-3 text-left text-white">Jangka Waktu</th>
-                                    <th class="px-6 py-3 text-left text-white">Margin Persen</th>
+                                    <th class="px-6 py-3 text-left text-white">Persen Margin</th>
                                     <th class="px-6 py-3 text-left text-white">Angsuran Pokok</th>
                                     <th class="px-6 py-3 text-left text-white">Angsuran Margin</th>
                                     <th class="px-6 py-3 text-left text-white">Total Angsuran</th>
                                     <th class="px-6 py-3 text-left text-white">Angsuran Ke</th>
-                                    <th class="px-6 py-3 text-left text-white">Sisa Piutang</th>
+                                    <th class="px-6 py-3 text-left text-white">Sisa Piutang Pokok</th>
+                                    <th class="px-6 py-3 text-left text-white">Sisa Piutang Margin</th>
                                     <th class="px-6 py-3 text-left text-white">Tanggal Perjanjian</th>
                                     <th class="px-6 py-3 text-left text-white">Status</th>
                                     <th class="px-6 py-3 text-left text-white">Bayar</th>
@@ -85,6 +86,7 @@
                                         <td class="px-6 py-4"><%= item.total_angsuran ? item.total_angsuran.toLocaleString() : '0' %></td>
                                         <td class="px-6 py-4"><%= item.angsuran_ke || 0 %></td>
                                         <td class="px-6 py-4"><%= item.sisa_piutang ? item.sisa_piutang.toLocaleString() : '0' %></td>
+                                        <td class="px-6 py-4"><%= item.sisa_piutang_margin ? item.sisa_piutang_margin.toLocaleString() : '0' %></td>
                                         <td class="px-6 py-4"><%= item.tanggal_perjanjian.toISOString().split('T')[0] %></td>
                                         <td class="px-6 py-4">
                                             <% if (item.ket_status === 'Lunas') { %>
@@ -108,7 +110,7 @@
                                 <% }) %>
                                 <% } else { %>
                                 <tr>
-                                    <td colspan="15" class="px-6 py-4 text-center">Tidak ada data pinjaman.</td>
+                                    <td colspan="17" class="px-6 py-4 text-center">Tidak ada data pinjaman.</td>
                                 </tr>
                                 <% } %>
                             </tbody>

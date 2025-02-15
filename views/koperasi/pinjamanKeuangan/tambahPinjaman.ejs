@@ -25,7 +25,7 @@
             <h1 class="text-2xl font-bold mb-8">Tambah Pinjaman Baru</h1>
         </div>
 
-        <form action="/pinjaman/tambah" method="POST">
+        <form action="/pinjaman/tambah" method="POST" class="space-y-6">
             <!-- Data Anggota -->
             <div class="bg-gray-200 p-6 rounded-lg">
                 <h2 class="text-lg font-semibold mb-4">Data Anggota</h2>
@@ -54,7 +54,7 @@
                     </div>
                     <div>
                         <label class="block mb-2">Jumlah Pinjaman</label>
-                        <input type="text" id="jumlahPinjaman" name="jumlah_pinjaman" class="w-full border p-2 rounded" placeholder="Masukkan Jumlah Pinjaman" required oninput="validateNumberInput(this)">
+                        <input type="text" id="jumlahPinjaman" name="jumlah_pinjaman" class="w-full border p-2 rounded" placeholder="Masukkan Jumlah Pinjaman" required oninput="formatRupiah(this)">
                     </div>
                     <div>
                         <label class="block mb-2">Jangka Waktu (Bulan)</label>
@@ -66,7 +66,7 @@
                     </div>
                     <div>
                         <label class="block mb-2">Tanggal Perjanjian</label>
-                        <input type="date" name="tanggal_perjanjian" class="w-full border p-2 rounded" required>
+                        <input type="date" id="tanggalPerjanjian" name="tanggal_perjanjian" class="w-full border p-2 rounded" required>
                     </div>
                 </div>
             </div>
@@ -78,10 +78,6 @@
                     <div>
                         <label class="block mb-2">Total Pembayaran Keseluruhan</label>
                         <input type="text" id="totalAngsuran" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Dihitung otomatis">
-                    </div>
-                    <div>
-                        <label class="block mb-2">Total Margin Keseluruhan</label>
-                        <input type="text" id="totalMarginKeseluruhan" name="total_margin_keseluruhan" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Dihitung otomatis">
                     </div>
                     <div>
                         <label class="block mb-2">Angsuran Pokok per Bulan</label>
@@ -112,18 +108,21 @@
             const jangkaWaktuInput = document.getElementById('jangkaWaktu');
             const pokokInput = document.getElementById('pokok');
             const marginInput = document.getElementById('margin');
+            const tanggalPerjanjianInput = document.getElementById('tanggalPerjanjian');
 
             const totalAngsuranOutput = document.getElementById('totalAngsuran');
             const marginPerBulanOutput = document.getElementById('marginPerBulan');
             const totalAngsuranPerBulanOutput = document.getElementById('totalAngsuranPerBulan');
-            const totalMarginKeseluruhanOutput = document.getElementById('totalMarginKeseluruhan'); // Tambahkan ini
+
+            // Set tanggal perjanjian otomatis ke hari ini
+            const today = new Date().toISOString().split('T')[0];
+            tanggalPerjanjianInput.value = today;
 
             function calculateResults() {
                 const jumlahPinjaman = parseFloat(jumlahPinjamanInput.value) || 0;
                 const jangkaWaktu = parseFloat(jangkaWaktuInput.value) || 0;
                 const margin = parseFloat(marginInput.value) || 0;
 
-                const totalMargin = (jumlahPinjaman * margin * jangkaWaktu) / 100;
                 const marginPerBulan = (jumlahPinjaman * margin * jangkaWaktu) / (100 * jangkaWaktu);
                 const angsuranPokokPerBulan = jumlahPinjaman / jangkaWaktu;
                 const totalAngsuranPerBulan = angsuranPokokPerBulan + marginPerBulan;
@@ -133,7 +132,6 @@
                 marginPerBulanOutput.value = marginPerBulan.toFixed(2); // Margin per Bulan
                 totalAngsuranPerBulanOutput.value = totalAngsuranPerBulan.toFixed(2); // Total Angsuran per Bulan
                 pokokInput.value = angsuranPokokPerBulan.toFixed(2); // Angsuran Pokok per Bulan
-                totalMarginKeseluruhanOutput.value = totalMargin.toFixed(2); // Total Margin Keseluruhan
             }
 
             jumlahPinjamanInput.addEventListener('input', calculateResults);
@@ -161,6 +159,26 @@
             } else {
                 document.getElementById('nama_anggota').value = '';
             }
+        }
+
+        // Fungsi untuk memformat input menjadi format Rupiah
+        function formatRupiah(input) {
+            let value = input.value.replace(/[^0-9]/g, '');
+            value = new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0,
+            }).format(value);
+            input.value = value;
+        }
+
+        // Fungsi untuk memformat nilai menjadi format Rupiah (tanpa input)
+        function formatRupiahValue(value) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0,
+            }).format(value);
         }
     </script>
 </body>

@@ -15,8 +15,7 @@ exports.lihatPinjaman = async (req, res) => {
         COALESCE(p.margin_per_bulan, 0) AS margin_per_bulan,
         COALESCE(p.total_angsuran, 0) AS total_angsuran,
         COALESCE(p.sisa_piutang, 0) AS sisa_piutang,
-        COALESCE(p.sisa_piutang_margin, 0) AS sisa_piutang_margin,
-        p.tanggal_perjanjian,
+        DATE(p.tanggal_perjanjian) AS tanggal_perjanjian,
         p.ket_status,
         COALESCE(p.angsuran_ke, 0) AS angsuran_ke
       FROM pinjaman p
@@ -32,8 +31,6 @@ exports.lihatPinjaman = async (req, res) => {
       if (results.length === 0) {
         return res.status(404).send("Data pinjaman tidak ditemukan.");
       }
-
-      console.log(results);
 
       res.render("koperasi/pinjamanKeuangan/lihatPinjaman", { pinjaman: results });
     });
@@ -79,14 +76,13 @@ exports.tambahPinjaman = async (req, res) => {
     angsuran_pokok,
     margin_per_bulan,
     total_angsuran,
-    tanggal_perjanjian,
-    total_margin_keseluruhan
+    tanggal_perjanjian
   } = req.body;
 
   const query = `
     INSERT INTO pinjaman 
-    (id_anggota, kategori, jumlah_pinjaman, jangka_waktu, margin_persen, angsuran_pokok, margin_per_bulan, total_angsuran, sisa_piutang, sisa_piutang_margin, tanggal_perjanjian, ket_status, angsuran_ke)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    (id_anggota, kategori, jumlah_pinjaman, jangka_waktu, margin_persen, angsuran_pokok, margin_per_bulan, total_angsuran, sisa_piutang, tanggal_perjanjian, ket_status, angsuran_ke)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   const values = [
@@ -99,8 +95,7 @@ exports.tambahPinjaman = async (req, res) => {
     margin_per_bulan,
     total_angsuran,
     jumlah_pinjaman, 
-    total_margin_keseluruhan, 
-    tanggal_perjanjian,
+    tanggal_perjanjian, 
     'Belum Lunas',
     0
   ];
@@ -200,7 +195,7 @@ exports.tampilkanBayarPinjaman = async (req, res) => {
     SELECT 
       tanggal_bayar,
       angsuran_ke,
-      jumlah_bayar,
+      jumlah_bayar,  
       ket
     FROM pembayaran
     WHERE id_pinjaman = ?
@@ -239,12 +234,12 @@ exports.prosesBayar = async (req, res) => {
   // Konversi nilai pembayaran ke angka
   const jumlahBayarPokok = parseFloat(pembayaran_pokok.replace(/[^0-9,]/g, '').replace(',', '.'));
   const jumlahBayarMargin = parseFloat(pembayaran_margin.replace(/[^0-9,]/g, '').replace(',', '.'));
+  const totalPembayaran = jumlahBayarPokok + jumlahBayarMargin; // Hitung total pembayaran
 
   // Query untuk mengambil data pinjaman
   const getPinjamanQuery = `
     SELECT 
       sisa_piutang,
-      sisa_piutang_margin,
       angsuran_ke
     FROM pinjaman
     WHERE id = ?
@@ -262,22 +257,21 @@ exports.prosesBayar = async (req, res) => {
 
     const pinjaman = results[0];
     const sisaPiutangBaru = pinjaman.sisa_piutang - jumlahBayarPokok;
-    const sisaPiutangMarginBaru = pinjaman.sisa_piutang_margin - jumlahBayarMargin;
     const angsuranKeBaru = pinjaman.angsuran_ke + 1;
 
-    // Cek apakah pinjaman sudah lunas
-    const statusPinjaman = sisaPiutangBaru <= 0 && sisaPiutangMarginBaru <= 0 ? 'Lunas' : 'Belum Lunas';
+    // Cek apakah pinjaman sudah lunas (hanya berdasarkan sisa_piutang)
+    const statusPinjaman = sisaPiutangBaru <= 0 ? 'Lunas' : 'Belum Lunas';
 
     // Query untuk mencatat pembayaran
     const insertPembayaranQuery = `
       INSERT INTO pembayaran 
-        (id_pinjaman, tanggal_bayar, jumlah_bayar, ket, angsuran_ke, pembayaran_margin)
-      VALUES (?, ?, ?, ?, ?, ?)
+        (id_pinjaman, tanggal_bayar, jumlah_bayar, ket, angsuran_ke)
+      VALUES (?, ?, ?, ?, ?)
     `;
 
     db.query(
       insertPembayaranQuery,
-      [idPinjaman, tanggal_bayar, jumlahBayarPokok, keterangan, angsuranKeBaru, jumlahBayarMargin],
+      [idPinjaman, tanggal_bayar, totalPembayaran, keterangan, angsuranKeBaru],
       (error, results) => {
         if (error) {
           console.error("Error saat mencatat pembayaran:", error);
@@ -289,7 +283,6 @@ exports.prosesBayar = async (req, res) => {
           UPDATE pinjaman
           SET 
             sisa_piutang = ?,
-            sisa_piutang_margin = ?,
             angsuran_ke = ?,
             ket_status = ?
           WHERE id = ?
@@ -297,7 +290,7 @@ exports.prosesBayar = async (req, res) => {
 
         db.query(
           updatePinjamanQuery,
-          [sisaPiutangBaru, sisaPiutangMarginBaru, angsuranKeBaru, statusPinjaman, idPinjaman],
+          [sisaPiutangBaru, angsuranKeBaru, statusPinjaman, idPinjaman],
           (updateError, updateResults) => {
             if (updateError) {
               console.error("Error saat mengupdate sisa piutang dan angsuran_ke:", updateError);

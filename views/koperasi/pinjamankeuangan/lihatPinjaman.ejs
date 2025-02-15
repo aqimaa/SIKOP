@@ -63,7 +63,6 @@
                                     <th class="px-6 py-3 text-left text-white">Total Angsuran</th>
                                     <th class="px-6 py-3 text-left text-white">Angsuran Ke</th>
                                     <th class="px-6 py-3 text-left text-white">Sisa Piutang Pokok</th>
-                                    <th class="px-6 py-3 text-left text-white">Sisa Piutang Margin</th>
                                     <th class="px-6 py-3 text-left text-white">Tanggal Perjanjian</th>
                                     <th class="px-6 py-3 text-left text-white">Status</th>
                                     <th class="px-6 py-3 text-left text-white">Bayar</th>
@@ -86,8 +85,10 @@
                                         <td class="px-6 py-4"><%= item.total_angsuran ? item.total_angsuran.toLocaleString() : '0' %></td>
                                         <td class="px-6 py-4"><%= item.angsuran_ke || 0 %></td>
                                         <td class="px-6 py-4"><%= item.sisa_piutang ? item.sisa_piutang.toLocaleString() : '0' %></td>
-                                        <td class="px-6 py-4"><%= item.sisa_piutang_margin ? item.sisa_piutang_margin.toLocaleString() : '0' %></td>
-                                        <td class="px-6 py-4"><%= item.tanggal_perjanjian.toISOString().split('T')[0] %></td>
+                                        <td class="px-6 py-4">
+                                            <%= item.tanggal_perjanjian ? new Intl.DateTimeFormat('id-ID').format(new Date(item.tanggal_perjanjian)) : '-' %>
+                                        </td>
+                                        
                                         <td class="px-6 py-4">
                                             <% if (item.ket_status === 'Lunas') { %>
                                             <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm whitespace-nowrap">Lunas</span>

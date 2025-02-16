@@ -123,6 +123,7 @@
                         <label class="block mb-2 text-xl font-semibold text-white">Jenis Pinjaman</label>
                         <select id="jenis" name="jenis" class="border rounded-lg px-5 py-3 w-60 bg-white" required>
                             <option value="">Pilih Pinjaman</option>
+                            <option value="Semua">Semua</option>
                             <% jenisPinjaman.forEach(jenis => { %>
                                 <option value="<%= jenis %>"><%= jenis.replace(/\b\w/g, char => char.toUpperCase()) %></option>
                             <% }); %>
@@ -135,14 +136,29 @@
             <!-- Table -->
             <div class="bg-white rounded-lg shadow overflow-x-auto">
                 <table class="w-full">
+                    <!-- Replace the problematic section with this code -->
                     <thead style="background-color: #5D8736;">
                         <tr>
                             <th class="px-6 py-3 text-left text-white">No</th>
                             <th class="px-6 py-3 text-left text-white">NIP</th>
                             <th class="px-6 py-3 text-left text-white">Nama</th>
-                            <th class="px-6 py-3 text-left text-white">Jenis Pinjaman</th>
-                            <th class="px-6 py-3 text-left text-white">Jangka Waktu</th>
-                            <th class="px-6 py-3 text-left text-white">Jumlah</th>
+                            
+                            <!-- Show all headers initially, but we'll hide them with JavaScript when data is loaded -->
+                            <th class="px-6 py-3 text-left text-white jenis-semua">Kategori</th>
+                            <th class="px-6 py-3 text-left text-white jenis-semua">Jumlah Pinjaman</th>
+                            <th class="px-6 py-3 text-left text-white jenis-semua">Jangka Waktu</th>
+                            <th class="px-6 py-3 text-left text-white jenis-semua">Margin %</th>
+                            <th class="px-6 py-3 text-left text-white jenis-semua">Angsuran Pokok</th>
+                            <th class="px-6 py-3 text-left text-white jenis-semua">Angsuran Margin</th>
+                            <th class="px-6 py-3 text-left text-white jenis-semua">Total Angsuran</th>
+                            <th class="px-6 py-3 text-left text-white jenis-semua">Angsuran Ke-</th>
+                            <th class="px-6 py-3 text-left text-white jenis-semua">Sisa Piutang Pokok</th>
+                            <th class="px-6 py-3 text-left text-white jenis-semua">Tanggal Perjanjian</th>
+                            <th class="px-6 py-3 text-left text-white jenis-semua">Status</th>
+                            
+                            <th class="px-6 py-3 text-left text-white jenis-specific" style="display: none;">Jenis Pinjaman</th>
+                            <th class="px-6 py-3 text-left text-white jenis-specific" style="display: none;">Jangka Waktu</th>
+                            <th class="px-6 py-3 text-left text-white jenis-specific" style="display: none;">Jumlah</th>
                         </tr>
                     </thead>
                     <tbody id="dataTable">
@@ -175,14 +191,30 @@
     <script>
         let currentPage = 1;
         let totalPages = 1;
+        
+        function updateTableHeaders(jenis) {
+            const semuaHeaders = document.querySelectorAll('.jenis-semua');
+            const specificHeaders = document.querySelectorAll('.jenis-specific');
+            
+            if (jenis === 'Semua') {
+                semuaHeaders.forEach(el => el.style.display = '');
+                specificHeaders.forEach(el => el.style.display = 'none');
+            } else {
+                semuaHeaders.forEach(el => el.style.display = 'none');
+                specificHeaders.forEach(el => el.style.display = '');
+            }
+        }
 
         // Fungsi untuk menampilkan data
         async function loadData(page = 1) {
             const tahun = document.getElementById('tahun').value;
             const bulan = document.getElementById('bulan').value;
             const jenis = document.getElementById('jenis').value;
+            
+            // Update table headers based on selected jenis
+            updateTableHeaders(jenis);
 
-            if (!tahun || !bulan || !jenis) {
+            if (!tahun || !bulan) {
                 Swal.fire({
                     icon: 'warning',
                     title: 'Oops...',
@@ -209,7 +241,7 @@
                 if (!result.data || result.data.length === 0) {
                     document.getElementById('dataTable').innerHTML = `
                         <tr>
-                            <td colspan="6" class="px-6 py-4 text-center">Tidak ada data ditemukan.</td>
+                            <td colspan="13" class="px-6 py-4 text-center">Tidak ada data ditemukan.</td>
                         </tr>
                     `;
                     document.getElementById('dataCount').textContent = 0;
@@ -218,16 +250,39 @@
 
                 // Update tabel
                 const tbody = document.getElementById('dataTable');
-                tbody.innerHTML = result.data.map((row, index) => `
-                    <tr class="border-b border-gray-200">
-                        <td class="px-6 py-4">${index + 1}</td>
-                        <td class="px-6 py-4">${row.nip}</td>
-                        <td class="px-6 py-4">${row.nama}</td>
-                        <td class="px-6 py-4">${row.jenis.replace(/\b\w/g, char => char.toUpperCase())}</td>
-                        <td class="px-6 py-4">${row.jangka_waktu} Bulan</td>
-                        <td class="px-6 py-4">${Number(row.jumlah).toLocaleString('id-ID')}</td>
-                    </tr>
-                `).join('');
+                tbody.innerHTML = result.data.map((row, index) => {
+                    if (jenis === 'Semua') {
+                        return `
+                            <tr class="border-b border-gray-200">
+                                <td class="px-6 py-4">${index + 1}</td>
+                                <td class="px-6 py-4">${row.nip}</td>
+                                <td class="px-6 py-4">${row.nama}</td>
+                                <td class="px-6 py-4">${row.kategori}</td>
+                                <td class="px-6 py-4">${Number(row.jumlah_pinjaman).toLocaleString('id-ID')}</td>
+                                <td class="px-6 py-4">${row.jangka_waktu}</td>
+                                <td class="px-6 py-4">${row.margin_persen}</td>
+                                <td class="px-6 py-4">${Number(row.angsuran_pokok).toLocaleString('id-ID')}</td>
+                                <td class="px-6 py-4">${Number(row.margin_per_bulan).toLocaleString('id-ID')}</td>
+                                <td class="px-6 py-4">${Number(row.total_angsuran).toLocaleString('id-ID')}</td>
+                                <td class="px-6 py-4">${row.angsuran_ke}</td>
+                                <td class="px-6 py-4">${Number(row.sisa_piutang).toLocaleString('id-ID')}</td>
+                                <td class="px-6 py-4">${new Date(row.tanggal_perjanjian).toISOString().split('T')[0]}</td>
+                                <td class="px-6 py-4">${row.ket_status}</td>
+                            </tr>
+                        `;
+                    } else {
+                        return `
+                            <tr class="border-b border-gray-200">
+                                <td class="px-6 py-4">${index + 1}</td>
+                                <td class="px-6 py-4">${row.nip}</td>
+                                <td class="px-6 py-4">${row.nama}</td>
+                                <td class="px-6 py-4">${row.jenis.replace(/\b\w/g, char => char.toUpperCase())}</td>
+                                <td class="px-6 py-4">${row.jangka_waktu} Bulan</td>
+                                <td class="px-6 py-4">${Number(row.jumlah).toLocaleString('id-ID')}</td>
+                            </tr>
+                        `;
+                    }
+                }).join('');
 
                 // Update jumlah data
                 document.getElementById('dataCount').textContent = result.data.length;

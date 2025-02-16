@@ -7,11 +7,10 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
 </head>
 <body class="flex">
-     <!-- Sidebar -->
-     <div class="w-72 text-white min-h-screen p-4 fixed" style="background-color: #5D8736;">
+    <!-- Sidebar -->
+    <div class="w-72 text-white min-h-screen p-4 fixed" style="background-color: #5D8736;">
         <div class="flex items-center mb-8">
             <img src="/images/logo.png" alt="Logo" class="w-16 h-16 mr-7">
             <div>
@@ -86,8 +85,8 @@
         </script>
     </div>
 
-     <!-- Main Content -->
-     <div class="flex-1 bg-gray-100 ml-72">
+    <!-- Main Content -->
+    <div class="flex-1 bg-gray-100 ml-72">
         <div class="flex justify-between shadow-md p-4 bg-white">
             <h1 class="text-2xl"></h1>
             <div class="flex items-center">
@@ -140,9 +139,26 @@
                             <th class="px-6 py-3 text-left text-white">No</th>
                             <th class="px-6 py-3 text-left text-white">NIP</th>
                             <th class="px-6 py-3 text-left text-white">Nama</th>
-                            <th class="px-6 py-3 text-left text-white">Jenis Kredit</th>
-                            <th class="px-6 py-3 text-left text-white">Jangka Waktu</th>
-                            <th class="px-6 py-3 text-left text-white">Jumlah</th>
+                            <th class="px-6 py-3 text-left text-white jenis-kredit-barang">Harga Pokok</th>
+                            <th class="px-6 py-3 text-left text-white jenis-kredit-barang">Jangka Waktu</th>
+                            <th class="px-6 py-3 text-left text-white jenis-kredit-barang">Pokok DP</th>
+                            <th class="px-6 py-3 text-left text-white jenis-kredit-barang">Total Angsuran</th>
+                            <th class="px-6 py-3 text-left text-white jenis-kredit-barang">Pokok</th>
+                            <th class="px-6 py-3 text-left text-white jenis-kredit-barang">Margin</th>
+                            <th class="px-6 py-3 text-left text-white jenis-kredit-barang">Angsuran Ke-</th>
+                            <th class="px-6 py-3 text-left text-white jenis-kredit-barang">Sisa Piutang</th>
+                            <th class="px-6 py-3 text-left text-white jenis-kredit-barang">Tanggal Mulai</th>
+                            <th class="px-6 py-3 text-left text-white jenis-kredit-barang">Status</th>
+                            <th class="px-6 py-3 text-left text-white jenis-kredit-lain">Jumlah Pinjaman</th>
+                            <th class="px-6 py-3 text-left text-white jenis-kredit-lain">Jangka Waktu</th>
+                            <th class="px-6 py-3 text-left text-white jenis-kredit-lain">Margin %</th>
+                            <th class="px-6 py-3 text-left text-white jenis-kredit-lain">Angsuran Pokok</th>
+                            <th class="px-6 py-3 text-left text-white jenis-kredit-lain">Angsuran Margin</th>
+                            <th class="px-6 py-3 text-left text-white jenis-kredit-lain">Total Angsuran</th>
+                            <th class="px-6 py-3 text-left text-white jenis-kredit-lain">Angsuran Ke-</th>
+                            <th class="px-6 py-3 text-left text-white jenis-kredit-lain">Sisa Piutang</th>
+                            <th class="px-6 py-3 text-left text-white jenis-kredit-lain">Tanggal Perjanjian</th>
+                            <th class="px-6 py-3 text-left text-white jenis-kredit-lain">Status</th>
                         </tr>
                     </thead>
                     <tbody id="dataTable">
@@ -176,11 +192,25 @@
         let currentPage = 1;
         let totalPages = 1;
 
-        // Fungsi untuk menampilkan data
+        function updateTableHeaders(jenis) {
+            const kreditBarangHeaders = document.querySelectorAll('.jenis-kredit-barang');
+            const kreditLainHeaders = document.querySelectorAll('.jenis-kredit-lain');
+
+            if (jenis === 'kredit_barang') {
+                kreditBarangHeaders.forEach(el => el.style.display = '');
+                kreditLainHeaders.forEach(el => el.style.display = 'none');
+            } else {
+                kreditBarangHeaders.forEach(el => el.style.display = 'none');
+                kreditLainHeaders.forEach(el => el.style.display = '');
+            }
+        }
+
         async function loadData(page = 1) {
             const tahun = document.getElementById('tahun').value;
             const bulan = document.getElementById('bulan').value;
             const jenis = document.getElementById('jenis').value;
+
+            updateTableHeaders(jenis);
 
             if (!tahun || !bulan || !jenis) {
                 Swal.fire({
@@ -205,29 +235,56 @@
 
                 const result = await response.json();
 
-                // Handle data kosong
                 if (!result.data || result.data.length === 0) {
                     document.getElementById('dataTable').innerHTML = `
                         <tr>
-                            <td colspan="6" class="px-6 py-4 text-center">Tidak ada data ditemukan.</td>
+                            <td colspan="14" class="px-6 py-4 text-center">Tidak ada data ditemukan.</td>
                         </tr>
                     `;
                     document.getElementById('dataCount').textContent = 0;
                     return;
                 }
 
-                // Update tabel
                 const tbody = document.getElementById('dataTable');
-                tbody.innerHTML = result.data.map((row, index) => `
-                    <tr class="border-b border-gray-200">
-                        <td class="px-6 py-4">${index + 1}</td>
-                        <td class="px-6 py-4">${row.nip}</td>
-                        <td class="px-6 py-4">${row.nama}</td>
-                        <td class="px-6 py-4">${row.jenis.replace('kredit_', '').replace(/\b\w/g, char => char.toUpperCase())}</td>
-                        <td class="px-6 py-4">${row.jangka_waktu} Bulan</td>
-                        <td class="px-6 py-4">${Number(row.jumlah).toLocaleString('id-ID')}</td>
-                    </tr>
-                `).join('');
+                tbody.innerHTML = result.data.map((row, index) => {
+                    if (jenis === 'kredit_barang') {
+                        return `
+                            <tr class="border-b border-gray-200">
+                                <td class="px-6 py-4">${index + 1}</td>
+                                <td class="px-6 py-4">${row.nip}</td>
+                                <td class="px-6 py-4">${row.nama}</td>
+                                <td class="px-6 py-4">${Number(row.harga_pokok).toLocaleString('id-ID')}</td>
+                                <td class="px-6 py-4">${row.jangka_waktu}</td>
+                                <td class="px-6 py-4">${Number(row.pokok_dp).toLocaleString('id-ID')}</td>
+                                <td class="px-6 py-4">${Number(row.total_angsuran).toLocaleString('id-ID')}</td>
+                                <td class="px-6 py-4">${Number(row.pokok).toLocaleString('id-ID')}</td>
+                                <td class="px-6 py-4">${Number(row.margin).toLocaleString('id-ID')}</td>
+                                <td class="px-6 py-4">${row.angsuran_ke}</td>
+                                <td class="px-6 py-4">${Number(row.sisa_piutang).toLocaleString('id-ID')}</td>
+                                <td class="px-6 py-4">${new Date(row.tanggal_mulai).toISOString().split('T')[0]}</td>
+                                <td class="px-6 py-4">${row.ket_status}</td>
+                            </tr>
+                        `;
+                    } else {
+                        return `
+                            <tr class="border-b border-gray-200">
+                                <td class="px-6 py-4">${index + 1}</td>
+                                <td class="px-6 py-4">${row.nip}</td>
+                                <td class="px-6 py-4">${row.nama}</td>
+                                <td class="px-6 py-4">${Number(row.jumlah_pinjaman).toLocaleString('id-ID')}</td>
+                                <td class="px-6 py-4">${row.jangka_waktu}</td>
+                                <td class="px-6 py-4">${row.margin_persen}</td>
+                                <td class="px-6 py-4">${Number(row.pokok).toLocaleString('id-ID')}</td>
+                                <td class="px-6 py-4">${Number(row.margin).toLocaleString('id-ID')}</td>
+                                <td class="px-6 py-4">${Number(row.total_angsuran).toLocaleString('id-ID')}</td>
+                                <td class="px-6 py-4">${row.angsuran_ke}</td>
+                                <td class="px-6 py-4">${Number(row.sisa_piutang).toLocaleString('id-ID')}</td>
+                                <td class="px-6 py-4">${new Date(row.tanggal_mulai).toISOString().split('T')[0]}</td>
+                                <td class="px-6 py-4">${row.ket_status}</td>
+                            </tr>
+                        `;
+                    }
+                }).join('');
 
                 // Update jumlah data
                 document.getElementById('dataCount').textContent = result.data.length;
@@ -238,7 +295,7 @@
                 totalPages = result.totalPages;
                 document.getElementById('pageInfo').textContent = `Halaman ${currentPage} dari ${totalPages}`;
 
-                // Enable/disable tombol
+                // Enable/disable tombol previous dan next
                 document.getElementById('previousButton').disabled = currentPage === 1;
                 document.getElementById('nextButton').disabled = currentPage === totalPages;
 
@@ -251,7 +308,7 @@
                     confirmButtonColor: '#5D8736',
                 });
             }
-        }   
+        }
 
         // Event listener untuk tombol tampilkan data
         document.getElementById('tampilkanData').addEventListener('click', () => {
@@ -280,11 +337,13 @@
             const tahun = document.getElementById('tahun').value;
             const bulan = document.getElementById('bulan').value;
             const jenis = document.getElementById('jenis').value;
-            const tipe = 'kredit'; // Ganti dengan 'kredit' sesuai kebutuhan
+            const tipe = 'kredit'; // Sesuaikan dengan kebutuhan
+
             if (!tahun || !bulan || !jenis) {
                 alert('Harap lengkapi semua filter terlebih dahulu');
                 return;
             }
+
             const url = `/cetak-laporan?tahun=${tahun}&bulan=${bulan}&jenis=${jenis}&tipe=${tipe}`;
             window.open(url, '_blank');
         }

@@ -124,6 +124,7 @@
                         <label class="block mb-2 text-xl font-semibold text-white">Jenis Simpanan</label>
                         <select id="jenis" name="jenis" class="border rounded-lg px-5 py-3 w-60 bg-white" required>
                             <option value="">Pilih Simpanan</option>
+                            <option value="Semua">Semua</option>
                             <% jenisSimpanan.forEach(jenis => { %>
                                 <option value="<%= jenis %>"><%= jenis.replace('simpanan_', '').replace(/\b\w/g, char => char.toUpperCase()) %></option>
                             <% }); %>
@@ -134,6 +135,7 @@
             </div>
 
             <!-- Table -->
+            <!-- Table -->
             <div class="bg-white rounded-lg shadow overflow-x-auto">
                 <table class="w-full">
                     <thead style="background-color: #5D8736;">
@@ -141,8 +143,16 @@
                             <th class="px-6 py-3 text-left text-white">No</th>
                             <th class="px-6 py-3 text-left text-white">NIP</th>
                             <th class="px-6 py-3 text-left text-white">Nama</th>
-                            <th class="px-6 py-3 text-left text-white">Jenis Simpanan</th>
-                            <th class="px-6 py-3 text-left text-white">Jumlah</th>
+                            
+                            <!-- Headers for 'Semua' option -->
+                            <th class="px-6 py-3 text-left text-white jenis-semua">Simpanan Wajib</th>
+                            <th class="px-6 py-3 text-left text-white jenis-semua">Simpanan Pokok</th>
+                            <th class="px-6 py-3 text-left text-white jenis-semua">Simpanan Sukarela</th>
+                            <th class="px-6 py-3 text-left text-white jenis-semua">Total Simpanan</th>
+                            
+                            <!-- Headers for specific jenis -->
+                            <th class="px-6 py-3 text-left text-white jenis-specific" style="display: none;">Jenis Simpanan</th>
+                            <th class="px-6 py-3 text-left text-white jenis-specific" style="display: none;">Jumlah</th>
                         </tr>
                     </thead>
                     <tbody id="dataTable">
@@ -176,11 +186,26 @@
         let currentPage = 1;
         let totalPages = 1;
     
+        function updateTableHeaders(jenis) {
+            const semuaHeaders = document.querySelectorAll('.jenis-semua');
+            const specificHeaders = document.querySelectorAll('.jenis-specific');
+            
+            if (jenis === 'Semua') {
+                semuaHeaders.forEach(el => el.style.display = '');
+                specificHeaders.forEach(el => el.style.display = 'none');
+            } else {
+                semuaHeaders.forEach(el => el.style.display = 'none');
+                specificHeaders.forEach(el => el.style.display = '');
+            }
+        }
+
         // Fungsi untuk menampilkan data
         async function loadData(page = 1) {
             const tahun = document.getElementById('tahun').value;
             const bulan = document.getElementById('bulan').value;
             const jenis = document.getElementById('jenis').value;
+
+            updateTableHeaders(jenis);
 
             if (!tahun || !bulan || !jenis) {
                 Swal.fire({
@@ -209,7 +234,7 @@
                 if (!result.data || result.data.length === 0) {
                     document.getElementById('dataTable').innerHTML = `
                         <tr>
-                            <td colspan="5" class="px-6 py-4 text-center">Tidak ada data ditemukan.</td>
+                            <td colspan="6" class="px-6 py-4 text-center">Tidak ada data ditemukan.</td>
                         </tr>
                     `;
                     document.getElementById('dataCount').textContent = 0;
@@ -218,15 +243,29 @@
 
                 // Update tabel
                 const tbody = document.getElementById('dataTable');
-                tbody.innerHTML = result.data.map((row, index) => `
-                    <tr class="border-b border-gray-200">
-                        <td class="px-6 py-4">${index + 1}</td>
-                        <td class="px-6 py-4">${row.nip}</td>
-                        <td class="px-6 py-4">${row.nama}</td>
-                        <td class="px-6 py-4">${jenis.replace('simpanan_', '').replace(/\b\w/g, char => char.toUpperCase())}</td>
-                        <td class="px-6 py-4">${Number(row.jumlah).toLocaleString('id-ID')}</td>
-                    </tr>
-                `).join('');
+                if (jenis === 'Semua') {
+                    tbody.innerHTML = result.data.map((row, index) => `
+                        <tr class="border-b border-gray-200">
+                            <td class="px-6 py-4">${index + 1}</td>
+                            <td class="px-6 py-4">${row.nip}</td>
+                            <td class="px-6 py-4">${row.nama}</td>
+                            <td class="px-6 py-4">${Number(row.simpanan_wajib).toLocaleString('id-ID')}</td>
+                            <td class="px-6 py-4">${Number(row.simpanan_pokok).toLocaleString('id-ID')}</td>
+                            <td class="px-6 py-4">${Number(row.simpanan_sukarela).toLocaleString('id-ID')}</td>
+                            <td class="px-6 py-4">${Number(row.total_simpanan).toLocaleString('id-ID')}</td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = result.data.map((row, index) => `
+                        <tr class="border-b border-gray-200">
+                            <td class="px-6 py-4">${index + 1}</td>
+                            <td class="px-6 py-4">${row.nip}</td>
+                            <td class="px-6 py-4">${row.nama}</td>
+                            <td class="px-6 py-4">${jenis.replace('simpanan_', '').replace(/\b\w/g, char => char.toUpperCase())}</td>
+                            <td class="px-6 py-4">${Number(row.jumlah).toLocaleString('id-ID')}</td>
+                        </tr>
+                    `).join('');
+                }
 
                 // Update jumlah data
                 document.getElementById('dataCount').textContent = result.data.length;
@@ -251,7 +290,7 @@
                 });
             }
         }
-    
+            
         // Event listener untuk tombol tampilkan data
         document.getElementById('tampilkanData').addEventListener('click', () => {
             currentPage = 1;

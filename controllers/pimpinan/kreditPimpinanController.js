@@ -11,7 +11,7 @@ exports.getKreditPimpinan = (req, res) => {
     console.log("User is Pimpinan, fetching data...");
 
     const queryTahun = `
-        SELECT DISTINCT YEAR(tanggal_mulai) AS tahun 
+        SELECT DISTINCT YEAR(tanggal_mulai) AS tahun
         FROM (
             SELECT tanggal_mulai FROM kredit_barang
             UNION ALL
@@ -20,12 +20,12 @@ exports.getKreditPimpinan = (req, res) => {
             SELECT tanggal_mulai FROM kredit_motor
             UNION ALL
             SELECT tanggal_mulai FROM kredit_umroh
-        ) AS all_kredit 
+        ) AS all_kredit
         ORDER BY tahun DESC
     `;
 
     const queryBulan = `
-        SELECT DISTINCT MONTH(tanggal_mulai) AS bulan 
+        SELECT DISTINCT MONTH(tanggal_mulai) AS bulan
         FROM (
             SELECT tanggal_mulai FROM kredit_barang
             UNION ALL
@@ -34,7 +34,7 @@ exports.getKreditPimpinan = (req, res) => {
             SELECT tanggal_mulai FROM kredit_motor
             UNION ALL
             SELECT tanggal_mulai FROM kredit_umroh
-        ) AS all_kredit 
+        ) AS all_kredit
         ORDER BY bulan ASC
     `;
 
@@ -52,7 +52,7 @@ exports.getKreditPimpinan = (req, res) => {
                 title: 'Data Kredit',
                 tahunList: tahunResults.map(t => t.tahun),
                 bulanList: bulanResults.map(b => b.bulan),
-                jenisKredit: ['kredit_barang', 'kredit_elektronik', 'kredit_motor', 'kredit_umroh'], // Sesuaikan dengan jenis kredit
+                jenisKredit: ['kredit_barang', 'kredit_elektronik', 'kredit_motor', 'kredit_umroh'],
                 data: []
             });
         });
@@ -78,29 +78,69 @@ exports.filterData = async (req, res) => {
             });
         };
 
-        const query = `
-            SELECT 
-                p.nip,
-                p.nama,
-                '${jenis}' AS jenis,
-                k.jangka_waktu,
-                ${jenis === 'kredit_barang' ? 'k.harga_pokok' : 'k.jumlah_pinjaman'} AS jumlah
-            FROM ${jenis} k
-            JOIN anggota a ON k.id_anggota = a.id
-            JOIN pegawai p ON a.nip_anggota = p.nip
-            WHERE YEAR(k.tanggal_mulai) = ?
-            AND MONTH(k.tanggal_mulai) = ?
-            LIMIT ? OFFSET ?
-        `;
+        let query, countQuery;
 
-        const countQuery = `
-            SELECT COUNT(*) AS total
-            FROM ${jenis} k
-            JOIN anggota a ON k.id_anggota = a.id
-            JOIN pegawai p ON a.nip_anggota = p.nip
-            WHERE YEAR(k.tanggal_mulai) = ?
-            AND MONTH(k.tanggal_mulai) = ?
-        `;
+        if (jenis === 'kredit_barang') {
+            query = `
+                SELECT
+                    p.nip,
+                    p.nama,
+                    k.harga_pokok,
+                    k.jangka_waktu,
+                    k.pokok_dp,
+                    k.total_angsuran,
+                    k.pokok,
+                    k.margin,
+                    k.angsuran_ke,
+                    k.sisa_piutang,
+                    k.tanggal_mulai,
+                    k.ket_status
+                FROM kredit_barang k
+                JOIN anggota a ON k.id_anggota = a.id
+                JOIN pegawai p ON a.nip_anggota = p.nip
+                WHERE YEAR(k.tanggal_mulai) = ?
+                AND MONTH(k.tanggal_mulai) = ?
+                LIMIT ? OFFSET ?
+            `;
+            countQuery = `
+                SELECT COUNT(*) AS total
+                FROM kredit_barang k
+                JOIN anggota a ON k.id_anggota = a.id
+                JOIN pegawai p ON a.nip_anggota = p.nip
+                WHERE YEAR(k.tanggal_mulai) = ?
+                AND MONTH(k.tanggal_mulai) = ?
+            `;
+        } else {
+            query = `
+                SELECT
+                    p.nip,
+                    p.nama,
+                    k.jumlah_pinjaman,
+                    k.jangka_waktu,
+                    k.margin_persen,
+                    k.pokok,
+                    k.margin,
+                    k.total_angsuran,
+                    k.angsuran_ke,
+                    k.sisa_piutang,
+                    k.tanggal_mulai,
+                    k.ket_status
+                FROM ${jenis} k
+                JOIN anggota a ON k.id_anggota = a.id
+                JOIN pegawai p ON a.nip_anggota = p.nip
+                WHERE YEAR(k.tanggal_mulai) = ?
+                AND MONTH(k.tanggal_mulai) = ?
+                LIMIT ? OFFSET ?
+            `;
+            countQuery = `
+                SELECT COUNT(*) AS total
+                FROM ${jenis} k
+                JOIN anggota a ON k.id_anggota = a.id
+                JOIN pegawai p ON a.nip_anggota = p.nip
+                WHERE YEAR(k.tanggal_mulai) = ?
+                AND MONTH(k.tanggal_mulai) = ?
+            `;
+        }
 
         const [data, totalResults] = await Promise.all([
             executeQuery(query, [tahun, bulan, parseInt(limit), offset]),
@@ -116,7 +156,6 @@ exports.filterData = async (req, res) => {
             limit: parseInt(limit),
             totalPages: Math.ceil(total / limit)
         });
-
     } catch (error) {
         console.error('Database error:', error);
         res.status(500).json({

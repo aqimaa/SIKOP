@@ -29,7 +29,8 @@ exports.getPinjamanPimpinan = (req, res) => {
                 tahunList: tahunResults.map(t => t.tahun),
                 bulanList: bulanResults.map(b => b.bulan),
                 jenisPinjaman: ['jangka panjang', 'jangka pendek'],
-                data: []
+                data: [],
+                jenis: null // Add this line to provide a default value
             });
         });
     });
@@ -38,7 +39,7 @@ exports.getPinjamanPimpinan = (req, res) => {
 exports.filterData = async (req, res) => {
     const { tahun, bulan, jenis, page = 1, limit = 10 } = req.body;
 
-    if (!tahun || !bulan || !jenis) {
+    if (!tahun || !bulan) {
         return res.status(400).json({ message: 'Harap lengkapi semua filter!' });
     }
 
@@ -54,35 +55,71 @@ exports.filterData = async (req, res) => {
             });
         };
 
-        const query = `
-            SELECT 
-                p.nip,
-                p.nama,
-                pj.kategori AS jenis,
-                pj.jangka_waktu,
-                pj.jumlah_pinjaman AS jumlah
-            FROM pinjaman pj
-            JOIN anggota a ON pj.id_anggota = a.id
-            JOIN pegawai p ON a.nip_anggota = p.nip
-            WHERE YEAR(pj.tanggal_perjanjian) = ?
-            AND MONTH(pj.tanggal_perjanjian) = ?
-            AND pj.kategori = ?
-            LIMIT ? OFFSET ?
-        `;
+        let query, countQuery;
 
-        const countQuery = `
-            SELECT COUNT(*) AS total
-            FROM pinjaman pj
-            JOIN anggota a ON pj.id_anggota = a.id
-            JOIN pegawai p ON a.nip_anggota = p.nip
-            WHERE YEAR(pj.tanggal_perjanjian) = ?
-            AND MONTH(pj.tanggal_perjanjian) = ?
-            AND pj.kategori = ?
-        `;
+        if (jenis === 'Semua') {
+            query = `
+                SELECT
+                    p.nip,
+                    p.nama,
+                    pj.kategori,
+                    pj.jumlah_pinjaman,
+                    pj.jangka_waktu,
+                    pj.margin_persen,
+                    pj.angsuran_pokok,
+                    pj.margin_per_bulan,
+                    pj.total_angsuran,
+                    pj.angsuran_ke,
+                    pj.sisa_piutang,
+                    pj.tanggal_perjanjian,
+                    pj.ket_status
+                FROM pinjaman pj
+                JOIN anggota a ON pj.id_anggota = a.id
+                JOIN pegawai p ON a.nip_anggota = p.nip
+                WHERE YEAR(pj.tanggal_perjanjian) = ?
+                AND MONTH(pj.tanggal_perjanjian) = ?
+                LIMIT ? OFFSET ?
+            `;
+
+            countQuery = `
+                SELECT COUNT(*) AS total
+                FROM pinjaman pj
+                JOIN anggota a ON pj.id_anggota = a.id
+                JOIN pegawai p ON a.nip_anggota = p.nip
+                WHERE YEAR(pj.tanggal_perjanjian) = ?
+                AND MONTH(pj.tanggal_perjanjian) = ?
+            `;
+        } else {
+            query = `
+                SELECT
+                    p.nip,
+                    p.nama,
+                    pj.kategori AS jenis,
+                    pj.jangka_waktu,
+                    pj.jumlah_pinjaman AS jumlah
+                FROM pinjaman pj
+                JOIN anggota a ON pj.id_anggota = a.id
+                JOIN pegawai p ON a.nip_anggota = p.nip
+                WHERE YEAR(pj.tanggal_perjanjian) = ?
+                AND MONTH(pj.tanggal_perjanjian) = ?
+                AND pj.kategori = ?
+                LIMIT ? OFFSET ?
+            `;
+
+            countQuery = `
+                SELECT COUNT(*) AS total
+                FROM pinjaman pj
+                JOIN anggota a ON pj.id_anggota = a.id
+                JOIN pegawai p ON a.nip_anggota = p.nip
+                WHERE YEAR(pj.tanggal_perjanjian) = ?
+                AND MONTH(pj.tanggal_perjanjian) = ?
+                AND pj.kategori = ?
+            `;
+        }
 
         const [data, totalResults] = await Promise.all([
-            executeQuery(query, [tahun, bulan, jenis, parseInt(limit), offset]),
-            executeQuery(countQuery, [tahun, bulan, jenis])
+            executeQuery(query, jenis === 'Semua' ? [tahun, bulan, parseInt(limit), offset] : [tahun, bulan, jenis, parseInt(limit), offset]),
+            executeQuery(countQuery, jenis === 'Semua' ? [tahun, bulan] : [tahun, bulan, jenis])
         ]);
 
         const total = totalResults[0].total;
@@ -94,7 +131,6 @@ exports.filterData = async (req, res) => {
             limit: parseInt(limit),
             totalPages: Math.ceil(total / limit)
         });
-
     } catch (error) {
         console.error('Database error:', error);
         res.status(500).json({

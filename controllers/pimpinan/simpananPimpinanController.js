@@ -29,7 +29,8 @@ exports.getSimpananPimpinan = (req, res) => {
                 tahunList: tahunResults.map(t => t.tahun),
                 bulanList: bulanResults.map(b => b.bulan),
                 jenisSimpanan: ['simpanan_wajib', 'simpanan_pokok', 'simpanan_sukarela'],
-                data: []
+                data: [],
+                jenis: null  // Add this line to provide a default value
             });
         });
     });
@@ -54,27 +55,56 @@ exports.filterData = async (req, res) => {
             });
         };
 
-        const query = `
-            SELECT 
-                p.nip,
-                p.nama,
-                s.${jenis} AS jumlah
-            FROM simpanan s
-            JOIN anggota a ON s.id_anggota = a.id
-            JOIN pegawai p ON a.nip_anggota = p.nip
-            WHERE YEAR(s.tanggal) = ?
-            AND MONTH(s.tanggal) = ?
-            LIMIT ? OFFSET ?
-        `;
+        let query, countQuery;
 
-        const countQuery = `
-            SELECT COUNT(*) AS total
-            FROM simpanan s
-            JOIN anggota a ON s.id_anggota = a.id
-            JOIN pegawai p ON a.nip_anggota = p.nip
-            WHERE YEAR(s.tanggal) = ?
-            AND MONTH(s.tanggal) = ?
-        `;
+        if (jenis === 'Semua') {
+            query = `
+                SELECT
+                    p.nip,
+                    p.nama,
+                    s.simpanan_wajib,
+                    s.simpanan_pokok,
+                    s.simpanan_sukarela,
+                    (s.simpanan_wajib + s.simpanan_pokok + s.simpanan_sukarela) AS total_simpanan
+                FROM simpanan s
+                JOIN anggota a ON s.id_anggota = a.id
+                JOIN pegawai p ON a.nip_anggota = p.nip
+                WHERE YEAR(s.tanggal) = ?
+                AND MONTH(s.tanggal) = ?
+                LIMIT ? OFFSET ?
+            `;
+
+            countQuery = `
+                SELECT COUNT(*) AS total
+                FROM simpanan s
+                JOIN anggota a ON s.id_anggota = a.id
+                JOIN pegawai p ON a.nip_anggota = p.nip
+                WHERE YEAR(s.tanggal) = ?
+                AND MONTH(s.tanggal) = ?
+            `;
+        } else {
+            query = `
+                SELECT
+                    p.nip,
+                    p.nama,
+                    s.${jenis} AS jumlah
+                FROM simpanan s
+                JOIN anggota a ON s.id_anggota = a.id
+                JOIN pegawai p ON a.nip_anggota = p.nip
+                WHERE YEAR(s.tanggal) = ?
+                AND MONTH(s.tanggal) = ?
+                LIMIT ? OFFSET ?
+            `;
+
+            countQuery = `
+                SELECT COUNT(*) AS total
+                FROM simpanan s
+                JOIN anggota a ON s.id_anggota = a.id
+                JOIN pegawai p ON a.nip_anggota = p.nip
+                WHERE YEAR(s.tanggal) = ?
+                AND MONTH(s.tanggal) = ?
+            `;
+        }
 
         const [data, totalResults] = await Promise.all([
             executeQuery(query, [tahun, bulan, parseInt(limit), offset]),
@@ -90,7 +120,6 @@ exports.filterData = async (req, res) => {
             limit: parseInt(limit),
             totalPages: Math.ceil(total / limit),
         });
-
     } catch (error) {
         console.error('Database error:', error);
         res.status(500).json({

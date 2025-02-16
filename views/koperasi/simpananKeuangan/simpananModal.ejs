@@ -1,9 +1,8 @@
 <!-- Modal Simpanan -->
 <div id="simpananModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
-    <!-- Mengubah lebar dari w-[800px] menjadi w-[1000px] -->
     <div class="bg-white rounded-lg w-[1000px] max-h-[90vh] flex flex-col">
         <!-- Header -->
-        <div class="p-6 border-b bg-[#5D8736] rounded-t-lg" style="background-color: #5D8736;">
+        <div class="p-6 border-b bg-[#5D8736] rounded-t-lg" style="background-color: #5D8736">
             <h2 class="text-xl font-semibold text-white">Tambah Simpanan Baru</h2>
         </div>
 
@@ -15,10 +14,10 @@
                     <div class="relative">
                         <label class="block text-sm font-medium mb-2">Nama Anggota</label>
                         <div class="relative">
-                            <input 
-                                type="text" 
-                                id="searchAnggota" 
-                                class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500 pr-10" 
+                            <input
+                                type="text"
+                                id="searchAnggota"
+                                class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500 pr-10"
                                 placeholder="Ketik nama anggota..."
                                 autocomplete="off"
                             >
@@ -26,28 +25,20 @@
                                 <span class="material-icons text-gray-400">search</span>
                             </div>
                         </div>
-                        <select 
-                            id="anggotaSelect" 
-                            name="anggota" 
-                            class="hidden"
-                        >
+                        <select id="anggotaSelect" name="anggota" class="hidden">
                             <option value="">Pilih Anggota...</option>
                         </select>
-                        <!-- Dropdown untuk hasil pencarian -->
-                        <div 
-                            id="searchResults" 
-                            class="absolute z-10 w-full bg-white border rounded-lg mt-1 shadow-lg hidden max-h-60 overflow-y-auto"
-                        ></div>
+                        <div id="searchResults" class="absolute z-10 w-full bg-white border rounded-lg mt-1 shadow-lg hidden max-h-60 overflow-y-auto"></div>
                     </div>
-                
+
                     <!-- NIP Field (Read Only) -->
                     <div>
                         <label class="block text-sm font-medium mb-2">NIP</label>
-                        <input 
-                            type="text" 
-                            id="nipField" 
-                            class="w-full p-3 border rounded-lg bg-gray-50" 
-                            readonly 
+                        <input
+                            type="text"
+                            id="nipField"
+                            class="w-full p-3 border rounded-lg bg-gray-50"
+                            readonly
                             placeholder="NIP akan muncul otomatis"
                         >
                     </div>
@@ -56,16 +47,20 @@
                 <!-- Jenis Simpanan Selection -->
                 <div class="grid grid-cols-3 gap-6">
                     <!-- Simpanan Pokok -->
-                    <div class="bg-white rounded-lg border p-6 hover:shadow-md transition-shadow">
+                    <div id="pokokContainer" class="bg-white rounded-lg border p-6 hover:shadow-md transition-shadow">
                         <label class="inline-flex items-center mb-3">
-                            <input type="checkbox" id="checkPokok" class="form-checkbox h-5 w-5 text-green-600" 
-                                onchange="toggleSimpananForm('Pokok')" checked>
+                            <input type="checkbox" id="checkPokok" class="form-checkbox h-5 w-5 text-green-600" disabled>
                             <span class="ml-2 text-gray-700 font-medium">Simpanan Pokok</span>
                         </label>
                         <div id="formPokok" class="mt-4">
                             <label class="block text-sm text-gray-600 mb-2">Jumlah (Rp)</label>
-                            <input type="number" name="simpanan_pokok" value="100000" 
-                                class="w-full p-3 border rounded-lg bg-gray-100" readonly>
+                            <input 
+                                type="number" 
+                                name="simpanan_pokok" 
+                                value="100000"
+                                class="w-full p-3 border rounded-lg bg-gray-100" 
+                                readonly
+                            >
                             <p class="text-sm text-gray-500 mt-2">*Simpanan pokok ditetapkan sebesar Rp 100.000</p>
                         </div>
                     </div>
@@ -73,28 +68,32 @@
                     <!-- Simpanan Wajib -->
                     <div class="bg-white rounded-lg border p-6 hover:shadow-md transition-shadow">
                         <label class="inline-flex items-center mb-3">
-                            <input type="checkbox" id="checkWajib" class="form-checkbox h-5 w-5 text-green-600" 
-                                onchange="toggleSimpananForm('Wajib')">
+                            <input type="checkbox" id="checkWajib" class="form-checkbox h-5 w-5 text-green-600" disabled>
                             <span class="ml-2 text-gray-700 font-medium">Simpanan Wajib</span>
                         </label>
-                        <div id="formWajib" class="hidden mt-4">
+                        <div id="formWajib" class="mt-4">
                             <label class="block text-sm text-gray-600 mb-2">Jumlah (Rp)</label>
-                            <input type="number" name="simpanan_wajib" 
-                                class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500">
+                            <input 
+                                type="number" 
+                                name="simpanan_wajib"
+                                class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500"
+                            >
                         </div>
                     </div>
 
                     <!-- Simpanan Sukarela -->
                     <div class="bg-white rounded-lg border p-6 hover:shadow-md transition-shadow">
                         <label class="inline-flex items-center mb-3">
-                            <input type="checkbox" id="checkSukarela" class="form-checkbox h-5 w-5 text-green-600" 
-                                onchange="toggleSimpananForm('Sukarela')">
+                            <input type="checkbox" id="checkSukarela" class="form-checkbox h-5 w-5 text-green-600" disabled>
                             <span class="ml-2 text-gray-700 font-medium">Simpanan Sukarela</span>
                         </label>
-                        <div id="formSukarela" class="hidden mt-4">
+                        <div id="formSukarela" class="mt-4">
                             <label class="block text-sm text-gray-600 mb-2">Jumlah (Rp)</label>
-                            <input type="number" name="simpanan_sukarela" 
-                                class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500">
+                            <input 
+                                type="number" 
+                                name="simpanan_sukarela"
+                                class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500"
+                            >
                         </div>
                     </div>
                 </div>
@@ -117,7 +116,7 @@
                 <button onclick="closeSimpananModal()" class="px-6 py-2.5 border rounded-lg hover:bg-gray-100 transition-colors">
                     Batal
                 </button>
-                <button onclick="submitSimpanan()" class="px-6 py-2.5 text-white rounded-lg bg-[#5D8736] hover:bg-[#4a6c2b] transition-colors" style="background-color: #5D8736;">
+                <button onclick="submitSimpanan()" class="px-6 py-2.5 text-white rounded-lg bg-[#5D8736] hover:bg-[#4a6c2b] transition-colors" style="background-color: #5D8736">
                     Simpan
                 </button>
             </div>
@@ -126,13 +125,28 @@
 </div>
 
 <script>
-    let anggotaList = [];
-    let searchTimeout;
-// Load anggota list when page loads
+let anggotaList = [];
+let searchTimeout;
+
 document.addEventListener('DOMContentLoaded', function() {
     loadAnggotaList();
     setupSearchHandler();
+    initializeForm();
 });
+
+function initializeForm() {
+    // Sembunyikan form simpanan saat awal
+    ['Wajib', 'Pokok', 'Sukarela'].forEach(type => {
+        const form = document.getElementById(`form${type}`);
+        if (form) form.classList.add('hidden');
+    });
+
+    // Set default value untuk simpanan wajib
+    const simpananWajibInput = document.querySelector('input[name="simpanan_wajib"]');
+    if (simpananWajibInput) {
+        simpananWajibInput.value = "150000";
+    }
+}
 
 async function loadAnggotaList() {
     try {
@@ -157,7 +171,6 @@ function setupSearchHandler() {
     const searchResults = document.getElementById('searchResults');
     const nipField = document.getElementById('nipField');
     
-    // Handle input changes with debounce
     searchInput.addEventListener('input', (e) => {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
@@ -167,7 +180,7 @@ function setupSearchHandler() {
                 return;
             }
             
-            const filteredResults = anggotaList.filter(anggota => 
+            const filteredResults = anggotaList.filter(anggota =>
                 anggota.nama.toLowerCase().includes(searchTerm)
             );
             
@@ -175,12 +188,56 @@ function setupSearchHandler() {
         }, 300);
     });
     
-    // Hide results when clicking outside
     document.addEventListener('click', (e) => {
         if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
             searchResults.classList.add('hidden');
         }
     });
+}
+
+async function checkAnggotaSimpanan(idAnggota) {
+    try {
+        const response = await fetch(`/api/simpanan/check/${idAnggota}`);
+        const data = await response.json();
+
+        // Enable semua checkbox setelah anggota dipilih
+        ['Wajib', 'Pokok', 'Sukarela'].forEach(type => {
+            const checkbox = document.getElementById(`check${type}`);
+            if (checkbox) {
+                checkbox.disabled = false;
+            }
+        });
+
+        // Set simpanan wajib
+        const checkWajib = document.getElementById('checkWajib');
+        const formWajib = document.getElementById('formWajib');
+        checkWajib.checked = true;
+        formWajib.classList.remove('hidden');
+        document.querySelector('input[name="simpanan_wajib"]').value = "150000";
+
+        // Handle simpanan pokok
+        const pokokContainer = document.getElementById('pokokContainer');
+        const checkPokok = document.getElementById('checkPokok');
+        const formPokok = document.getElementById('formPokok');
+
+        if (data.has_simpanan_pokok) {
+            pokokContainer.style.display = 'none';
+        } else {
+            pokokContainer.style.display = 'block';
+            checkPokok.checked = true;
+            formPokok.classList.remove('hidden');
+        }
+
+        // Reset simpanan sukarela
+        const checkSukarela = document.getElementById('checkSukarela');
+        const formSukarela = document.getElementById('formSukarela');
+        checkSukarela.checked = false;
+        formSukarela.classList.add('hidden');
+
+    } catch (error) {
+        console.error('Error checking simpanan:', error);
+        showNotification('Gagal memeriksa data simpanan', 'error');
+    }
 }
 
 function displaySearchResults(results) {
@@ -207,22 +264,18 @@ function displaySearchResults(results) {
             <div class="text-sm text-gray-600">${anggota.nip}</div>
         `;
         
-        div.addEventListener('click', () => {
+        div.addEventListener('click', async () => {
             document.getElementById('searchAnggota').value = anggota.nama;
             document.getElementById('nipField').value = anggota.nip;
             anggotaSelect.value = anggota.id;
             searchResults.classList.add('hidden');
+            
+            // Check simpanan history dan update form
+            await checkAnggotaSimpanan(anggota.id);
         });
         
         searchResults.appendChild(div);
     });
-}
-
-function clearForm() {
-    document.getElementById('searchAnggota').value = '';
-    document.getElementById('nipField').value = '';
-    document.getElementById('anggotaSelect').value = '';
-    document.getElementById('searchResults').classList.add('hidden');
 }
 
 function toggleSimpananForm(type) {
@@ -236,44 +289,48 @@ function toggleSimpananForm(type) {
     }
 }
 
-function openSimpananModal(bulan) {
-    document.getElementById('simpananModal').classList.remove('hidden');
+function clearForm() {
+    document.getElementById('searchAnggota').value = '';
+    document.getElementById('nipField').value = '';
+    document.getElementById('anggotaSelect').value = '';
+    document.getElementById('searchResults').classList.add('hidden');
     
-    // Set tanggal sesuai bulan yang dipilih
-    if (bulan) {
-        const tahun = document.getElementById('filterTahun').value || new Date().getFullYear();
-        const tanggalSimpanan = new Date(tahun, bulan - 1);
-        document.getElementById('tanggalSimpanan').valueAsDate = tanggalSimpanan;
-    }
-}
-
-function closeSimpananModal() {
-    document.getElementById('simpananModal').classList.add('hidden');
-    document.getElementById('simpananForm').reset();
-    clearForm();
-
     // Reset semua checkbox dan form
     ['Wajib', 'Pokok', 'Sukarela'].forEach(type => {
         const checkbox = document.getElementById(`check${type}`);
         const form = document.getElementById(`form${type}`);
         
-        // Khusus untuk Pokok, set ulang ke checked dan tampilkan form
-        if (type === 'Pokok') {
-            checkbox.checked = true;
-            form.classList.remove('hidden');
-        } else {
+        if (checkbox) {
             checkbox.checked = false;
+            checkbox.disabled = true;
+        }
+        if (form) {
             form.classList.add('hidden');
         }
     });
+
+    // Reset input values
+    document.querySelector('input[name="simpanan_wajib"]').value = "";
+    document.querySelector('input[name="simpanan_sukarela"]').value = "";
+    document.querySelector('select[name="metode_bayar"]').value = "";
+}
+
+function closeSimpananModal() {
+    document.getElementById('simpananModal').classList.add('hidden');
+    clearForm();
+}
+
+function openSimpananModal() {
+    document.getElementById('simpananModal').classList.remove('hidden');
+    clearForm();
 }
 
 async function submitSimpanan() {
-    const form = document.getElementById('simpananForm');
     if (!validateForm()) {
         return;
     }
 
+    const form = document.getElementById('simpananForm');
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
 

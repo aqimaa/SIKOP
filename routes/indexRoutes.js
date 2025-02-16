@@ -125,11 +125,13 @@ router.get("/api/simpanan/years", simpananController.getAvailableYears);
 router.get("/api/anggota", simpananController.getAnggotaListSimpanan);
 router.get("/api/simpanan/history/:id_anggota", simpananController.getHistorySimpanan);
 router.get("/api/simpanan/check/:id_anggota", simpananController.checkAnggotaSimpanan);
+router.get('/simpanan/export', simpananController.exportSimpananPDF);
 router.post("/api/simpanan/periode", simpananController.createPeriode);
 router.get("/api/simpanan/:id", simpananController.getSimpananById);
 router.put("/api/simpanan/:id", simpananController.updateSimpanan);
 router.post("/api/simpanan", simpananController.createSimpanan);
 router.delete("/api/simpanan/:id", simpananController.deleteSimpanan);
+
 
 // <!=============================================== Route Pinjaman ===============================================> //
 

@@ -1,4 +1,7 @@
 const db = require('../../config/database');
+const path = require('path');
+const ejs = require('ejs');
+const pdf = require('html-pdf');
 
 const lihatSimpanan = (req, res) => {
     try {
@@ -587,6 +590,103 @@ const checkAnggotaSimpanan = (req, res) => {
     });
 };
 
+const exportSimpananPDF = (req, res) => {
+    const { anggota, tahun, bulan } = req.query;
+    
+    let query = `
+        SELECT 
+            s.id,
+            p.nip,
+            p.nama,
+            s.tanggal,
+            s.simpanan_wajib,
+            s.simpanan_pokok,
+            s.simpanan_sukarela,
+            s.metode_bayar
+        FROM simpanan s
+        JOIN anggota a ON s.id_anggota = a.id
+        JOIN pegawai p ON a.nip_anggota = p.nip
+        WHERE 1=1
+    `;
+
+    const params = [];
+
+    if (anggota) {
+        query += ` AND s.id_anggota = ?`;
+        params.push(anggota);
+    }
+
+    if (tahun) {
+        query += ` AND YEAR(s.tanggal) = ?`;
+        params.push(tahun);
+    }
+
+    if (bulan) {
+        query += ` AND MONTH(s.tanggal) = ?`;
+        params.push(bulan);
+    }
+
+    query += ` ORDER BY s.tanggal DESC`;
+
+    db.query(query, params, (err, results) => {
+        if (err) {
+            console.error('Error executing query:', err);
+            return res.status(500).json({ message: 'Database error', error: err });
+        }
+
+        const bulanList = [
+            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        ];
+
+        const data = {
+            tahun: tahun || 'Semua',
+            bulan: bulan ? bulanList[bulan - 1] : 'Semua',
+            data: results
+        };
+
+        const filePath = path.join(
+            __dirname, 
+            '../../views/koperasi/simpananKeuangan/templateLaporanSimpanan.ejs'
+        );
+
+        ejs.renderFile(filePath, data, (err, html) => {
+            if (err) {
+                console.error('Error rendering template:', err);
+                return res.status(500).json({ 
+                    message: 'Error rendering template', 
+                    error: err 
+                });
+            }
+
+            const options = {
+                format: 'A4',
+                border: {
+                    top: '1cm',
+                    right: '1cm',
+                    bottom: '1cm',
+                    left: '1cm'
+                }
+            };
+
+            pdf.create(html, options).toStream((err, stream) => {
+                if (err) {
+                    console.error('Error generating PDF:', err);
+                    return res.status(500).json({ 
+                        message: 'Error generating PDF', 
+                        error: err 
+                    });
+                }
+
+                const filename = `laporan-simpanan${tahun ? '-' + tahun : ''}${bulan ? '-' + bulanList[bulan - 1] : ''}.pdf`;
+                
+                res.setHeader('Content-Type', 'application/pdf');
+                res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
+                stream.pipe(res);
+            });
+        });
+    });
+};
 
 module.exports = {
     lihatSimpanan,
@@ -600,5 +700,6 @@ module.exports = {
     getHistorySimpanan,
     updateSimpanan,
     getSimpananById,
-    checkAnggotaSimpanan
+    checkAnggotaSimpanan,
+    exportSimpananPDF
 };

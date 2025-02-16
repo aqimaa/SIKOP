@@ -169,25 +169,25 @@
         }
 
         function renderData() {
-            const container = document.getElementById('dataContainer');
-            container.innerHTML = '';
-            const selectedYear = document.getElementById('filterTahun').value;
+    const container = document.getElementById('dataContainer');
+    container.innerHTML = '';
+    const selectedYear = document.getElementById('filterTahun').value;
 
-            months.forEach((month, index) => {
-                const monthData = monthlySummaries[index] || {
-                    items: [],
-                    total_wajib: 0,
-                    total_pokok: 0,
-                    total_sukarela: 0
-                };
+    months.forEach((month, index) => {
+        const monthData = monthlySummaries[index] || {
+            items: [],
+            total_wajib: 0,
+            total_pokok: 0,
+            total_sukarela: 0
+        };
 
-                // Filter items based on selected year
-                const filteredItems = monthData.items.filter(item => {
-                    const itemYear = new Date(item.tanggal).getFullYear();
-                    return !selectedYear || itemYear.toString() === selectedYear;
-                });
+               // Filter items based on selected year
+        const filteredItems = monthData.items.filter(item => {
+            const itemYear = new Date(item.tanggal).getFullYear();
+            return !selectedYear || itemYear.toString() === selectedYear;
+        });
 
-                if (filteredItems.length === 0) return;
+        if (filteredItems.length === 0) return;
 
                 // Initialize pagination state for this month if not exists
                 if (!paginationState[index]) {
@@ -245,8 +245,15 @@
                                     <p class="font-semibold">Rp ${(totals.total_wajib + totals.total_pokok + totals.total_sukarela).toLocaleString('id-ID')}</p>
                                 </div>
                             </div>
-                        </div>
-                    </button>
+                            <button 
+                            onclick="exportSimpananBulan(event, ${index + 1})"
+                            class="px-3 py-1.5 bg-blue-600 text-white rounded flex items-center gap-1 hover:bg-blue-700 text-sm">
+                            <span class="material-icons text-sm">download</span>
+                            Export PDF
+                        </button>
+                    </div>
+                </button>
+            </div>
                     <div id="content-${index}" class="hidden border-t">
                         <div class="overflow-x-auto">
                             <table class="w-full">
@@ -342,6 +349,29 @@
             }
 
             return buttons.join('');
+        }
+
+        function exportSimpananBulan(event, bulan) {
+            // Prevent button click from triggering toggleMonth
+            event.stopPropagation();
+            
+            const anggota = document.getElementById('filterAnggota').value;
+            const tahun = document.getElementById('filterTahun').value;
+            
+            if (!tahun) {
+                showNotification('Pilih tahun terlebih dahulu', 'warning');
+                return;
+            }
+            
+            let url = '/simpanan/export';
+            const params = new URLSearchParams();
+            
+            if (anggota) params.append('anggota', anggota);
+            params.append('tahun', tahun);
+            params.append('bulan', bulan);
+            
+            url += '?' + params.toString();
+            window.location.href = url;
         }
 
         function changePage(monthIndex, newPage) {

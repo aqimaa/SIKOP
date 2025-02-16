@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Laporan Simpanan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #5D8736;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .text-right {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="title">Laporan Data Simpanan Koperasi</div>
+        <% if(tahun) { %>
+            <div class="subtitle">Tahun: <%= tahun %></div>
+        <% } %>
+        <% if(bulan && bulan !== 'Semua') { %>
+            <div class="subtitle">Bulan: <%= bulan %></div>
+        <% } %>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>NIP</th>
+                <th>Nama</th>
+                <th>Tanggal</th>
+                <th>Simpanan Wajib</th>
+                <th>Simpanan Pokok</th>
+                <th>Simpanan Sukarela</th>
+                <th>Metode Bayar</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% data.forEach((item, index) => { %>
+                <tr>
+                    <td><%= index + 1 %></td>
+                    <td><%= item.nip %></td>
+                    <td><%= item.nama %></td>
+                    <td><%= new Date(item.tanggal).toLocaleDateString('id-ID') %></td>
+                    <td class="text-right">Rp <%= item.simpanan_wajib.toLocaleString('id-ID') %></td>
+                    <td class="text-right">Rp <%= item.simpanan_pokok.toLocaleString('id-ID') %></td>
+                    <td class="text-right">Rp <%= item.simpanan_sukarela.toLocaleString('id-ID') %></td>
+                    <td><%= item.metode_bayar %></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+</body>
+</html>

@@ -28,15 +28,11 @@
                     <h2 class="text-2xl font-bold mt-3">Data Pinjaman</h2>
                 </div>
 
-                <!-- Search Bar + Tambah Button dalam satu baris -->
                 <div class="bg-white p-6 rounded shadow"> 
                     <div class="flex items-center space-x-8 justify-between mb-4">
                         <!-- Search Bar -->
                         <div class="flex items-center space-x-2 flex-1 mt-1">
-                            <input type="text" id="searchInput" placeholder="Cari Anggota" class="border border-gray-300 p-2 rounded flex-1">
-                            <button onclick="cariAnggota()" class="text-white px-3 py-2 rounded-md focus:outline-none flex items-center justify-center" style="background-color: #5D8736;">
-                                <span class="material-icons">search</span>
-                            </button>               
+                            <input type="text" id="searchInput" placeholder="Cari Anggota" class="border border-gray-300 p-2 rounded flex-1" oninput="cariAnggota()">
                         </div>
         
                         <!-- Tambah Button -->
@@ -77,14 +73,14 @@
                                         <td class="px-6 py-4"><%= item.id_anggota %></td>
                                         <td class="px-6 py-4"><%= item.nama_anggota %></td>
                                         <td class="px-6 py-4"><%= item.kategori %></td>
-                                        <td class="px-6 py-4"><%= item.jumlah_pinjaman.toLocaleString('id-ID') %></td>
+                                        <td class="px-6 py-4"><%= item.jumlah_pinjaman.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></td>
                                         <td class="px-6 py-4"><%= item.jangka_waktu %> Bulan</td>
                                         <td class="px-6 py-4"><%= item.margin_persen %>%</td>
-                                        <td class="px-6 py-4"><%= item.angsuran_pokok.toLocaleString('id-ID') %></td>
-                                        <td class="px-6 py-4"><%= item.margin_per_bulan.toLocaleString('id-ID') %></td>
-                                        <td class="px-6 py-4"><%= item.total_angsuran.toLocaleString('id-ID') %></td>
+                                        <td class="px-6 py-4"><%= item.angsuran_pokok.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></td>
+                                        <td class="px-6 py-4"><%= item.margin_per_bulan.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></td>
+                                        <td class="px-6 py-4"><%= item.total_angsuran.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></td>
                                         <td class="px-6 py-4"><%= item.angsuran_ke || 0 %></td>
-                                        <td class="px-6 py-4"><%= item.sisa_piutang.toLocaleString('id-ID') %></td>
+                                        <td class="px-6 py-4"><%= item.sisa_piutang.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></td>
                                         <td class="px-6 py-4">
                                             <%= item.tanggal_perjanjian ? new Intl.DateTimeFormat('id-ID').format(new Date(item.tanggal_perjanjian)) : '-' %>
                                         </td>

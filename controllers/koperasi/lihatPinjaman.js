@@ -21,6 +21,7 @@ exports.lihatPinjaman = async (req, res) => {
       FROM pinjaman p
       JOIN anggota a ON p.id_anggota = a.id
       JOIN pegawai pg ON a.nip_anggota = pg.nip
+      ORDER BY p.id DESC;  -- Urutkan berdasarkan id secara descending
     `;
 
     db.query(query, (error, results) => {
@@ -32,7 +33,6 @@ exports.lihatPinjaman = async (req, res) => {
         return res.status(404).send("Data pinjaman tidak ditemukan.");
       }
 
-      // Format angka dengan toLocaleString
       const formattedResults = results.map(item => ({
         ...item,
         jumlah_pinjaman: item.jumlah_pinjaman.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
@@ -89,6 +89,16 @@ exports.tambahPinjaman = async (req, res) => {
     tanggal_perjanjian,
   } = req.body;
 
+  const parseNumberWithComma = (value) => {
+    return parseFloat(value.replace(/\./g, '').replace(',', '.'));
+  };
+
+  const formattedJumlahPinjaman = parseNumberWithComma(jumlah_pinjaman);
+  const formattedMarginPersen = parseNumberWithComma(margin_persen);
+  const formattedAngsuranPokok = parseNumberWithComma(angsuran_pokok);
+  const formattedMarginPerBulan = parseNumberWithComma(margin_per_bulan);
+  const formattedTotalAngsuran = parseNumberWithComma(total_angsuran);
+
   const query = `
     INSERT INTO pinjaman 
     (id_anggota, kategori, jumlah_pinjaman, jangka_waktu, margin_persen, angsuran_pokok, margin_per_bulan, total_angsuran, sisa_piutang, tanggal_perjanjian, ket_status, angsuran_ke)
@@ -98,13 +108,13 @@ exports.tambahPinjaman = async (req, res) => {
   const values = [
     id_anggota,
     kategori,
-    jumlah_pinjaman,
+    formattedJumlahPinjaman,
     jangka_waktu,
-    margin_persen,
-    angsuran_pokok,
-    margin_per_bulan,
-    total_angsuran,
-    jumlah_pinjaman, 
+    formattedMarginPersen,
+    formattedAngsuranPokok,
+    formattedMarginPerBulan,
+    formattedTotalAngsuran,
+    formattedJumlahPinjaman, 
     tanggal_perjanjian,
     'Belum Lunas',
     0
@@ -165,6 +175,7 @@ exports.cariAnggota = async (req, res) => {
       JOIN anggota a ON p.id_anggota = a.id
       JOIN pegawai pg ON a.nip_anggota = pg.nip
       WHERE pg.nama LIKE ? OR p.id_anggota LIKE ?
+      ORDER BY p.id DESC;
     `;
 
     db.query(query, [`%${keyword}%`, `%${keyword}%`], (error, results) => {
@@ -241,11 +252,9 @@ exports.prosesBayar = async (req, res) => {
   const idPinjaman = req.params.id;
   const { tanggal_bayar, pembayaran_pokok, pembayaran_margin, keterangan } = req.body;
 
-  // Konversi nilai pembayaran ke angka
   const jumlahBayarPokok = parseFloat(pembayaran_pokok.replace(/[^0-9,]/g, '').replace(',', '.'));
   const jumlahBayarMargin = parseFloat(pembayaran_margin.replace(/[^0-9,]/g, '').replace(',', '.'));
 
-  // Query untuk mengambil data pinjaman
   const getPinjamanQuery = `
     SELECT 
       sisa_piutang,
@@ -267,11 +276,8 @@ exports.prosesBayar = async (req, res) => {
     const pinjaman = results[0];
     const sisaPiutangBaru = pinjaman.sisa_piutang - jumlahBayarPokok;
     const angsuranKeBaru = pinjaman.angsuran_ke + 1;
-
-    // Cek apakah pinjaman sudah lunas (berdasarkan sisa_piutang)
     const statusPinjaman = sisaPiutangBaru <= 0 ? 'Lunas' : 'Belum Lunas';
 
-    // Query untuk mencatat pembayaran
     const insertPembayaranQuery = `
       INSERT INTO pembayaran 
         (id_pinjaman, tanggal_bayar, jumlah_bayar, ket, angsuran_ke)
@@ -287,7 +293,6 @@ exports.prosesBayar = async (req, res) => {
           return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mencatat pembayaran." });
         }
 
-        // Query untuk mengupdate sisa piutang dan angsuran_ke
         const updatePinjamanQuery = `
           UPDATE pinjaman
           SET 
@@ -366,16 +371,15 @@ exports.simpanEditPinjaman = async (req, res) => {
     sisa_piutang,
   } = req.body;
 
-  // Format data sebelum disimpan ke database
-  const formatNumber = (value) => {
+  const cleanNumberFormat = (value) => {
     return parseFloat(value.replace(/\./g, '').replace(',', '.'));
   };
 
-  const formattedJumlahPinjaman = formatNumber(jumlah_pinjaman);
-  const formattedAngsuranPokok = formatNumber(angsuran_pokok);
-  const formattedMarginPerBulan = formatNumber(margin_per_bulan);
-  const formattedTotalAngsuran = formatNumber(total_angsuran);
-  const formattedSisaPiutang = formatNumber(sisa_piutang);
+  const formattedJumlahPinjaman = cleanNumberFormat(jumlah_pinjaman);
+  const formattedAngsuranPokok = cleanNumberFormat(angsuran_pokok);
+  const formattedMarginPerBulan = cleanNumberFormat(margin_per_bulan);
+  const formattedTotalAngsuran = cleanNumberFormat(total_angsuran);
+  const formattedSisaPiutang = cleanNumberFormat(sisa_piutang);
 
   const query = `
     UPDATE pinjaman
@@ -405,7 +409,7 @@ exports.simpanEditPinjaman = async (req, res) => {
     formattedMarginPerBulan,
     formattedTotalAngsuran,
     formattedSisaPiutang,
-    formattedSisaPiutang <= 0 ? 'Lunas' : 'Belum Lunas', // Update status berdasarkan sisa_piutang
+    formattedSisaPiutang <= 0 ? 'Lunas' : 'Belum Lunas', 
     id
   ];
 

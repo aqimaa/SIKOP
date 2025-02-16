@@ -1,153 +1,190 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard Admin Keuangan</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-</head>
-<body class="flex bg-white">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  </head>
+  <body class="flex bg-white">
     <!-- Sidebar -->
     <%- include('../../sidebar') %>
 
     <!-- Main Content -->
     <div class="flex-1 ml-72 p-8">
-        <div class="fixed top-0 left-72 right-0 flex justify-between shadow-md p-4 bg-white z-20">
-            <h1 class="text-2xl"></h1>
-            <div class="flex items-center">
-                <span>Admin Keuangan</span>
-                <img src="/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
-            </div>
+      <div class="fixed top-0 left-72 right-0 flex justify-between shadow-md p-4 bg-white z-20">
+        <h1 class="text-2xl"></h1>
+        <div class="flex items-center">
+          <span>Admin Keuangan</span>
+          <img src="/images/profile-user.png" class="w-10 h-10 rounded-full ml-2" />
         </div>
+      </div>
 
-        <div class="mt-20 text-center">
-            <h1 class="text-2xl font-bold mb-8">Tambah Pinjaman Baru</h1>
-        </div>
+      <div class="mt-20 text-center">
+        <h1 class="text-2xl font-bold mb-8">Tambah Pinjaman Baru</h1>
+      </div>
 
-        <form action="/pinjaman/tambah" method="POST">
-            <div class="space-y-6">
-                <!-- Data Anggota -->
-                <div class="bg-gray-200 p-6 rounded-lg">
-                    <h2 class="text-lg font-semibold mb-4">Data Anggota</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block mb-2">No. Anggota</label>
-                            <input type="text" id="id_anggota" name="id_anggota" class="w-full border p-2 rounded" placeholder="Masukkan No. Anggota" required oninput="getNamaAnggota(this.value)">
-                        </div>
-                        <div>
-                            <label class="block mb-2">Nama Anggota</label>
-                            <input type="text" id="nama_anggota" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Nama anggota akan muncul otomatis">
-                        </div>
-                    </div>
-                </div>
-                <!-- Data Pinjaman -->
-                <div class="bg-gray-200 p-6 rounded-lg">
-                    <h2 class="text-lg font-semibold mb-4">Data Pinjaman</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block mb-2">Kategori Pinjaman</label>
-                            <select name="kategori" class="w-full border p-2 rounded" required>
-                                <option value="jangka panjang">Jangka Panjang</option>
-                                <option value="jangka pendek">Jangka Pendek</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block mb-2">Jumlah Pinjaman</label>
-                            <input type="text" id="jumlahPinjaman" name="jumlah_pinjaman" class="w-full border p-2 rounded" placeholder="Masukkan Jumlah Pinjaman" required oninput="validateNumberInput(this)">
-                        </div>
-                        <div>
-                            <label class="block mb-2">Jangka Waktu (Bulan)</label>
-                            <input type="number" id="jangkaWaktu" name="jangka_waktu" class="w-full border p-2 rounded" placeholder="Masukkan Jangka Waktu" required>
-                        </div>
-                        <div>
-                            <label class="block mb-2">Margin (%)</label>
-                            <input type="text" id="margin" name="margin_persen" class="w-full border p-2 rounded" placeholder="Masukkan Persen Margin per Bulan" required oninput="validateNumberInput(this)">
-                        </div>
-                        <div>
-                            <label class="block mb-2">Tanggal Perjanjian</label>
-                            <input type="date" name="tanggal_perjanjian" class="w-full border p-2 rounded" required>
-                        </div>
-                    </div>
-                </div>
-                <!-- Hasil Perhitungan -->
-                <div class="bg-blue-100 p-6 rounded-lg">
-                    <h2 class="text-lg font-semibold mb-4">Hasil Perhitungan</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block mb-2">Total Angsuran Keseluruhan</label>
-                            <input type="text" id="totalAngsuran" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Dihitung otomatis">
-                        </div>
-                        <div>
-                            <label class="block mb-2">Total Angsuran per Bulan</label>
-                            <input type="text" id="totalAngsuranPerBulan" name="total_angsuran" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Dihitung otomatis">
-                        </div>
-                        <div>
-                            <label class="block mb-2">Margin per Bulan</label>
-                            <input type="text" id="marginPerBulan" name="margin_per_bulan" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Dihitung otomatis">
-                        </div>
-                        <div>
-                            <label class="block mb-2">Angsuran Pokok per Bulan</label>
-                            <input type="text" id="pokok" name="angsuran_pokok" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Dihitung otomatis">
-                        </div>
-                    </div>
-                </div>
-                <!-- Buttons -->
-                <div class="flex space-x-4">
-                    <button type="button" id="batalButton" class="flex-1 border border-green-800 text-green-800 py-2 px-4 rounded-md mt-4" style="border-color: #5D8736; color: #5D8736;">Batal</button>
-                    <button type="submit" class="flex-1 text-white py-2 px-4 rounded-md mt-4" style="background-color: #5D8736;">Simpan</button>
-                </div>
+      <form action="/pinjaman/tambah" method="POST">
+        <div class="space-y-6">
+          <!-- Data Anggota -->
+          <div class="bg-gray-200 p-6 rounded-lg">
+            <h2 class="text-lg font-semibold mb-4">Data Anggota</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block mb-2">No. Anggota</label>
+                <input type="text" id="id_anggota" name="id_anggota" class="w-full border p-2 rounded" placeholder="Masukkan No. Anggota" required oninput="getNamaAnggota(this.value)" />
+              </div>
+              <div>
+                <label class="block mb-2">Nama Anggota</label>
+                <input type="text" id="nama_anggota" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Nama anggota akan muncul otomatis" />
+              </div>
             </div>
-        </form>
+          </div>
+
+          <!-- Data Pinjaman -->
+          <div class="bg-gray-200 p-6 rounded-lg">
+            <h2 class="text-lg font-semibold mb-4">Data Pinjaman</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block mb-2">Kategori Pinjaman</label>
+                <select name="kategori" class="w-full border p-2 rounded" required>
+                  <option value="jangka panjang">Jangka Panjang</option>
+                  <option value="jangka pendek">Jangka Pendek</option>
+                </select>
+              </div>
+              <div>
+                <label class="block mb-2">Jumlah Pinjaman</label>
+                <input type="text" id="jumlahPinjaman" name="jumlah_pinjaman" class="w-full border p-2 rounded" placeholder="Masukkan Jumlah Pinjaman" required oninput="validateNumberInput(this)" />
+              </div>
+              <div>
+                <label class="block mb-2">Jangka Waktu (Bulan)</label>
+                <input type="number" id="jangkaWaktu" name="jangka_waktu" class="w-full border p-2 rounded" placeholder="Masukkan Jangka Waktu" required />
+              </div>
+              <div>
+                <label class="block mb-2">Margin (%)</label>
+                <input type="text" id="margin" name="margin_persen" class="w-full border p-2 rounded" placeholder="Masukkan Persen Margin per Bulan" required oninput="validateNumberInput(this)" />
+              </div>
+              <div>
+                <label class="block mb-2">Tanggal Perjanjian</label>
+                <input type="date" id="tanggal_perjanjian" name="tanggal_perjanjian" class="w-full border p-2 rounded" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Hasil Perhitungan -->
+          <div class="bg-blue-100 p-6 rounded-lg">
+            <h2 class="text-lg font-semibold mb-4">Hasil Perhitungan</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block mb-2">Total Angsuran Keseluruhan</label>
+                <input type="text" id="totalAngsuran" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Dihitung otomatis" />
+              </div>
+              <div>
+                <label class="block mb-2">Total Angsuran per Bulan</label>
+                <input type="text" id="totalAngsuranPerBulan" name="total_angsuran" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Dihitung otomatis" />
+              </div>
+              <div>
+                <label class="block mb-2">Margin per Bulan</label>
+                <input type="text" id="marginPerBulan" name="margin_per_bulan" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Dihitung otomatis" />
+              </div>
+              <div>
+                <label class="block mb-2">Angsuran Pokok per Bulan</label>
+                <input type="text" id="pokok" name="angsuran_pokok" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Dihitung otomatis" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Buttons -->
+          <div class="flex space-x-4">
+            <button type="button" id="batalButton" class="flex-1 border border-green-800 text-green-800 py-2 px-4 rounded-md mt-4" style="border-color: #5d8736; color: #5d8736">Batal</button>
+            <button type="submit" class="flex-1 text-white py-2 px-4 rounded-md mt-4" style="background-color: #5d8736">Simpan</button>
+          </div>
+        </div>
+      </form>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const jumlahPinjamanInput = document.getElementById('jumlahPinjaman');
-            const jangkaWaktuInput = document.getElementById('jangkaWaktu');
-            const pokokInput = document.getElementById('pokok');
-            const marginInput = document.getElementById('margin');
-            const totalAngsuranOutput = document.getElementById('totalAngsuran');
-            const marginPerBulanOutput = document.getElementById('marginPerBulan');
-            const totalAngsuranPerBulanOutput = document.getElementById('totalAngsuranPerBulan');
-            function calculateResults() {
-                const jumlahPinjaman = parseFloat(jumlahPinjamanInput.value) || 0;
-                const jangkaWaktu = parseFloat(jangkaWaktuInput.value) || 0;
-                const margin = parseFloat(marginInput.value) || 0;
-                const totalMargin = (jumlahPinjaman * margin * jangkaWaktu) / 100;
-                const marginPerBulan = (jumlahPinjaman * margin * jangkaWaktu) / (100 * jangkaWaktu);
-                const angsuranPokokPerBulan = jumlahPinjaman / jangkaWaktu;
-                const totalAngsuranPerBulan = angsuranPokokPerBulan + marginPerBulan;
-                const totalAngsuran = totalAngsuranPerBulan * jangkaWaktu;
-                totalAngsuranOutput.value = totalAngsuran.toFixed(2); // Total Angsuran Keseluruhan
-                marginPerBulanOutput.value = marginPerBulan.toFixed(2); // Margin per Bulan
-                totalAngsuranPerBulanOutput.value = totalAngsuranPerBulan.toFixed(2); // Total Angsuran per Bulan
-                pokokInput.value = angsuranPokokPerBulan.toFixed(2); // Angsuran Pokok per Bulan
-            }
-            jumlahPinjamanInput.addEventListener('input', calculateResults);
-            jangkaWaktuInput.addEventListener('input', calculateResults);
-            marginInput.addEventListener('input', calculateResults);
-            // Event listener untuk tombol "Batal"
-            document.getElementById('batalButton').addEventListener('click', function() {
-                window.location.href = '/lihatPinjaman'; // Redirect ke halaman lihatPinjaman
-            });
-        });
-        function getNamaAnggota(idAnggota) {
-            if (idAnggota) {
-                fetch(`/pinjaman/getAnggota/${idAnggota}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            document.getElementById('nama_anggota').value = data.nama;
-                        } else {
-                            document.getElementById('nama_anggota').value = '';
-                        }
-                    })
-                    .catch(error => console.error('Error:', error));
-            } else {
-                document.getElementById('nama_anggota').value = '';
-            }
+      document.addEventListener("DOMContentLoaded", function () {
+        const jumlahPinjamanInput = document.getElementById("jumlahPinjaman");
+        const jangkaWaktuInput = document.getElementById("jangkaWaktu");
+        const pokokInput = document.getElementById("pokok");
+        const marginInput = document.getElementById("margin");
+        const totalAngsuranOutput = document.getElementById("totalAngsuran");
+        const marginPerBulanOutput = document.getElementById("marginPerBulan");
+        const totalAngsuranPerBulanOutput = document.getElementById("totalAngsuranPerBulan");
+
+        // Fungsi untuk mengonversi input dengan koma ke angka
+        const parseNumberWithComma = (value) => {
+          return parseFloat(value.replace(/\./g, "").replace(",", "."));
+        };
+
+        // Fungsi untuk memformat angka dengan koma
+        const formatNumberWithComma = (value) => {
+          return value.toLocaleString("id-ID", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        };
+
+        // Fungsi untuk mengisi tanggal perjanjian dengan hari ini
+        const setTanggalPerjanjian = () => {
+          const today = new Date();
+          const year = today.getFullYear();
+          const month = String(today.getMonth() + 1).padStart(2, "0");
+          const day = String(today.getDate()).padStart(2, "0");
+          const formattedDate = `${year}-${month}-${day}`;
+          document.getElementById("tanggal_perjanjian").value = formattedDate;
+        };
+
+        // Panggil fungsi untuk mengisi tanggal perjanjian
+        setTanggalPerjanjian();
+
+        function calculateResults() {
+          const jumlahPinjaman = parseNumberWithComma(jumlahPinjamanInput.value) || 0;
+          const jangkaWaktu = parseFloat(jangkaWaktuInput.value) || 0;
+          const margin = parseNumberWithComma(marginInput.value) || 0;
+
+          // Hitung hasil
+          const totalMargin = (jumlahPinjaman * margin * jangkaWaktu) / 100;
+          const marginPerBulan = (jumlahPinjaman * margin * jangkaWaktu) / (100 * jangkaWaktu);
+          const angsuranPokokPerBulan = jumlahPinjaman / jangkaWaktu;
+          const totalAngsuranPerBulan = angsuranPokokPerBulan + marginPerBulan;
+          const totalAngsuran = totalAngsuranPerBulan * jangkaWaktu;
+
+          totalAngsuranOutput.value = formatNumberWithComma(totalAngsuran);
+          marginPerBulanOutput.value = formatNumberWithComma(marginPerBulan);
+          totalAngsuranPerBulanOutput.value = formatNumberWithComma(totalAngsuranPerBulan);
+          pokokInput.value = formatNumberWithComma(angsuranPokokPerBulan);
         }
+
+        jumlahPinjamanInput.addEventListener("input", calculateResults);
+        jangkaWaktuInput.addEventListener("input", calculateResults);
+        marginInput.addEventListener("input", calculateResults);
+
+        // Event listener untuk tombol "Batal"
+        document.getElementById("batalButton").addEventListener("click", function () {
+          window.location.href = "/lihatPinjaman"; 
+        });
+      });
+
+      function getNamaAnggota(idAnggota) {
+        if (idAnggota) {
+          fetch(`/pinjaman/getAnggota/${idAnggota}`)
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.success) {
+                document.getElementById("nama_anggota").value = data.nama;
+              } else {
+                document.getElementById("nama_anggota").value = "";
+              }
+            })
+            .catch((error) => console.error("Error:", error));
+        } else {
+          document.getElementById("nama_anggota").value = "";
+        }
+      }
+
+      function validateNumberInput(input) {
+        input.value = input.value.replace(/[^0-9,.]/g, "");
+      }
     </script>
-</body>
+  </body>
 </html>

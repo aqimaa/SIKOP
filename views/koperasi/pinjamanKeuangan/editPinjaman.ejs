@@ -7,13 +7,12 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script>
-        // Fungsi untuk memformat angka dengan pemisah ribuan (.) dan koma (,) untuk desimal
         function formatNumberInput(input) {
-            let value = input.value.replace(/[^0-9,]/g, ''); // Hanya menerima angka dan koma
-            value = value.replace(/\./g, ''); // Hapus semua titik
-            let parts = value.split(','); // Pisahkan bagian bulat dan desimal
-            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Format ribuan dengan titik
-            input.value = parts.join(','); // Gabungkan kembali dengan koma
+            let value = input.value.replace(/[^0-9,]/g, ''); 
+            value = value.replace(/\./g, ''); 
+            let parts = value.split(','); 
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.'); 
+            input.value = parts.join(','); 
         }
 
         // Fungsi untuk memvalidasi input angka
@@ -21,7 +20,7 @@
             formatNumberInput(input);
         }
 
-        // Fungsi untuk memformat nilai saat halaman dimuat, kecuali nomor anggota dan nama anggota
+        // Fungsi untuk memformat nilai saat halaman dimuat
         function formatValuesOnLoad() {
             const inputs = document.querySelectorAll('input[type="text"]');
             inputs.forEach(input => {
@@ -34,9 +33,6 @@
             });
         }
 
-        window.onload = formatValuesOnLoad;
-
-        // Jalankan fungsi formatValuesOnLoad saat halaman dimuat
         window.onload = formatValuesOnLoad;
 
         // Fungsi untuk memformat data sebelum form disubmit

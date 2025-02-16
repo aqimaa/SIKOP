@@ -15,7 +15,7 @@ exports.lihatPinjaman = async (req, res) => {
         COALESCE(p.margin_per_bulan, 0) AS margin_per_bulan,
         COALESCE(p.total_angsuran, 0) AS total_angsuran,
         COALESCE(p.sisa_piutang, 0) AS sisa_piutang,
-        p.tanggal_perjanjian,
+        DATE(p.tanggal_perjanjian) AS tanggal_perjanjian,
         p.ket_status,
         COALESCE(p.angsuran_ke, 0) AS angsuran_ke
       FROM pinjaman p
@@ -32,9 +32,6 @@ exports.lihatPinjaman = async (req, res) => {
         return res.status(404).send("Data pinjaman tidak ditemukan.");
       }
 
-      // Debug data
-      console.log(results);
-
       res.render("koperasi/pinjamanKeuangan/lihatPinjaman", { pinjaman: results });
     });
   } catch (error) {
@@ -43,22 +40,19 @@ exports.lihatPinjaman = async (req, res) => {
   }
 };
 
-// Fungsi untuk menghapus pinjaman
 exports.hapusPinjaman = async (req, res) => {
   const id = req.params.id;
 
-  // Hapus data pembayaran terkait terlebih dahulu
   const deletePembayaranQuery = 'DELETE FROM pembayaran WHERE id_pinjaman = ?';
-  
+
   db.query(deletePembayaranQuery, [id], (error, results) => {
     if (error) {
       console.error('Error saat menghapus data pembayaran:', error);
       return res.status(500).json({ success: false, message: 'Terjadi kesalahan saat menghapus data pembayaran.' });
     }
 
-    // Setelah data pembayaran dihapus, hapus data pinjaman
     const deletePinjamanQuery = 'DELETE FROM pinjaman WHERE id = ?';
-    
+
     db.query(deletePinjamanQuery, [id], (error, results) => {
       if (error) {
         console.error('Error saat menghapus data pinjaman:', error);
@@ -72,7 +66,6 @@ exports.hapusPinjaman = async (req, res) => {
   });
 };
 
-// Fungsi untuk menambah pinjaman
 exports.tambahPinjaman = async (req, res) => {
   const {
     id_anggota,
@@ -101,10 +94,10 @@ exports.tambahPinjaman = async (req, res) => {
     angsuran_pokok,
     margin_per_bulan,
     total_angsuran,
-    total_angsuran * jangka_waktu, // Sisa piutang awal
-    tanggal_perjanjian,
-    'Belum Lunas', // Status awal
-    0 // Inisialisasi angsuran_ke dengan 0
+    jumlah_pinjaman, 
+    tanggal_perjanjian, 
+    'Belum Lunas',
+    0
   ];
 
   db.query(query, values, (error, results) => {
@@ -116,11 +109,9 @@ exports.tambahPinjaman = async (req, res) => {
   });
 };
 
-// Fungsi untuk mengambil data anggota berdasarkan ID
 exports.getAnggotaById = async (req, res) => {
   const idAnggota = req.params.id;
-  console.log("ID Anggota yang diminta:", idAnggota); // Debugging
-
+  console.log("ID Anggota yang diminta:", idAnggota);
   const query = `
       SELECT pg.nama 
       FROM anggota a
@@ -129,20 +120,18 @@ exports.getAnggotaById = async (req, res) => {
   `;
 
   db.query(query, [idAnggota], (error, results) => {
-      if (error) {
-          console.error("Error saat mengambil data anggota:", error); // Debugging
-          return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mengambil data anggota." });
-      }
-      console.log("Hasil query:", results); // Debugging
-      if (results.length === 0) {
-          return res.json({ success: false, message: "Anggota tidak ditemukan." });
-      }
-      res.json({ success: true, nama: results[0].nama });
+    if (error) {
+      console.error("Error saat mengambil data anggota:", error);
+      return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mengambil data anggota." });
+    }
+    console.log("Hasil query:", results);
+    if (results.length === 0) {
+      return res.json({ success: false, message: "Anggota tidak ditemukan." });
+    }
+    res.json({ success: true, nama: results[0].nama });
   });
 };
 
-
-// Fungsi untuk mencari anggota
 exports.cariAnggota = async (req, res) => {
   const { keyword } = req.query;
 
@@ -184,7 +173,6 @@ exports.cariAnggota = async (req, res) => {
 exports.tampilkanBayarPinjaman = async (req, res) => {
   const id = req.params.id;
 
-  // Ambil data pinjaman
   const queryPinjaman = `
     SELECT 
       p.id,
@@ -194,19 +182,20 @@ exports.tampilkanBayarPinjaman = async (req, res) => {
       p.jangka_waktu,
       p.sisa_piutang,
       p.total_angsuran,
-      p.angsuran_ke
+      p.angsuran_ke,
+      p.margin_per_bulan,
+      p.angsuran_pokok
     FROM pinjaman p
     JOIN anggota a ON p.id_anggota = a.id
     JOIN pegawai pg ON a.nip_anggota = pg.nip
     WHERE p.id = ?
   `;
 
-  // Ambil riwayat pembayaran
   const queryPembayaran = `
     SELECT 
       tanggal_bayar,
       angsuran_ke,
-      jumlah_bayar,
+      jumlah_bayar,  
       ket
     FROM pembayaran
     WHERE id_pinjaman = ?
@@ -238,64 +227,84 @@ exports.tampilkanBayarPinjaman = async (req, res) => {
   });
 };
 
-// Fungsi untuk memproses pembayaran
 exports.prosesBayar = async (req, res) => {
   const idPinjaman = req.params.id;
-  const { tanggal_bayar, jumlah_bayar, keterangan } = req.body;
+  const { tanggal_bayar, pembayaran_pokok, pembayaran_margin, keterangan } = req.body;
 
-  // Ambil nilai angsuran_ke terakhir dari tabel pinjaman
-  const getAngsuranKeQuery = `
-    SELECT angsuran_ke, sisa_piutang
+  // Konversi nilai pembayaran ke angka
+  const jumlahBayarPokok = parseFloat(pembayaran_pokok.replace(/[^0-9,]/g, '').replace(',', '.'));
+  const jumlahBayarMargin = parseFloat(pembayaran_margin.replace(/[^0-9,]/g, '').replace(',', '.'));
+  const totalPembayaran = jumlahBayarPokok + jumlahBayarMargin; // Hitung total pembayaran
+
+  // Query untuk mengambil data pinjaman
+  const getPinjamanQuery = `
+    SELECT 
+      sisa_piutang,
+      angsuran_ke
     FROM pinjaman
     WHERE id = ?
   `;
 
-  db.query(getAngsuranKeQuery, [idPinjaman], (error, results) => {
+  db.query(getPinjamanQuery, [idPinjaman], (error, results) => {
     if (error) {
-      console.error("Error saat mengambil angsuran_ke:", error);
-      return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mengambil angsuran_ke." });
+      console.error("Error saat mengambil data pinjaman:", error);
+      return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mengambil data pinjaman." });
     }
 
-    const angsuranKe = results[0].angsuran_ke + 1; // Increment angsuran_ke
-    const sisaPiutangBaru = results[0].sisa_piutang - jumlah_bayar;
+    if (results.length === 0) {
+      return res.status(404).json({ success: false, message: "Data pinjaman tidak ditemukan." });
+    }
 
-    // Jika sisa_piutang <= 0, set status menjadi "Lunas"
+    const pinjaman = results[0];
+    const sisaPiutangBaru = pinjaman.sisa_piutang - jumlahBayarPokok;
+    const angsuranKeBaru = pinjaman.angsuran_ke + 1;
+
+    // Cek apakah pinjaman sudah lunas (hanya berdasarkan sisa_piutang)
     const statusPinjaman = sisaPiutangBaru <= 0 ? 'Lunas' : 'Belum Lunas';
 
-    // Insert pembayaran baru dengan angsuran_ke yang benar
+    // Query untuk mencatat pembayaran
     const insertPembayaranQuery = `
-      INSERT INTO pembayaran (id_pinjaman, tanggal_bayar, jumlah_bayar, ket, angsuran_ke)
+      INSERT INTO pembayaran 
+        (id_pinjaman, tanggal_bayar, jumlah_bayar, ket, angsuran_ke)
       VALUES (?, ?, ?, ?, ?)
     `;
 
-    db.query(insertPembayaranQuery, [idPinjaman, tanggal_bayar, jumlah_bayar, keterangan, angsuranKe], (error, results) => {
-      if (error) {
-        console.error("Error saat mencatat pembayaran:", error);
-        return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mencatat pembayaran." });
-      }
-
-      // Update sisa piutang, angsuran_ke, dan status di tabel pinjaman
-      const updatePinjamanQuery = `
-        UPDATE pinjaman
-        SET sisa_piutang = ?,
-            angsuran_ke = ?,
-            ket_status = ?
-        WHERE id = ?
-      `;
-
-      db.query(updatePinjamanQuery, [sisaPiutangBaru, angsuranKe, statusPinjaman, idPinjaman], (updateError, updateResults) => {
-        if (updateError) {
-          console.error("Error saat mengupdate sisa piutang dan angsuran_ke:", updateError);
-          return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mengupdate sisa piutang dan angsuran_ke." });
+    db.query(
+      insertPembayaranQuery,
+      [idPinjaman, tanggal_bayar, totalPembayaran, keterangan, angsuranKeBaru],
+      (error, results) => {
+        if (error) {
+          console.error("Error saat mencatat pembayaran:", error);
+          return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mencatat pembayaran." });
         }
 
-        res.redirect('/lihatPinjaman');
-      });
-    });
+        // Query untuk mengupdate sisa piutang dan status pinjaman
+        const updatePinjamanQuery = `
+          UPDATE pinjaman
+          SET 
+            sisa_piutang = ?,
+            angsuran_ke = ?,
+            ket_status = ?
+          WHERE id = ?
+        `;
+
+        db.query(
+          updatePinjamanQuery,
+          [sisaPiutangBaru, angsuranKeBaru, statusPinjaman, idPinjaman],
+          (updateError, updateResults) => {
+            if (updateError) {
+              console.error("Error saat mengupdate sisa piutang dan angsuran_ke:", updateError);
+              return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mengupdate sisa piutang dan angsuran_ke." });
+            }
+
+            res.redirect('/lihatPinjaman');
+          }
+        );
+      }
+    );
   });
 };
 
-// Fungsi untuk menampilkan form edit pinjaman
 exports.tampilkanEditPinjaman = async (req, res) => {
   const id = req.params.id;
 
@@ -333,7 +342,6 @@ exports.tampilkanEditPinjaman = async (req, res) => {
   });
 };
 
-// Fungsi untuk menyimpan perubahan pinjaman
 exports.simpanEditPinjaman = async (req, res) => {
   const id = req.params.id;
   const {

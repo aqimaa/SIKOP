@@ -109,12 +109,13 @@
                     </div>
                 <div><a href="/master/anggota/tambahAnggota"><button style="background-color: #22c55e; color: white;" class="px-4 py-2 rounded hover:bg-[#4c6e2f]">+ Tambah Anggota Baru</button></a></div>
             </div>
-            <table class="table-auto w-full border-collapse">
+            <table class="table-auto w-full border-collapse"> 
                 <thead>
-                    <tr class="text-center", style="background-color: #22c55e; color : white">
+                    <tr class="text-center" style="background-color: #22c55e; color: white">
                         <th class="p-4">Id</th>
                         <th class="p-4">Nama</th>
                         <th class="p-4">NIP</th>
+                        <th class="p-4">Wilayah</th> <!-- Kolom baru untuk wilayah -->
                         <th class="p-4">Status</th>
                         <th class="p-4">Aksi</th>
                     </tr>
@@ -123,8 +124,9 @@
                     <% anggota.forEach(function(anggota) { %>
                         <tr class="text-center border-b">
                             <td class="p-4"><%= anggota.id %></td>
-                            <td class="p-4"><%= anggota.nama %></td> <!-- Nama Pegawai dari tabel pegawai -->
+                            <td class="p-4"><%= anggota.nama %></td>
                             <td class="p-4"><%= anggota.nip_anggota %></td>
+                            <td class="p-4"><%= anggota.wilayah %></td> <!-- Menampilkan wilayah -->
                             <td class="p-4"><%= anggota.status %></td>
                             <td class="p-4">
                                 <form action="/master/anggota/ubahAnggota/<%= anggota.id %>" method="GET" class="inline">
@@ -142,8 +144,8 @@
                                         </svg>
                                     </button>
                                 </form>
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
                     <% }); %>
                 </tbody>
             </table>

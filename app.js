@@ -1,4 +1,3 @@
-// app.js
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
@@ -7,11 +6,8 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const allRoutes = require('./routes/indexRoutes.js');
 const methodOverride = require('method-override');
-
-// Initialize app
 const app = express();
 
-// Middleware & View Engine Setup
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(logger('dev'));
@@ -28,16 +24,11 @@ app.use(
   })
 );
 app.use(methodOverride('_method'));
-
-// Default Home Route
 app.use(allRoutes);
-
-// Handle 404 errors
 app.use('*', (req, res) => {
   res.status(404).json({ message: 'Not Found Error!!' });
 });
 
-// Start Server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

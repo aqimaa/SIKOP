@@ -21,99 +21,104 @@
                 <img src="/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
             </div>
         </div>
-
         <div class="flex-1 p-8 mt-12">
             <!-- Fixed Search and Filter -->
             <div class="fixed top-16 left-72 right-0 bg-gray-100 z-10 p-4">
                 <div class="text-center mb-4">
-                    <h2 class="text-2xl font-bold mt-4 mb-6">Data Pinjaman</h2>
+                    <h2 class="text-2xl font-bold mt-3">Data Pinjaman</h2>
                 </div>
 
-                <div class="flex justify-between mb-3">
-                    <div class="flex space-x-2">
-                        <input type="text" id="searchInput" placeholder="Cari Anggota" class="px-3 py-1 border rounded-md focus:outline-none">
-                        <button onclick="cariAnggota()" class="text-white px-3 py-1 rounded-md focus:outline-none" style="background-color: #5D8736;">
-                            <span class="material-icons">search</span>
-                        </button>
+                <!-- Search Bar + Tambah Button dalam satu baris -->
+                <div class="bg-white p-6 rounded shadow"> 
+                    <div class="flex items-center space-x-8 justify-between mb-4">
+                        <!-- Search Bar -->
+                        <div class="flex items-center space-x-2 flex-1 mt-1">
+                            <input type="text" id="searchInput" placeholder="Cari Anggota" class="border border-gray-300 p-2 rounded flex-1">
+                            <button onclick="cariAnggota()" class="text-white px-3 py-2 rounded-md focus:outline-none flex items-center justify-center" style="background-color: #5D8736;">
+                                <span class="material-icons">search</span>
+                            </button>               
+                        </div>
+        
+                        <!-- Tambah Button -->
+                        <a href="/pinjaman/tambah" class="px-4 py-2 rounded text-white flex items-center space-x-2 hover:bg-[#4c6e2f]" style="background-color: #5D8736;">
+                            <span class="material-icons text-white">add</span>
+                            <span>Pinjaman Baru</span>
+                        </a>
                     </div>
-                    <!-- Tombol Tambah Pinjaman Baru -->
-                    <a href="/pinjaman/tambah" class="text-white px-3 py-1 rounded flex items-center space-x-1" style="background-color: #5D8736;">
-                        <span class="material-icons">add</span>
-                        <span>Pinjaman Baru</span>
-                    </a>
+
+                    <!-- Scrollable Table -->
+                    <div class="bg-white rounded-lg shadow overflow-x-auto " style="max-height: calc(100vh - 280px); overflow-y: auto;">
+                        <table class="w-full">
+                            <thead style="position: sticky; top: 0; z-index: 5; background-color: #5D8736;">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-white">No.</th>
+                                    <th class="px-6 py-3 text-left text-white">No Anggota</th>
+                                    <th class="px-6 py-3 text-left text-white">Nama Anggota</th>
+                                    <th class="px-6 py-3 text-left text-white">Kategori</th>
+                                    <th class="px-6 py-3 text-left text-white">Jumlah Pinjaman</th>
+                                    <th class="px-6 py-3 text-left text-white">Jangka Waktu</th>
+                                    <th class="px-6 py-3 text-left text-white">Persen Margin</th>
+                                    <th class="px-6 py-3 text-left text-white">Angsuran Pokok</th>
+                                    <th class="px-6 py-3 text-left text-white">Angsuran Margin</th>
+                                    <th class="px-6 py-3 text-left text-white">Total Angsuran</th>
+                                    <th class="px-6 py-3 text-left text-white">Angsuran Ke</th>
+                                    <th class="px-6 py-3 text-left text-white">Sisa Piutang Pokok</th>
+                                    <th class="px-6 py-3 text-left text-white">Tanggal Perjanjian</th>
+                                    <th class="px-6 py-3 text-left text-white">Status</th>
+                                    <th class="px-6 py-3 text-left text-white">Bayar</th>
+                                    <th class="px-6 py-3 text-left text-white">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pinjamanTableBody">
+                                <% if (pinjaman && pinjaman.length > 0) { %>
+                                <% pinjaman.forEach((item, index) => { %>
+                                    <tr class="border-b border-gray-200">
+                                        <td class="px-6 py-4"><%= index + 1 %></td>
+                                        <td class="px-6 py-4"><%= item.id_anggota %></td>
+                                        <td class="px-6 py-4"><%= item.nama_anggota %></td>
+                                        <td class="px-6 py-4"><%= item.kategori %></td>
+                                        <td class="px-6 py-4"><%= item.jumlah_pinjaman.toLocaleString() %></td>
+                                        <td class="px-6 py-4"><%= item.jangka_waktu %> Bulan</td>
+                                        <td class="px-6 py-4"><%= item.margin_persen %>%</td>
+                                        <td class="px-6 py-4"><%= item.angsuran_pokok ? item.angsuran_pokok.toLocaleString() : '0' %></td>
+                                        <td class="px-6 py-4"><%= item.margin_per_bulan ? item.margin_per_bulan.toLocaleString() : '0' %></td>
+                                        <td class="px-6 py-4"><%= item.total_angsuran ? item.total_angsuran.toLocaleString() : '0' %></td>
+                                        <td class="px-6 py-4"><%= item.angsuran_ke || 0 %></td>
+                                        <td class="px-6 py-4"><%= item.sisa_piutang ? item.sisa_piutang.toLocaleString() : '0' %></td>
+                                        <td class="px-6 py-4">
+                                            <%= item.tanggal_perjanjian ? new Intl.DateTimeFormat('id-ID').format(new Date(item.tanggal_perjanjian)) : '-' %>
+                                        </td>
+                                        
+                                        <td class="px-6 py-4">
+                                            <% if (item.ket_status === 'Lunas') { %>
+                                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm whitespace-nowrap">Lunas</span>
+                                            <% } else { %>
+                                            <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm whitespace-nowrap">Belum Lunas</span>
+                                            <% } %>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex space-x-2">
+                                                <button onclick="bayarPinjaman('<%= item.id %>')" class="border border-gray-300 px-2 py-1 rounded p-1" style="background-color: #5D8736; color: white;">Bayar</button>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex space-x-2">
+                                                <button onclick="editPinjaman('<%= item.id %>')" class="border border-gray-300 rounded p-1"><span class="material-icons">edit</span></button>
+                                                <button onclick="hapusPinjaman('<%= item.id %>')" class="border border-gray-300 rounded p-1"><span class="material-icons">delete</span></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                                <% } else { %>
+                                <tr>
+                                    <td colspan="17" class="px-6 py-4 text-center">Tidak ada data pinjaman.</td>
+                                </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-
-            <!-- Scrollable Table -->
-            <div class="bg-white rounded-lg shadow overflow-x-auto mt-36" style="max-height: calc(100vh - 280px); overflow-y: auto;">
-                <table class="w-full">
-                    <thead style="position: sticky; top: 0; z-index: 5; background-color: #5D8736;">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-white">No.</th>
-                            <th class="px-6 py-3 text-left text-white">No Anggota</th>
-                            <th class="px-6 py-3 text-left text-white">Nama Anggota</th>
-                            <th class="px-6 py-3 text-left text-white">Kategori</th>
-                            <th class="px-6 py-3 text-left text-white">Jumlah Pinjaman</th>
-                            <th class="px-6 py-3 text-left text-white">Jangka Waktu</th>
-                            <th class="px-6 py-3 text-left text-white">Margin Persen</th>
-                            <th class="px-6 py-3 text-left text-white">Angsuran Pokok</th>
-                            <th class="px-6 py-3 text-left text-white">Angsuran Margin</th>
-                            <th class="px-6 py-3 text-left text-white">Total Angsuran</th>
-                            <th class="px-6 py-3 text-left text-white">Angsuran Ke</th>
-                            <th class="px-6 py-3 text-left text-white">Sisa Piutang</th>
-                            <th class="px-6 py-3 text-left text-white">Tanggal Perjanjian</th>
-                            <th class="px-6 py-3 text-left text-white">Status</th>
-                            <th class="px-6 py-3 text-left text-white">Bayar</th>
-                            <th class="px-6 py-3 text-left text-white">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="pinjamanTableBody">
-                        <% if (pinjaman && pinjaman.length > 0) { %>
-                          <% pinjaman.forEach((item, index) => { %>
-                            <tr class="border-b border-gray-200">
-                                <td class="px-6 py-4"><%= index + 1 %></td>
-                                <td class="px-6 py-4"><%= item.id_anggota %></td>
-                                <td class="px-6 py-4"><%= item.nama_anggota %></td>
-                                <td class="px-6 py-4"><%= item.kategori %></td>
-                                <td class="px-6 py-4"><%= item.jumlah_pinjaman.toLocaleString() %></td>
-                                <td class="px-6 py-4"><%= item.jangka_waktu %> Bulan</td>
-                                <td class="px-6 py-4"><%= item.margin_persen %>%</td>
-                                <td class="px-6 py-4"><%= item.angsuran_pokok ? item.angsuran_pokok.toLocaleString() : '0' %></td>
-                                <td class="px-6 py-4"><%= item.margin_per_bulan ? item.margin_per_bulan.toLocaleString() : '0' %></td>
-                                <td class="px-6 py-4"><%= item.total_angsuran ? item.total_angsuran.toLocaleString() : '0' %></td>
-                                <td class="px-6 py-4"><%= item.angsuran_ke || 0 %></td>
-                                <td class="px-6 py-4"><%= item.sisa_piutang ? item.sisa_piutang.toLocaleString() : '0' %></td>
-                                <td class="px-6 py-4"><%= item.tanggal_perjanjian.toISOString().split('T')[0] %></td>
-                                <td class="px-6 py-4">
-                                    <% if (item.ket_status === 'Lunas') { %>
-                                      <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm whitespace-nowrap">Lunas</span>
-                                    <% } else { %>
-                                      <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm whitespace-nowrap">Belum Lunas</span>
-                                    <% } %>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="flex space-x-2">
-                                        <button onclick="bayarPinjaman('<%= item.id %>')" class="border border-gray-300 px-2 py-1 rounded p-1" style="background-color: #5D8736; color: white;">Bayar</button>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="flex space-x-2">
-                                        <button onclick="editPinjaman('<%= item.id %>')" class="border border-gray-300 rounded p-1"><span class="material-icons">edit</span></button>
-                                        <button onclick="hapusPinjaman('<%= item.id %>')" class="border border-gray-300 rounded p-1"><span class="material-icons">delete</span></button>
-                                    </div>
-                                </td>
-                            </tr>
-                          <% }) %>
-                        <% } else { %>
-                          <tr>
-                            <td colspan="15" class="px-6 py-4 text-center">Tidak ada data pinjaman.</td>
-                          </tr>
-                        <% } %>
-                      </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
 
     <script>
         function cariAnggota() {

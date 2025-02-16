@@ -760,11 +760,14 @@ exports.prosesBayarKreditBarang = (req, res) => {
                                 // Kirim respon sukses
                                 res.status(200).json({
                                     success: true,
-                                    message: `Pembayaran angsuran ke-${newAngsuranKe} sebesar Rp ${jumlahBayarNumeric.toLocaleString('id-ID')} berhasil disimpan`,
-                                    angsuranKe: newAngsuranKe,
-                                    sisaPiutang: newSisaPiutang,
-                                    status: isLunas ? 'Lunas' : 'Belum Lunas'
-                                });
+                                    message: 'Pembayaran Kredit Barang Berhasil',
+                                    details: {
+                                        angsuranKe: newAngsuranKe,
+                                        jumlahBayar: jumlahBayarNumeric,
+                                        sisaPiutang: newSisaPiutang,
+                                        status: isLunas ? 'Lunas' : 'Belum Lunas'
+                                    }
+                                });                           
                             });                        
                         }
                     );

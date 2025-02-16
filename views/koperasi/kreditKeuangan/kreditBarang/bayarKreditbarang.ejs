@@ -172,7 +172,7 @@
                     jumlah_bayar: parseFloat(document.getElementById('jumlah_bayar').value),
                     keterangan: document.getElementById('keterangan').value || '-'
                 };
-    
+
                 // Validasi jumlah bayar sebelum konfirmasi
                 if (formData.jumlah_bayar > sisaPiutang) {
                     Swal.fire({
@@ -182,7 +182,7 @@
                     });
                     return;
                 }
-    
+
                 // Konfirmasi pembayaran dengan SweetAlert2
                 const result = await Swal.fire({
                     title: 'Konfirmasi Pembayaran',
@@ -194,7 +194,7 @@
                     confirmButtonText: 'Ya, Bayar',
                     cancelButtonText: 'Batal'
                 });
-    
+
                 if (result.isConfirmed) {
                     const submitBtn = document.getElementById('submitBtn');
                     submitBtn.disabled = true;
@@ -208,32 +208,37 @@
                             },
                             body: JSON.stringify(formData)
                         });
-    
+
                         const responseData = await response.json();
-    
+
                         if (responseData.success) {
-                            // Tampilkan SweetAlert2 untuk konfirmasi sukses
                             const result = await Swal.fire({
                                 icon: 'success',
-                                title: 'Pembayaran Berhasil!',
+                                title: responseData.message,
                                 html: `
-                                    <div class="text-left p-4">
-                                        <div class="mb-3">
-                                            <p class="font-semibold">Detail Pembayaran:</p>
-                                            <p class="mb-2">Angsuran ke-${responseData.angsuranKe}</p>
-                                            <p class="mb-2">Jumlah Bayar: Rp ${parseFloat(formData.jumlah_bayar).toLocaleString('id-ID')}</p>
-                                            <p class="mb-2">Sisa Piutang: Rp ${parseFloat(responseData.sisaPiutang).toLocaleString('id-ID')}</p>
-                                            <p class="text-${responseData.status === 'Lunas' ? 'green' : 'blue'}-600">Status: ${responseData.status}</p>
-                                        </div>
+                                    <div class="text-left">
+                                        <p class="mb-2"><strong>Angsuran:</strong> ke-${responseData.details.angsuranKe}</p>
+                                        <p class="mb-2"><strong>Jumlah Bayar:</strong> Rp ${responseData.details.jumlahBayar.toLocaleString('id-ID')}</p>
+                                        <p class="mb-2"><strong>Sisa Piutang:</strong> Rp ${responseData.details.sisaPiutang.toLocaleString('id-ID')}</p>
+                                        <p class="font-semibold ${responseData.details.status === 'Lunas' ? 'text-green-600' : 'text-blue-600'}">
+                                            Status: ${responseData.details.status}
+                                        </p>
                                     </div>
                                 `,
-                                showConfirmButton: true,
-                                confirmButtonText: 'OK',
+                                confirmButtonText: 'Selesai',
                                 confirmButtonColor: '#5D8736',
                                 allowOutsideClick: false
                             });
-    
+
                             if (result.isConfirmed) {
+                                // Kirim data ke parent window untuk update tabel
+                                window.opener.postMessage({
+                                    action: 'updateKreditBarang',
+                                    kreditId: kreditId,
+                                    angsuranKe: responseData.details.angsuranKe,
+                                    sisaPiutang: responseData.details.sisaPiutang,
+                                    status: responseData.details.status
+                                }, '*');
                                 window.location.href = '/kredit-barang';
                             }
                         } else {
@@ -252,7 +257,7 @@
                     }
                 }
             });
-    
+
             // Validasi jumlah bayar saat input
             document.getElementById('jumlah_bayar').addEventListener('input', function(e) {
                 const value = parseFloat(e.target.value) || 0;

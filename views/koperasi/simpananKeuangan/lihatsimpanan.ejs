@@ -23,10 +23,12 @@
                         <h1 class="text-2xl font-bold">Data Simpanan Koperasi</h1>
                         <p class="text-gray-600">Kelola data simpanan anggota koperasi</p>
                     </div>
-                    <button onclick="openSimpananModal()" class="px-4 py-2 rounded flex items-center gap-1 text-white hover:opacity-90" style="background-color: #5D8736">
-                        <span class="material-icons">add</span>
-                        <span>Tambah Simpanan Baru</span>
-                    </button>
+                    <div class="flex gap-2">
+                        <button onclick="openSimpananModal()" class="px-4 py-2 rounded flex items-center gap-1 text-white hover:opacity-90" style="background-color: #5D8736">
+                            <span class="material-icons">add</span>
+                            <span>Tambah Simpanan Baru</span>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Filters -->
@@ -64,7 +66,6 @@
     <script>
         let monthlySummaries = {};
         let paginationState = {};
-
         const months = [
             "Januari", "Februari", "Maret", "April", "Mei", "Juni",
             "Juli", "Agustus", "September", "Oktober", "November", "Desember"
@@ -73,8 +74,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             loadAnggotaFilter();
             loadYearFilter();
-
-            // Add event listeners to filters
             document.getElementById('filterAnggota').addEventListener('change', handleFilter);
             document.getElementById('filterTahun').addEventListener('change', handleFilter);
         });
@@ -93,274 +92,278 @@
                 });
             } catch (error) {
                 console.error('Error loading anggota list:', error);
+                showNotification('Gagal memuat daftar anggota', 'error');
             }
         }
+
         async function loadYearFilter() {
-    try {
-        const response = await fetch('/api/simpanan/years');
-        const years = await response.json();
-        
-        const filterTahun = document.getElementById('filterTahun');
-        filterTahun.innerHTML = ''; // Clear existing options
-        
-        // Add default option if needed
-        const defaultOption = document.createElement('option');
-        defaultOption.value = '';
-        defaultOption.textContent = 'Semua Tahun';
-        filterTahun.appendChild(defaultOption);
-        
-        // Add years with data
-        years.forEach(year => {
-            const option = document.createElement('option');
-            option.value = year;
-            option.textContent = year;
-            // Set current year as selected if it exists in the data
-            if (year === new Date().getFullYear()) {
-                option.selected = true;
+            try {
+                const response = await fetch('/api/simpanan/years');
+                const years = await response.json();
+                
+                const filterTahun = document.getElementById('filterTahun');
+                filterTahun.innerHTML = ''; // Clear existing options
+                
+                // Add default option
+                const defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.textContent = 'Semua Tahun';
+                filterTahun.appendChild(defaultOption);
+                
+                // Add years with data
+                years.forEach(year => {
+                    const option = document.createElement('option');
+                    option.value = year;
+                    option.textContent = year;
+                    if (year === new Date().getFullYear()) {
+                        option.selected = true;
+                    }
+                    filterTahun.appendChild(option);
+                });
+
+                handleFilter();
+            } catch (error) {
+                console.error('Error loading years:', error);
+                showNotification('Gagal memuat data tahun', 'error');
             }
-            filterTahun.appendChild(option);
-        });
+        }
 
-        // Trigger initial filter
-        handleFilter();
-    } catch (error) {
-        console.error('Error loading years:', error);
-        showNotification('Gagal memuat data tahun', 'error');
-    }
-}
-
-
-async function handleFilter() {
-    const anggota = document.getElementById('filterAnggota').value;
-    const tahun = document.getElementById('filterTahun').value;
-    
-    try {
-        const queryParams = new URLSearchParams({ anggota, tahun }).toString();
-        const response = await fetch(`/api/simpanan/filter?${queryParams}`);
-        const data = await response.json();
-        
-        showNotification('Data berhasil dimuat', 'info');
-        
-        // Organize data by month and year
-        monthlySummaries = data.reduce((acc, item) => {
-            const date = new Date(item.tanggal);
-            const month = date.getMonth();
-            const year = date.getFullYear();
+        async function handleFilter() {
+            const anggota = document.getElementById('filterAnggota').value;
+            const tahun = document.getElementById('filterTahun').value;
             
-            if (!acc[month]) {
-                acc[month] = {
+            try {
+                const queryParams = new URLSearchParams({ anggota, tahun }).toString();
+                const response = await fetch(`/api/simpanan/filter?${queryParams}`);
+                const data = await response.json();
+                
+                // Organize data by month and year
+                monthlySummaries = data.reduce((acc, item) => {
+                    const date = new Date(item.tanggal);
+                    const month = date.getMonth();
+                    const year = date.getFullYear();
+                    
+                    if (!acc[month]) {
+                        acc[month] = {
+                            items: [],
+                            total_wajib: 0,
+                            total_pokok: 0,
+                            total_sukarela: 0
+                        };
+                    }
+                    
+                    acc[month].items.push(item);
+                    acc[month].total_wajib += parseFloat(item.simpanan_wajib || 0);
+                    acc[month].total_pokok += parseFloat(item.simpanan_pokok || 0);
+                    acc[month].total_sukarela += parseFloat(item.simpanan_sukarela || 0);
+                    
+                    return acc;
+                }, {});
+
+                renderData();
+                
+            } catch (error) {
+                console.error('Error filtering data:', error);
+                showNotification('Gagal memuat data', 'error');
+            }
+        }
+
+        function renderData() {
+            const container = document.getElementById('dataContainer');
+            container.innerHTML = '';
+            const selectedYear = document.getElementById('filterTahun').value;
+
+            months.forEach((month, index) => {
+                const monthData = monthlySummaries[index] || {
                     items: [],
                     total_wajib: 0,
                     total_pokok: 0,
                     total_sukarela: 0
                 };
-            }
-            
-            acc[month].items.push(item);
-            acc[month].total_wajib += parseFloat(item.simpanan_wajib);
-            acc[month].total_pokok += parseFloat(item.simpanan_pokok);
-            acc[month].total_sukarela += parseFloat(item.simpanan_sukarela);
-            
-            return acc;
-        }, {});
 
-        renderData();
-        
-    } catch (error) {
-        console.error('Error filtering data:', error);
-        showNotification('Gagal memuat data', 'error');
-    }
-}
-function renderData() {
-    const container = document.getElementById('dataContainer');
-    container.innerHTML = '';
-    const selectedYear = document.getElementById('filterTahun').value;
+                // Filter items based on selected year
+                const filteredItems = monthData.items.filter(item => {
+                    const itemYear = new Date(item.tanggal).getFullYear();
+                    return !selectedYear || itemYear.toString() === selectedYear;
+                });
 
-    months.forEach((month, index) => {
-        const monthData = monthlySummaries[index] || {
-            items: [],
-            total_wajib: 0,
-            total_pokok: 0,
-            total_sukarela: 0
-        };
+                if (filteredItems.length === 0) return;
 
-        if (monthData.items.length === 0) return;
+                // Initialize pagination state for this month if not exists
+                if (!paginationState[index]) {
+                    paginationState[index] = {
+                        currentPage: 1,
+                        itemsPerPage: 10
+                    };
+                }
 
-        // Filter items based on selected year
-        const filteredItems = monthData.items.filter(item => {
-            const itemYear = new Date(item.tanggal).getFullYear();
-            return !selectedYear || itemYear.toString() === selectedYear;
-        });
+                // Calculate totals for filtered items
+                const totals = filteredItems.reduce((acc, item) => ({
+                    total_wajib: acc.total_wajib + parseFloat(item.simpanan_wajib || 0),
+                    total_pokok: acc.total_pokok + parseFloat(item.simpanan_pokok || 0),
+                    total_sukarela: acc.total_sukarela + parseFloat(item.simpanan_sukarela || 0)
+                }), { total_wajib: 0, total_pokok: 0, total_sukarela: 0 });
 
-        if (filteredItems.length === 0) return;
+                // Sort items by name
+                filteredItems.sort((a, b) => a.nama.localeCompare(b.nama));
 
-        // Initialize pagination state for this month if not exists
-        if (!paginationState[index]) {
-            paginationState[index] = {
-                currentPage: 1,
-                itemsPerPage: 10
-            };
+                // Pagination calculations
+                const { currentPage, itemsPerPage } = paginationState[index];
+                const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                const paginatedItems = filteredItems.slice(startIndex, endIndex);
+
+                const monthElement = document.createElement('div');
+                monthElement.className = 'bg-white rounded-lg shadow overflow-hidden mb-4';
+                monthElement.innerHTML = `
+                    <button
+                        class="w-full p-4 flex justify-between items-center hover:bg-gray-50"
+                        onclick="toggleMonth(${index})"
+                    >
+                        <div class="flex items-center gap-4">
+                            <span class="material-icons" id="icon-${index}">expand_more</span>
+                            <h3 class="font-semibold text-lg">${month}${selectedYear ? ` - ${selectedYear}` : ''}</h3>
+                            <span class="text-sm text-gray-500">${filteredItems.length} transaksi</span>
+                        </div>
+                        <div class="flex items-center gap-6">
+                            <div class="grid grid-cols-4 gap-6 text-sm">
+                                <div class="text-right">
+                                    <p class="text-gray-600">Simpanan Wajib</p>
+                                    <p class="font-semibold">Rp ${totals.total_wajib.toLocaleString('id-ID')}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-gray-600">Simpanan Pokok</p>
+                                    <p class="font-semibold">Rp ${totals.total_pokok.toLocaleString('id-ID')}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-gray-600">Simpanan Sukarela</p>
+                                    <p class="font-semibold">Rp ${totals.total_sukarela.toLocaleString('id-ID')}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-gray-600">Total</p>
+                                    <p class="font-semibold">Rp ${(totals.total_wajib + totals.total_pokok + totals.total_sukarela).toLocaleString('id-ID')}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </button>
+                    <div id="content-${index}" class="hidden border-t">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="text-white" style="background-color: #5D8736">
+                                        <th class="px-6 py-3 text-left">No</th>
+                                        <th class="px-6 py-3 text-left">NIP</th>
+                                        <th class="px-6 py-3 text-left">Nama</th>
+                                        <th class="px-6 py-3 text-left">Tanggal</th>
+                                        <th class="px-6 py-3 text-right">Simpanan Wajib</th>
+                                        <th class="px-6 py-3 text-right">Simpanan Pokok</th>
+                                        <th class="px-6 py-3 text-right">Simpanan Sukarela</th>
+                                        <th class="px-6 py-3 text-right">Total Simpanan</th>
+                                        <th class="px-6 py-3 text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    ${paginatedItems.map((item, idx) => `
+                                        <tr class="hover:bg-gray-50 transition-colors">
+                                            <td class="px-6 py-4 cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${startIndex + idx + 1}</td>
+                                            <td class="px-6 py-4 cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${item.nip}</td>
+                                            <td class="px-6 py-4 cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${item.nama}</td>
+                                            <td class="px-6 py-4 cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${new Date(item.tanggal).toLocaleDateString('id-ID')}</td>
+                                            <td class="px-6 py-4 text-right cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">Rp ${parseFloat(item.simpanan_wajib || 0).toLocaleString('id-ID')}</td>
+                                            <td class="px-6 py-4 text-right cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">Rp ${parseFloat(item.simpanan_pokok || 0).toLocaleString('id-ID')}</td>
+                                            <td class="px-6 py-4 text-right cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">Rp ${parseFloat(item.simpanan_sukarela || 0).toLocaleString('id-ID')}</td>
+                                            <td class="px-6 py-4 text-right font-bold cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">Rp ${(parseFloat(item.simpanan_wajib || 0) + parseFloat(item.simpanan_pokok || 0) + parseFloat(item.simpanan_sukarela || 0)).toLocaleString('id-ID')}</td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex justify-center space-x-2">
+                                                    <button class="text-blue-600 hover:text-blue-800" onclick="editSimpanan(${item.id})" title="Edit">
+                                                        <span class="material-icons">edit</span>
+                                                    </button>
+                                                    <button class="text-red-600 hover:text-red-800" onclick="deleteSimpanan(${item.id})" title="Hapus">
+                                                        <span class="material-icons">delete</span>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                        ${totalPages > 1 ? `
+                            <div class="flex justify-between items-center px-6 py-4 bg-gray-50">
+                                <div class="text-sm text-gray-600">
+                                    Menampilkan ${startIndex + 1}-${Math.min(endIndex, filteredItems.length)} dari ${filteredItems.length} data
+                                </div>
+                                <div class="flex gap-2">
+                                    <button
+                                        onclick="changePage(${index}, ${currentPage - 1})"
+                                        class="px-3 py-1 rounded border ${currentPage === 1 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'hover:bg-gray-100'}"
+                                        ${currentPage === 1 ? 'disabled' : ''}
+                                    >
+                                        <span class="material-icons text-sm">chevron_left</span>
+                                    </button>
+                                    ${generatePaginationButtons(index, currentPage, totalPages)}
+                                    <button
+                                        onclick="changePage(${index}, ${currentPage + 1})"
+                                        class="px-3 py-1 rounded border ${currentPage === totalPages ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'hover:bg-gray-100'}"
+                                        ${currentPage === totalPages ? 'disabled' : ''}
+                                    >
+                                        <span class="material-icons text-sm">chevron_right</span>
+                                    </button>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+
+                container.appendChild(monthElement);
+            });
         }
 
-        // Calculate totals for filtered items
-        const totals = filteredItems.reduce((acc, item) => ({
-            total_wajib: acc.total_wajib + parseFloat(item.simpanan_wajib || 0),
-            total_pokok: acc.total_pokok + parseFloat(item.simpanan_pokok || 0),
-            total_sukarela: acc.total_sukarela + parseFloat(item.simpanan_sukarela || 0)
-        }), { total_wajib: 0, total_pokok: 0, total_sukarela: 0 });
+        function generatePaginationButtons(monthIndex, currentPage, totalPages) {
+            const buttons = [];
+            const maxButtons = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+            let endPage = Math.min(totalPages, startPage + maxButtons - 1);
 
-        // Sort items by name
-        filteredItems.sort((a, b) => a.nama.localeCompare(b.nama));
+            if (endPage - startPage + 1 < maxButtons) {
+                startPage = Math.max(1, endPage - maxButtons + 1);
+            }
 
-        // Pagination calculations
-        const { currentPage, itemsPerPage } = paginationState[index];
-        const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
-        const startIndex = (currentPage - 1) * itemsPerPage;
-        const endIndex = startIndex + itemsPerPage;
-        const paginatedItems = filteredItems.slice(startIndex, endIndex);
+            for (let i = startPage; i <= endPage; i++) {
+                buttons.push(`
+                    <button
+                        onclick="changePage(${monthIndex}, ${i})"
+                        class="px-3 py-1 rounded border ${i === currentPage ? 'bg-green-600 text-white' : 'hover:bg-gray-100'}"
+                    >
+                        ${i}
+                    </button>
+                `);
+            }
 
-        const monthElement = document.createElement('div');
-        monthElement.className = 'bg-white rounded-lg shadow overflow-hidden';
-        monthElement.innerHTML = `
-            <button
-                class="w-full p-4 flex justify-between items-center hover:bg-gray-50"
-                onclick="toggleMonth(${index})"
-            >
-                <div class="flex items-center gap-4">
-                    <span class="material-icons" id="icon-${index}">expand_more</span>
-                    <h3 class="font-semibold text-lg">${month}${selectedYear ? ` - ${selectedYear}` : ''}</h3>
-                    <span class="text-sm text-gray-500">${filteredItems.length} transaksi</span>
-                </div>
-                <div class="flex items-center gap-6">
-                    <div class="grid grid-cols-3 gap-6 text-sm">
-                        <div class="text-right">
-                            <p class="text-gray-600">Simpanan Wajib</p>
-                            <p class="font-semibold">Rp ${totals.total_wajib.toLocaleString('id-ID')}</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-gray-600">Simpanan Pokok</p>
-                            <p class="font-semibold">Rp ${totals.total_pokok.toLocaleString('id-ID')}</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-gray-600">Simpanan Sukarela</p>
-                            <p class="font-semibold">Rp ${totals.total_sukarela.toLocaleString('id-ID')}</p>
-                        </div>
-                    </div>
-                </div>
-            </button>
-            <div id="content-${index}" class="hidden border-t">
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead>
-                            <tr class="text-white" style="background-color: #5D8736">
-                                <th class="px-6 py-3 text-left">No</th>
-                                <th class="px-6 py-3 text-left">NIP</th>
-                                <th class="px-6 py-3 text-left">Nama</th>
-                                <th class="px-6 py-3 text-left">Tanggal</th>
-                                <th class="px-6 py-3 text-right">Simpanan Wajib</th>
-                                <th class="px-6 py-3 text-right">Simpanan Pokok</th>
-                                <th class="px-6 py-3 text-right">Simpanan Sukarela</th>
-                                <th class="px-6 py-3 text-center">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-200">
-                            ${paginatedItems.map((item, idx) => `
-                                <tr class="hover:bg-gray-50 transition-colors">
-                                    <td class="px-6 py-4 cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${startIndex + idx + 1}</td>
-                                    <td class="px-6 py-4 cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${item.nip}</td>
-                                    <td class="px-6 py-4 cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${item.nama}</td>
-                                    <td class="px-6 py-4 cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${new Date(item.tanggal).toLocaleDateString('id-ID')}</td>
-                                    <td class="px-6 py-4 text-right cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${item.simpanan_wajib.toLocaleString('id-ID')}</td>
-                                    <td class="px-6 py-4 text-right cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${item.simpanan_pokok.toLocaleString('id-ID')}</td>
-                                    <td class="px-6 py-4 text-right cursor-pointer" onclick="showHistory('${item.id_anggota}', '${item.nama}')">${item.simpanan_sukarela.toLocaleString('id-ID')}</td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex justify-center space-x-2">
-                                            <button class="text-blue-600 hover:text-blue-800" onclick="editSimpanan(${item.id})" title="Edit">
-                                                <span class="material-icons">edit</span>
-                                            </button>
-                                            <button class="text-red-600 hover:text-red-800" onclick="deleteSimpanan(${item.id})" title="Hapus">
-                                                <span class="material-icons">delete</span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-                ${totalPages > 1 ? `
-                    <div class="flex justify-between items-center px-6 py-4 bg-gray-50">
-                        <div class="text-sm text-gray-600">
-                            Menampilkan ${startIndex + 1}-${Math.min(endIndex, filteredItems.length)} dari ${filteredItems.length} data
-                        </div>
-                        <div class="flex gap-2">
-                            <button 
-                                onclick="changePage(${index}, ${currentPage - 1})"
-                                class="px-3 py-1 rounded border ${currentPage === 1 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'hover:bg-gray-100'}"
-                                ${currentPage === 1 ? 'disabled' : ''}
-                            >
-                                <span class="material-icons text-sm">chevron_left</span>
-                            </button>
-                            ${generatePaginationButtons(index, currentPage, totalPages)}
-                            <button 
-                                onclick="changePage(${index}, ${currentPage + 1})"
-                                class="px-3 py-1 rounded border ${currentPage === totalPages ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'hover:bg-gray-100'}"
-                                ${currentPage === totalPages ? 'disabled' : ''}
-                            >
-                                <span class="material-icons text-sm">chevron_right</span>
-                            </button>
-                        </div>
-                    </div>
-                ` : ''}
-            </div>
-        `;
+            return buttons.join('');
+        }
 
-        container.appendChild(monthElement);
-    });
-}
-function generatePaginationButtons(monthIndex, currentPage, totalPages) {
-    const buttons = [];
-    const maxButtons = 5;
-    let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
-    let endPage = Math.min(totalPages, startPage + maxButtons - 1);
-
-    if (endPage - startPage + 1 < maxButtons) {
-        startPage = Math.max(1, endPage - maxButtons + 1);
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-        buttons.push(`
-            <button 
-                onclick="changePage(${monthIndex}, ${i})"
-                class="px-3 py-1 rounded border ${i === currentPage ? 'bg-green-600 text-white' : 'hover:bg-gray-100'}"
-            >
-                ${i}
-            </button>
-        `);
-    }
-
-    return buttons.join('');
-}
-
-function changePage(monthIndex, newPage) {
-    const totalItems = monthlySummaries[monthIndex].items.length;
-    const totalPages = Math.ceil(totalItems / paginationState[monthIndex].itemsPerPage);
-    
-    if (newPage >= 1 && newPage <= totalPages) {
-        paginationState[monthIndex].currentPage = newPage;
-        renderData();
-        
-        // Keep the month expanded after page change
-        const content = document.getElementById(`content-${monthIndex}`);
-        if (content) {
-            content.classList.remove('hidden');
-            const icon = document.getElementById(`icon-${monthIndex}`);
-            if (icon) {
-                icon.textContent = 'expand_less';
+        function changePage(monthIndex, newPage) {
+            const totalItems = monthlySummaries[monthIndex].items.length;
+            const totalPages = Math.ceil(totalItems / paginationState[monthIndex].itemsPerPage);
+            
+            if (newPage >= 1 && newPage <= totalPages) {
+                paginationState[monthIndex].currentPage = newPage;
+                renderData();
+                
+                // Keep the month expanded after page change
+                const content = document.getElementById(`content-${monthIndex}`);
+                if (content) {
+                    content.classList.remove('hidden');
+                    const icon = document.getElementById(`icon-${monthIndex}`);
+                    if (icon) {
+                        icon.textContent = 'expand_less';
+                    }
+                }
             }
         }
-    }
-}
+
         function toggleMonth(index) {
             const content = document.getElementById(`content-${index}`);
             const icon = document.getElementById(`icon-${index}`);
@@ -375,16 +378,16 @@ function changePage(monthIndex, newPage) {
         }
 
         async function deleteSimpanan(id) {
-    showDeleteConfirmModal(id);
-}
+            showDeleteConfirmModal(id);
+        }
 
-function editSimpanan(id) {
-    if (!id) {
-        showNotification('ID simpanan tidak valid', 'error');
-        return;
-    }
-    editSimpananById(id); // This calls the function we defined in editModal.ejs
-}
+        function editSimpanan(id) {
+            if (!id) {
+                showNotification('ID simpanan tidak valid', 'error');
+                return;
+            }
+            editSimpananById(id);
+        }
     </script>
 </body>
 </html>

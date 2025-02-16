@@ -60,14 +60,18 @@ const filterSimpanan = (req, res) => {
     let query = `
         SELECT
             MIN(s.id) as id,
-            id_anggota,
+            s.id_anggota,
             p.nip,
             p.nama,
             MAX(s.tanggal) as tanggal,
             SUM(s.simpanan_wajib) as simpanan_wajib,
             SUM(s.simpanan_pokok) as simpanan_pokok,
             SUM(s.simpanan_sukarela) as simpanan_sukarela,
-            s.metode_bayar
+            s.metode_bayar,
+            (SELECT 
+                SUM(s2.simpanan_wajib + s2.simpanan_pokok + s2.simpanan_sukarela) 
+             FROM simpanan s2 
+             WHERE s2.id_anggota = s.id_anggota) as total_simpanan
         FROM simpanan s
         JOIN anggota a ON s.id_anggota = a.id
         JOIN pegawai p ON a.nip_anggota = p.nip
@@ -86,7 +90,8 @@ const filterSimpanan = (req, res) => {
         params.push(tahun);
     }
 
-    query += ` GROUP BY id_anggota, p.nip, p.nama, s.metode_bayar, MONTH(s.tanggal), YEAR(s.tanggal)
+    query += ` GROUP BY id_anggota, p.nip, p.nama, s.metode_bayar,
+              MONTH(s.tanggal), YEAR(s.tanggal)
               ORDER BY s.tanggal ASC`;
 
     db.query(query, params, (error, results) => {
@@ -551,6 +556,38 @@ const getHistorySimpanan = (req, res) => {
     });
 };
 
+const checkAnggotaSimpanan = (req, res) => {
+    const { id_anggota } = req.params;
+    const currentMonth = new Date().getMonth() + 1;
+    const currentYear = new Date().getFullYear();
+
+    const query = `
+        SELECT 
+            (SELECT COUNT(*) > 0 
+             FROM simpanan 
+             WHERE id_anggota = ? AND simpanan_pokok > 0) as has_simpanan_pokok,
+            (SELECT COUNT(*) > 0 
+             FROM simpanan 
+             WHERE id_anggota = ? 
+             AND MONTH(tanggal) = ? 
+             AND YEAR(tanggal) = ?) as has_simpanan_bulan_ini
+    `;
+
+    db.query(query, [id_anggota, id_anggota, currentMonth, currentYear], (error, results) => {
+        if (error) {
+            console.error("Error:", error);
+            return res.status(500).json({ message: error.message });
+        }
+
+        res.json({
+            has_simpanan_pokok: results[0].has_simpanan_pokok === 1,
+            has_simpanan_bulan_ini: results[0].has_simpanan_bulan_ini === 1,
+            default_simpanan_wajib: 150000
+        });
+    });
+};
+
+
 module.exports = {
     lihatSimpanan,
     createPeriode,
@@ -562,5 +599,6 @@ module.exports = {
     deleteSimpanan,
     getHistorySimpanan,
     updateSimpanan,
-    getSimpananById
+    getSimpananById,
+    checkAnggotaSimpanan
 };

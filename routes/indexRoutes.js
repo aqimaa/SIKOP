@@ -44,16 +44,17 @@ router.get("/dashboardKeuangan", (req, res) => {
   res.render("dashboardKeuangan");
 });
 
-// <!=============================================== Route Pimpinan ===============================================> //
-
-
 router.get("/kreditPimpinan", kreditPimpinanController.getKreditPimpinan);
 router.post("/kredit/filter", kreditPimpinanController.filterData);
+
 router.get("/pinjamanPimpinan", pinjamanPimpinanController.getPinjamanPimpinan);
 router.post("/pinjaman/filter", pinjamanPimpinanController.filterData);
+
 router.get("/cetak-laporan", cetakLaporanPimpinanController.cetakLaporan);
 router.get("/simpananPimpinan", simpananPimpinanController.getSimpananPimpinan);
+
 router.post("/simpanan/filter", simpananPimpinanController.filterData);
+
 // <!=============================================== Route Kredit ===============================================> //
 
 router.get("/kredit-barang", kreditController.getAllKreditBarang);
@@ -123,6 +124,7 @@ router.get("/api/simpanan/filter", simpananController.filterSimpanan);
 router.get("/api/simpanan/years", simpananController.getAvailableYears);
 router.get("/api/anggota", simpananController.getAnggotaListSimpanan);
 router.get("/api/simpanan/history/:id_anggota", simpananController.getHistorySimpanan);
+router.get("/api/simpanan/check/:id_anggota", simpananController.checkAnggotaSimpanan);
 router.post("/api/simpanan/periode", simpananController.createPeriode);
 router.get("/api/simpanan/:id", simpananController.getSimpananById);
 router.put("/api/simpanan/:id", simpananController.updateSimpanan);

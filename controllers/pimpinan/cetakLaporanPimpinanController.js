@@ -6,7 +6,7 @@ const XLSX = require('xlsx');
 
 
 exports.cetakLaporan = (req, res) => {
-    const { tahun, bulan, jenis, tipe } = req.query;
+    const { tahun, bulan, jenis, tipe, namaPimpinan, nipPimpinan } = req.query;
     let query, tableName, jenisField;
 
     switch (tipe) {
@@ -153,7 +153,9 @@ exports.cetakLaporan = (req, res) => {
             jenis: jenis,
             data: results,
             tipe: tipe,
-            jenisKredit: jenis.replace('kredit_', '').toUpperCase()
+            jenisKredit: jenis.replace('kredit_', '').toUpperCase(),
+            namaPimpinan: namaPimpinan, // Tambahkan ini
+            nipPimpinan: nipPimpinan
         };
 
         const filePath = path.join(__dirname, '../../views/koperasi/pimpinan/templateLaporan.ejs');

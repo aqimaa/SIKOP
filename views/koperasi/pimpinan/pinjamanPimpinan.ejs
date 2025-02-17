@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
 <body class="flex">
@@ -332,19 +333,68 @@
                 loadData(currentPage);
             }
         });
+        
+        function showCustomPopup() {
+            Swal.fire({
+                title: 'Masukkan Nama dan NIP Pimpinan',
+                html:
+                    '<input id="namaPimpinan" class="swal2-input" placeholder="Nama Pimpinan">' +
+                    '<input id="nipPimpinan" class="swal2-input" placeholder="NIP Pimpinan">',
+                focusConfirm: false,
+                showCancelButton: true,
+                confirmButtonText: 'Lanjutkan',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    popup: 'custom-popup',
+                    input: 'custom-input',
+                    confirmButton: 'custom-confirm-button',
+                    cancelButton: 'custom-cancel-button'
+                },
+                preConfirm: () => {
+                    const namaPimpinan = document.getElementById('namaPimpinan').value;
+                    const nipPimpinan = document.getElementById('nipPimpinan').value;
+
+                    if (!namaPimpinan || !nipPimpinan) {
+                        Swal.showValidationMessage('Nama dan NIP harus diisi');
+                        return false;
+                    }
+
+                    return { namaPimpinan, nipPimpinan };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const { namaPimpinan, nipPimpinan } = result.value;
+
+                    // Redirect ke URL cetak laporan dengan parameter nama dan NIP
+                    const tahun = document.getElementById('tahun').value;
+                    const bulan = document.getElementById('bulan').value;
+                    const jenis = document.getElementById('jenis').value;
+                    const tipe = 'pinjaman'; // Sesuaikan dengan kebutuhan
+
+                    const url = `/cetak-laporan?tahun=${tahun}&bulan=${bulan}&jenis=${jenis}&tipe=${tipe}&namaPimpinan=${encodeURIComponent(namaPimpinan)}&nipPimpinan=${encodeURIComponent(nipPimpinan)}`;
+                    window.open(url, '_blank');
+                }
+            });
+        }
 
         // Fungsi cetak laporan
         function cetakLaporan() {
             const tahun = document.getElementById('tahun').value;
             const bulan = document.getElementById('bulan').value;
             const jenis = document.getElementById('jenis').value;
-            const tipe = 'pinjaman'; // Ganti dengan 'pinjaman' atau 'kredit' sesuai kebutuhan
+
             if (!tahun || !bulan || !jenis) {
-                alert('Harap lengkapi semua filter terlebih dahulu');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Harap lengkapi semua filter terlebih dahulu!',
+                    confirmButtonColor: '#5D8736',
+                });
                 return;
             }
-            const url = `/cetak-laporan?tahun=${tahun}&bulan=${bulan}&jenis=${jenis}&tipe=${tipe}`;
-            window.open(url, '_blank');
+
+            // Tampilkan popup input nama dan NIP
+            showCustomPopup();
         }
         function exportExcel() {
         const tahun = document.getElementById('tahun').value;

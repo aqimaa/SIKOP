@@ -43,16 +43,14 @@ router.get("/dashboardPimpinan", (req, res) => {
 router.get("/dashboardKeuangan", (req, res) => {
   res.render("dashboardKeuangan");
 });
+// <!=============================================== Route Pimpinan ===============================================> //
 
 router.get("/kreditPimpinan", kreditPimpinanController.getKreditPimpinan);
 router.post("/kredit/filter", kreditPimpinanController.filterData);
-
 router.get("/pinjamanPimpinan", pinjamanPimpinanController.getPinjamanPimpinan);
 router.post("/pinjaman/filter", pinjamanPimpinanController.filterData);
-
 router.get("/cetak-laporan", cetakLaporanPimpinanController.cetakLaporan);
 router.get("/simpananPimpinan", simpananPimpinanController.getSimpananPimpinan);
-
 router.post("/simpanan/filter", simpananPimpinanController.filterData);
 
 // <!=============================================== Route Kredit ===============================================> //

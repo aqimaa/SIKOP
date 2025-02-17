@@ -49,28 +49,38 @@ exports.getDashboardData = (req, res) => {
 
 exports.getPegawai = (req, res) => {
   const search = req.query.search || "";
-  const query = `SELECT * FROM pegawai WHERE nama LIKE ? OR nip LIKE ? OR wilayah LIKE ?`;
+  const tipe_pegawai = req.query.tipe_pegawai || ""; 
+  
+  const query = `
+    SELECT nip, nama, wilayah, tipe_pegawai
+    FROM pegawai 
+    WHERE (nama LIKE ? OR nip LIKE ? OR wilayah LIKE ?)
+    AND (tipe_pegawai LIKE ?)
+  `;
 
-  db.query(query, [`%${search}%`, `%${search}%`, `%${search}%`], (err, results) => {
+  db.query(query, [`%${search}%`, `%${search}%`, `%${search}%`, `%${tipe_pegawai}%`], (err, results) => {
     if (err) {
       return res.status(500).json({ message: "Database error", error: err });
     }
-    res.render("master/pegawai/pegawai", { pegawai: results, search });
+
+    // Pass the results, search, and tipe_pegawai to the view
+    res.render("master/pegawai/pegawai", { pegawai: results, search, tipe_pegawai });
   });
 };
 
 exports.createPegawai = (req, res) => {
   console.log("Data diterima dari frontend:", req.body);
 
-  const { nip, nama, wilayah } = req.body;
+  const { nip, nama, wilayah, tipe_pegawai } = req.body;
 
-  if (!nip || !nama || !wilayah) {
+  // Validate input
+  if (!nip || !nama || !wilayah || !tipe_pegawai) {
     return res.status(400).json({ success: false, message: "Semua field harus diisi" });
   }
 
-  const query = "INSERT INTO pegawai (nip, nama, wilayah) VALUES (?, ?, ?)";
+  const query = "INSERT INTO pegawai (nip, nama, wilayah, tipe_pegawai) VALUES (?, ?, ?, ?)";
 
-  db.query(query, [nip, nama, wilayah], (err, results) => {
+  db.query(query, [nip, nama, wilayah, tipe_pegawai], (err, results) => {
     if (err) {
       console.error("Database error:", err);
       return res.status(500).json({ success: false, message: "Terjadi kesalahan pada database", error: err.message });
@@ -97,9 +107,10 @@ exports.getUbahPegawai = (req, res) => {
 
 exports.updatePegawai = (req, res) => {
   const { nip } = req.params;
-  const { new_nip, nama, wilayah } = req.body;
+  const { new_nip, nama, wilayah, tipe_pegawai } = req.body; // Include tipe_pegawai
 
-  if (!new_nip || !nama || !wilayah) {
+  // Validate input fields
+  if (!new_nip || !nama || !wilayah || !tipe_pegawai) {
     return res.status(400).json({ message: 'Semua field harus diisi' });
   }
 
@@ -112,8 +123,9 @@ exports.updatePegawai = (req, res) => {
       return res.status(404).json({ message: 'Pegawai tidak ditemukan' });
     }
 
-    const updateQuery = 'UPDATE pegawai SET nip = ?, nama = ?, wilayah = ? WHERE nip = ?';
-    db.query(updateQuery, [new_nip, nama, wilayah, nip], (err) => {
+    // Update query to include tipe_pegawai
+    const updateQuery = 'UPDATE pegawai SET nip = ?, nama = ?, wilayah = ?, tipe_pegawai = ? WHERE nip = ?';
+    db.query(updateQuery, [new_nip, nama, wilayah, tipe_pegawai, nip], (err) => {
       if (err) {
         return res.status(500).json({ message: 'Database error', error: err });
       }
@@ -147,16 +159,17 @@ exports.getAnggota = (req, res) => {
   const searchQuery = req.query.search ? `%${req.query.search}%` : '%';
 
   const query = `
-      SELECT anggota.id, anggota.nip_anggota, pegawai.nama, pegawai.wilayah, anggota.status 
+      SELECT anggota.id, anggota.nip_anggota, pegawai.nama, pegawai.wilayah, pegawai.tipe_pegawai, anggota.status 
       FROM anggota 
       JOIN pegawai ON anggota.nip_anggota = pegawai.nip
       WHERE anggota.id LIKE ? 
         OR pegawai.nama LIKE ? 
         OR anggota.nip_anggota LIKE ? 
-        OR pegawai.wilayah LIKE ?
+        OR pegawai.wilayah LIKE ? 
+        OR pegawai.tipe_pegawai LIKE ?
   `;
 
-  db.query(query, [searchQuery, searchQuery, searchQuery, searchQuery], (err, results) => {
+  db.query(query, [searchQuery, searchQuery, searchQuery, searchQuery, searchQuery], (err, results) => {
     if (err) {
       return res.status(500).json({ message: 'Database error', error: err });
     }
@@ -173,6 +186,7 @@ exports.getPegawaiForAnggota = (req, res) => {
     res.render('master/anggota/tambahAnggota', { pegawai: results, title: 'Tambah Anggota' });
   });
 };
+
 
 exports.getAnggotaById = (req, res) => {
   const { id } = req.params;

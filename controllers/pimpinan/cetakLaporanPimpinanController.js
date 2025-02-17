@@ -196,7 +196,7 @@ exports.cetakLaporan = (req, res) => {
 // Fungsi export Excel
 exports.exportExcel = async (req, res) => {
     const { tahun, bulan, jenis, tipe } = req.query;
-    
+
     try {
         let query;
         let params = [];
@@ -204,7 +204,7 @@ exports.exportExcel = async (req, res) => {
         if (tipe === 'simpanan') {
             if (jenis === 'Semua') {
                 query = `
-                    SELECT 
+                    SELECT
                         p.nip,
                         p.nama,
                         s.simpanan_wajib,
@@ -220,7 +220,7 @@ exports.exportExcel = async (req, res) => {
                 params = [tahun, bulan];
             } else {
                 query = `
-                    SELECT 
+                    SELECT
                         p.nip,
                         p.nama,
                         s.${jenis} AS jumlah
@@ -235,7 +235,7 @@ exports.exportExcel = async (req, res) => {
         } else if (tipe === 'pinjaman') {
             if (jenis === 'Semua') {
                 query = `
-                    SELECT 
+                    SELECT
                         p.nip,
                         p.nama,
                         pj.kategori,
@@ -258,7 +258,7 @@ exports.exportExcel = async (req, res) => {
                 params = [tahun, bulan];
             } else {
                 query = `
-                    SELECT 
+                    SELECT
                         p.nip,
                         p.nama,
                         pj.kategori AS jenis,
@@ -276,36 +276,36 @@ exports.exportExcel = async (req, res) => {
         } else if (tipe === 'kredit') {
             if (jenis === 'kredit_barang') {
                 query = `
-                    SELECT 
+                    SELECT
                         p.nip,
                         p.nama,
-                        k.harga_pokok,
-                        k.jangka_waktu,
-                        k.pokok_dp,
-                        k.total_angsuran,
-                        k.pokok,
-                        k.margin,
-                        k.angsuran_ke,
-                        k.sisa_piutang,
-                        k.tanggal_mulai,
-                        k.ket_status
-                    FROM kredit_barang k
-                    JOIN anggota a ON k.id_anggota = a.id
+                        kb.harga_pokok,
+                        kb.jangka_waktu,
+                        kb.pokok_dp,
+                        CAST(kb.total_angsuran AS DECIMAL(10,2)) as total_angsuran,
+                        kb.pokok,
+                        kb.margin,
+                        kb.angsuran_ke,
+                        kb.sisa_piutang,
+                        kb.tanggal_mulai,
+                        kb.ket_status
+                    FROM kredit_barang kb
+                    JOIN anggota a ON kb.id_anggota = a.id
                     JOIN pegawai p ON a.nip_anggota = p.nip
-                    WHERE YEAR(k.tanggal_mulai) = ?
-                    AND MONTH(k.tanggal_mulai) = ?
+                    WHERE YEAR(kb.tanggal_mulai) = ?
+                    AND MONTH(kb.tanggal_mulai) = ?
                 `;
             } else {
                 query = `
-                    SELECT 
+                    SELECT
                         p.nip,
                         p.nama,
                         k.jumlah_pinjaman,
                         k.jangka_waktu,
                         k.margin_persen,
+                        CAST(k.total_angsuran AS DECIMAL(10,2)) as total_angsuran,
                         k.pokok,
                         k.margin,
-                        k.total_angsuran,
                         k.angsuran_ke,
                         k.sisa_piutang,
                         k.tanggal_mulai,
@@ -372,7 +372,7 @@ exports.exportExcel = async (req, res) => {
         });
     } catch (error) {
         console.error('Error generating Excel:', error);
-        res.status(500).json({ message: 'Error generating Excel file', error: error.message });
-    }
+        res.status(500).json({ message: 'Error generating Excel file', error: error.message });
+    }
 };
 

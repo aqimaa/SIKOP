@@ -23,7 +23,67 @@
                         <h1 class="text-2xl font-bold">Data Simpanan Koperasi</h1>
                         <p class="text-gray-600">Kelola data simpanan anggota koperasi</p>
                     </div>
-                    <div class="flex gap-2">
+                    <div class="flex gap-3">
+                        <!-- Export Dropdown -->
+                        <div class="relative">
+                            <button 
+                                onclick="toggleExportDropdown()"
+                                class="px-4 py-2 rounded flex items-center gap-1 text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
+                            >
+                                <span class="material-icons text-sm">download</span>
+                                <span>Export</span>
+                                <span class="material-icons text-sm">arrow_drop_down</span>
+                            </button>
+                            <!-- Dropdown menu untuk export -->
+                            <div id="exportDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                                <div class="p-3" onclick="event.stopPropagation()">
+                                    <!-- Export berdasarkan filter -->
+                                    <button 
+                                        onclick="exportSimpananSemua()"
+                                        class="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 flex items-center gap-2 rounded mb-1"
+                                    >
+                                        <span class="material-icons text-sm">picture_as_pdf</span>
+                                        <span>Export Data Terfilter</span>
+                                    </button>
+                                    
+                                    <!-- Export bulan ini -->
+                                    <button 
+                                        onclick="exportSimpananBulanIni()"
+                                        class="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 flex items-center gap-2 rounded mb-2"
+                                    >
+                                        <span class="material-icons text-sm">picture_as_pdf</span>
+                                        <span>Export Bulan Ini</span>
+                                    </button>
+                                    
+                                    <!-- Divider -->
+                                    <div class="border-t border-gray-200 mb-2"></div>
+                                    
+                                    <!-- Export bulan tertentu -->
+                                    <div class="space-y-2">
+                                        <p class="text-sm text-gray-600 px-4">Export Bulan Tertentu:</p>
+                                        <div class="px-4 space-y-2">
+                                            <select id="exportMonth" class="w-full p-2 border rounded text-sm">
+                                                <option value="">Pilih Bulan...</option>
+                                                <% for(let i = 0; i < 12; i++) { %>
+                                                    <option value="<%= i+1 %>"><%= months[i] %></option>
+                                                <% } %>
+                                            </select>
+                                            <select id="exportYear" class="w-full p-2 border rounded text-sm">
+                                                <option value="">Pilih Tahun...</option>
+                                            </select>
+                                            <button 
+                                                onclick="exportSimpananBulanTertentu()"
+                                                class="w-full px-4 py-2 text-white bg-green-600 hover:bg-green-700 rounded flex items-center justify-center gap-2 text-sm"
+                                                style="background-color: #5D8736"
+                                            >
+                                                <span class="material-icons text-sm">picture_as_pdf</span>
+                                                <span>Export</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <button onclick="openSimpananModal()" class="px-4 py-2 rounded flex items-center gap-1 text-white hover:opacity-90" style="background-color: #5D8736">
                             <span class="material-icons">add</span>
                             <span>Tambah Simpanan Baru</span>
@@ -76,6 +136,22 @@
             loadYearFilter();
             document.getElementById('filterAnggota').addEventListener('change', handleFilter);
             document.getElementById('filterTahun').addEventListener('change', handleFilter);
+            
+            // Reset pilihan bulan dan tahun saat dropdown ditutup
+            document.addEventListener('click', function(event) {
+                const dropdown = document.getElementById('exportDropdown');
+                const exportButton = event.target.closest('[onclick*="toggleExportDropdown"]');
+                const dropdownContent = event.target.closest('#exportDropdown');
+                
+                if (!exportButton || !exportButton.hasAttribute('onclick') || exportButton.getAttribute('onclick') !== 'toggleExportDropdown()') {
+                    dropdown.classList.add('hidden');
+                    // Reset pilihan
+                    const exportMonth = document.getElementById('exportMonth');
+                    const exportYear = document.getElementById('exportYear');
+                    if (exportMonth) exportMonth.value = '';
+                    if (exportYear) exportYear.value = '';
+                }
+            });
         });
 
         async function loadAnggotaFilter() {
@@ -120,12 +196,86 @@
                     }
                     filterTahun.appendChild(option);
                 });
-
                 handleFilter();
             } catch (error) {
                 console.error('Error loading years:', error);
                 showNotification('Gagal memuat data tahun', 'error');
             }
+        }
+
+        async function loadExportYearFilter() {
+            try {
+                const response = await fetch('/api/simpanan/years');
+                const years = await response.json();
+                
+                const exportYear = document.getElementById('exportYear');
+                exportYear.innerHTML = '<option value="">Pilih Tahun...</option>'; 
+                
+                years.forEach(year => {
+                    const option = document.createElement('option');
+                    option.value = year;
+                    option.textContent = year;
+                    exportYear.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading export years:', error);
+                showNotification('Gagal memuat data tahun untuk export', 'error');
+            }
+        }
+
+        function toggleExportDropdown() {
+            const dropdown = document.getElementById('exportDropdown');
+            if (dropdown.classList.contains('hidden')) {
+                loadExportYearFilter(); // Load tahun ketika dropdown dibuka
+            }
+            dropdown.classList.toggle('hidden');
+        }
+
+        function exportSimpananBulanTertentu() {
+            const bulan = document.getElementById('exportMonth').value;
+            const tahun = document.getElementById('exportYear').value;
+            
+            if (!bulan || !tahun) {
+                showNotification('Pilih bulan dan tahun terlebih dahulu', 'warning');
+                return;
+            }
+            
+            const anggota = document.getElementById('filterAnggota').value;
+            let url = '/simpanan/export';
+            const params = new URLSearchParams();
+            
+            params.append('bulan', bulan);
+            params.append('tahun', tahun);
+            if (anggota) params.append('anggota', anggota);
+            
+            url += '?' + params.toString();
+            window.location.href = url;
+        }
+
+        function exportSimpananBulanIni() {
+            const currentDate = new Date();
+            const tahun = document.getElementById('filterTahun').value || currentDate.getFullYear();
+            const bulan = currentDate.getMonth() + 1;
+            
+            const url = `/simpanan/export?tahun=${tahun}&bulan=${bulan}`;
+            window.location.href = url;
+        }
+
+        function exportSimpananSemua() {
+            const tahun = document.getElementById('filterTahun').value;
+            const anggota = document.getElementById('filterAnggota').value;
+            
+            let url = '/simpanan/export';
+            const params = new URLSearchParams();
+            
+            if (tahun) params.append('tahun', tahun);
+            if (anggota) params.append('anggota', anggota);
+            
+            if (params.toString()) {
+                url += '?' + params.toString();
+            }
+            
+            window.location.href = url;
         }
 
         async function handleFilter() {
@@ -159,7 +309,6 @@
                     
                     return acc;
                 }, {});
-
                 renderData();
                 
             } catch (error) {
@@ -169,25 +318,25 @@
         }
 
         function renderData() {
-    const container = document.getElementById('dataContainer');
-    container.innerHTML = '';
-    const selectedYear = document.getElementById('filterTahun').value;
+            const container = document.getElementById('dataContainer');
+            container.innerHTML = '';
+            const selectedYear = document.getElementById('filterTahun').value;
 
-    months.forEach((month, index) => {
-        const monthData = monthlySummaries[index] || {
-            items: [],
-            total_wajib: 0,
-            total_pokok: 0,
-            total_sukarela: 0
-        };
+            months.forEach((month, index) => {
+                const monthData = monthlySummaries[index] || {
+                    items: [],
+                    total_wajib: 0,
+                    total_pokok: 0,
+                    total_sukarela: 0
+                };
 
-               // Filter items based on selected year
-        const filteredItems = monthData.items.filter(item => {
-            const itemYear = new Date(item.tanggal).getFullYear();
-            return !selectedYear || itemYear.toString() === selectedYear;
-        });
+                // Filter items based on selected year
+                const filteredItems = monthData.items.filter(item => {
+                    const itemYear = new Date(item.tanggal).getFullYear();
+                    return !selectedYear || itemYear.toString() === selectedYear;
+                });
 
-        if (filteredItems.length === 0) return;
+                if (filteredItems.length === 0) return;
 
                 // Initialize pagination state for this month if not exists
                 if (!paginationState[index]) {
@@ -245,15 +394,8 @@
                                     <p class="font-semibold">Rp ${(totals.total_wajib + totals.total_pokok + totals.total_sukarela).toLocaleString('id-ID')}</p>
                                 </div>
                             </div>
-                            <button 
-                            onclick="exportSimpananBulan(event, ${index + 1})"
-                            class="px-3 py-1.5 bg-blue-600 text-white rounded flex items-center gap-1 hover:bg-blue-700 text-sm">
-                            <span class="material-icons text-sm">download</span>
-                            Export PDF
-                        </button>
-                    </div>
-                </button>
-            </div>
+                        </div>
+                    </button>
                     <div id="content-${index}" class="hidden border-t">
                         <div class="overflow-x-auto">
                             <table class="w-full">
@@ -322,7 +464,6 @@
                         ` : ''}
                     </div>
                 `;
-
                 container.appendChild(monthElement);
             });
         }
@@ -347,31 +488,7 @@
                     </button>
                 `);
             }
-
             return buttons.join('');
-        }
-
-        function exportSimpananBulan(event, bulan) {
-            // Prevent button click from triggering toggleMonth
-            event.stopPropagation();
-            
-            const anggota = document.getElementById('filterAnggota').value;
-            const tahun = document.getElementById('filterTahun').value;
-            
-            if (!tahun) {
-                showNotification('Pilih tahun terlebih dahulu', 'warning');
-                return;
-            }
-            
-            let url = '/simpanan/export';
-            const params = new URLSearchParams();
-            
-            if (anggota) params.append('anggota', anggota);
-            params.append('tahun', tahun);
-            params.append('bulan', bulan);
-            
-            url += '?' + params.toString();
-            window.location.href = url;
         }
 
         function changePage(monthIndex, newPage) {

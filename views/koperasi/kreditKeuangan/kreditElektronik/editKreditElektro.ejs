@@ -6,12 +6,52 @@
     <title>Edit Kredit Elektronik</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function formatNumberInput(input) {
+            let value = input.value.replace(/[^0-9,]/g, ''); 
+            value = value.replace(/\./g, ''); 
+            let parts = value.split(','); 
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.'); 
+            input.value = parts.join(','); 
+        }
+
+        function validateNumberInput(input) {
+            formatNumberInput(input);
+        }
+
+        function formatValuesOnLoad() {
+            const inputs = document.querySelectorAll('input[type="text"]');
+            inputs.forEach(input => {
+                if (input.name !== "id_anggota" && input.name !== "nama_anggota" && input.value) {
+                    input.value = parseFloat(input.value.replace(/\./g, '').replace(',', '.')).toLocaleString('id-ID', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                }
+            });
+        }
+
+        window.onload = formatValuesOnLoad;
+
+        function formatDataBeforeSubmit() {
+            const inputs = document.querySelectorAll('input[type="text"]');
+            inputs.forEach(input => {
+                if (input.name !== "id_anggota" && input.name !== "nama_anggota" && input.value) {
+                    input.value = input.value.replace(/\./g, '').replace(',', '.');
+                }
+            });
+        }
+
+        document.querySelector('form').addEventListener('submit', function(event) {
+            formatDataBeforeSubmit();
+        });
+    </script>
 </head>
-<body class="flex bg-gray-100">
+<body class="flex bg-white">
     <!-- Sidebar -->
     <%- include('../../../sidebar') %>
 
+    <!-- Main Content -->
     <div class="flex-1 ml-72 p-8">
         <div class="fixed top-0 left-72 right-0 flex justify-between shadow-md p-4 bg-white z-20">
             <h1 class="text-2xl"></h1>
@@ -25,190 +65,67 @@
             <h1 class="text-2xl font-bold mb-8">Edit Kredit Elektronik</h1>
         </div>
 
-        <form id="editKreditForm" action="/kreditElektronik/edit/<%= kredit.id %>?_method=PUT" method="POST" class="max-w-2xl mx-auto bg-white shadow-md rounded-lg p-8">            <div class="grid grid-cols-2 gap-6">
-                <!-- ID Anggota (Read Only) -->
-                <div class="col-span-2 md:col-span-1">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">
-                        ID Anggota
-                    </label>
-                    <input 
-                        type="text" 
-                        value="<%= kredit.id_anggota %>" 
-                        readonly 
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 bg-gray-200 leading-tight"
-                    >
-                    <input type="hidden" name="id_anggota" value="<%= kredit.id_anggota %>">
-                </div>
-
-                <!-- Nama Anggota (Read Only) -->
-                <div class="col-span-2 md:col-span-1">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">
-                        Nama Anggota
-                    </label>
-                    <input 
-                        type="text" 
-                        value="<%= kredit.nama_anggota || '' %>" 
-                        readonly 
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 bg-gray-200 leading-tight"
-                    >
-                </div>
-        
-                <!-- Jumlah Pinjaman -->
-                <div class="col-span-2 md:col-span-1">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="jumlah_pinjaman">
-                        Jumlah Pinjaman
-                    </label>
-                    <input 
-                        type="number" 
-                        id="jumlah_pinjaman" 
-                        name="jumlah_pinjaman" 
-                        value="<%= kredit.jumlah_pinjaman %>" 
-                        required 
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                </div>
-        
-                <!-- Jangka Waktu -->
-                <div class="col-span-2 md:col-span-1">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="jangka_waktu">
-                        Jangka Waktu (Bulan)
-                    </label>
-                    <input 
-                        type="number" 
-                        id="jangka_waktu" 
-                        name="jangka_waktu" 
-                        value="<%= kredit.jangka_waktu %>" 
-                        required 
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                </div>
-        
-                <!-- Margin Persen -->
-                <div class="col-span-2 md:col-span-1">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="margin_persen">
-                        Margin (%)
-                    </label>
-                    <input 
-                        type="number" 
-                        id="margin_persen" 
-                        name="margin_persen" 
-                        value="<%= kredit.margin_persen %>" 
-                        step="0.01"
-                        required 
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                </div>
-        
-                <!-- Tanggal Perjanjian -->
-                <div class="col-span-2 md:col-span-1">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="tanggal_mulai">
-                        Tanggal Perjanjian
-                    </label>
-                    <input 
-                        type="date" 
-                        id="tanggal_mulai" 
-                        name="tanggal_mulai" 
-                        value="<%= new Date(kredit.tanggal_mulai).toISOString().split('T')[0] %>" 
-                        required 
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                </div>
-        
-                <!-- Status -->
-                <div class="col-span-2">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="ket_status">
-                        Status
-                    </label>
-                    <select 
-                        id="ket_status" 
-                        name="ket_status" 
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                        <option value="Belum Lunas" <%= kredit.ket_status === 'Belum Lunas' ? 'selected' : '' %>>Belum Lunas</option>
-                        <option value="Lunas" <%= kredit.ket_status === 'Lunas' ? 'selected' : '' %>>Lunas</option>
-                    </select>
+        <form action="/kreditElektronik/edit/<%= kredit.id %>" method="POST" class="space-y-6">
+            <!-- Data Anggota -->
+            <div class="bg-gray-200 p-6 rounded-md shadow-md">
+                <h3 class="text-xl font-semibold mb-4">Data Anggota</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Nomor Anggota</label>
+                        <input type="text" name="id_anggota" value="<%= kredit.id_anggota %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" readonly>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Nama Anggota</label>
+                        <input type="text" name="nama_anggota" value="<%= kredit.nama_anggota %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" readonly>
+                    </div>
                 </div>
             </div>
-        
-            <!-- Hidden Inputs untuk Data Tambahan -->
-            <input type="hidden" name="pokok" value="<%= kredit.pokok %>">
-            <input type="hidden" name="margin" value="<%= kredit.margin %>">
-            <input type="hidden" name="angsuran_ke" value="<%= kredit.angsuran_ke %>">
-            <input type="hidden" name="sisa_piutang" value="<%= kredit.sisa_piutang %>">
-        
-            <!-- Tombol Aksi -->
-            <div class="flex items-center justify-between mt-6">
-                <button 
-                    type="submit" 
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                >
-                    Perbarui Data
-                </button>
-                <a 
-                    href="/lihatKreditElektronik" 
-                    class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                >
-                    Batal
-                </a>
+
+            <!-- Data Kredit -->
+            <div class="bg-gray-200 p-6 rounded-md shadow-md">
+                <h3 class="text-xl font-semibold mb-4">Data Kredit</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Jumlah Pinjaman</label>
+                        <input type="text" name="jumlah_pinjaman" value="<%= kredit.jumlah_pinjaman.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" oninput="validateNumberInput(this)">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Jangka Waktu (Bulan)</label>
+                        <input type="number" name="jangka_waktu" value="<%= kredit.jangka_waktu %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Margin (%)</label>
+                        <input type="text" name="margin_persen" value="<%= kredit.margin_persen.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" oninput="validateNumberInput(this)">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Tanggal Mulai</label>
+                        <input type="date" name="tanggal_mulai" value="<%= kredit.tanggal_mulai.toISOString().split('T')[0] %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Angsuran Pokok</label>
+                        <input type="text" name="pokok" value="<%= kredit.pokok.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" oninput="validateNumberInput(this)">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Angsuran Margin</label>
+                        <input type="text" name="margin" value="<%= kredit.margin.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" oninput="validateNumberInput(this)">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Total Angsuran</label>
+                        <input type="text" name="total_angsuran" value="<%= kredit.total_angsuran.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" oninput="validateNumberInput(this)">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Sisa Piutang</label>
+                        <input type="text" name="sisa_piutang" value="<%= kredit.sisa_piutang.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %>" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" oninput="validateNumberInput(this)">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex space-x-4">
+                <button type="button" onclick="window.location.href='/lihatKreditElektronik'" class="flex-1 border border-green-800 text-green-800 py-2 px-4 rounded-md mt-4" style="border-color: #5D8736; color: #5D8736;">Batal</button>
+                <button type="submit" class="flex-1 text-white py-2 px-4 rounded-md mt-4" style="background-color: #5D8736;">Simpan</button>
             </div>
         </form>
     </div>
-
-    <script>
-        document.getElementById('editKreditForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const form = e.target;
-            const formData = new FormData(form);
-
-            const data = {
-                id_anggota: formData.get('id_anggota'),
-                jumlah_pinjaman: parseFloat(formData.get('jumlah_pinjaman')),
-                jangka_waktu: parseInt(formData.get('jangka_waktu')),
-                margin_persen: parseFloat(formData.get('margin_persen')),
-                tanggal_mulai: formData.get('tanggal_mulai'),
-                ket_status: formData.get('ket_status'),
-                pokok: parseFloat(formData.get('pokok')),
-                margin: parseFloat(formData.get('margin')),
-                angsuran_ke: parseInt(formData.get('angsuran_ke')),
-                sisa_piutang: parseFloat(formData.get('sisa_piutang'))
-            };
-            
-            fetch(`/kreditElektronik/edit/<%= kredit.id %>`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil!',
-                        text: 'Data kredit elektronik berhasil diperbarui',
-                        confirmButtonText: 'OK'
-                    }).then(() => {
-                        window.location.href = '/lihatKreditElektronik';
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal',
-                        text: data.message || 'Gagal memperbarui data'
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Kesalahan',
-                    text: 'Terjadi kesalahan saat memperbarui data'
-                });
-            });
-        });
-    </script>
 </body>
 </html>

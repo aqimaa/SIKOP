@@ -68,65 +68,94 @@ exports.hapusKreditUmroh = async (req, res) => {
 
 exports.tambahKreditUmroh = async (req, res) => {
   const {
-    id_anggota,
-    jumlah_pinjaman,
-    jangka_waktu,
-    total_angsuran,
-    pokok,
-    margin,
-    margin_persen,
-    tanggal_mulai,
-    sisa_piutang
+      id_anggota,
+      jumlah_pinjaman,
+      jangka_waktu,
+      margin_persen,
+      tanggal_mulai,
   } = req.body;
 
+  // Validasi input
+  if (!id_anggota || !jumlah_pinjaman || !jangka_waktu || !margin_persen || !tanggal_mulai) {
+      return res.status(400).json({ success: false, message: "Semua field harus diisi." });
+  }
+
+  // Parse dan format angka
+  const parseNumberWithComma = (value) => {
+      if (!value || typeof value !== 'string') return 0;
+      return parseFloat(value.replace(/\./g, '').replace(',', '.'));
+  };
+
+  const formattedJumlahPinjaman = parseNumberWithComma(jumlah_pinjaman);
+  const formattedMarginPersen = parseNumberWithComma(margin_persen);
+
+  // Hitung total margin, pokok, dan total angsuran
+  const pokokPerBulan = formattedJumlahPinjaman / jangka_waktu;
+  
+  // Perbaikan perhitungan margin
+  const marginPerBulan = (formattedJumlahPinjaman * formattedMarginPersen) / 100;
+  const totalMargin = marginPerBulan * jangka_waktu;
+  
+  const totalAngsuranPerBulan = pokokPerBulan + marginPerBulan;
+  const totalAngsuranKeseluruhan = totalAngsuranPerBulan * jangka_waktu;
+  
+  // Query untuk menyimpan data ke database
   const query = `
-    INSERT INTO kredit_umroh 
-    (id_anggota, jumlah_pinjaman, jangka_waktu, total_angsuran, pokok, margin, sisa_piutang, tanggal_mulai, ket_status, angsuran_ke, margin_persen)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO kredit_umroh
+      (id_anggota, jumlah_pinjaman, jangka_waktu, margin_persen, pokok, margin, 
+       total_angsuran, sisa_piutang, tanggal_mulai, ket_status, angsuran_ke)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   const values = [
-    id_anggota,
-    jumlah_pinjaman,
-    jangka_waktu,
-    total_angsuran,
-    pokok,
-    margin,
-    sisa_piutang,
-    tanggal_mulai,
-    'Belum Lunas',
-    0,
-    margin_persen
+      id_anggota,
+      formattedJumlahPinjaman,
+      jangka_waktu,
+      formattedMarginPersen,
+      pokokPerBulan,
+      marginPerBulan,
+      totalAngsuranPerBulan,
+      formattedJumlahPinjaman,
+      tanggal_mulai,
+      "Belum Lunas",
+      0
   ];
 
   db.query(query, values, (error, results) => {
-    if (error) {
-      console.error("Error saat menambahkan kredit umroh:", error);
-      return res.status(500).json({ success: false, message: "Terjadi kesalahan saat menambahkan kredit umroh." });
-    }
-    res.redirect('/lihatKreditUmroh');
+      if (error) {
+          console.error("Error saat menambahkan kredit umroh:", error);
+          return res.status(500).json({
+              success: false,
+              message: "Terjadi kesalahan saat menambahkan kredit umroh."
+          });
+      }
+      res.redirect("/lihatKreditUmroh");
   });
 };
 
 exports.getAnggotaById = async (req, res) => {
   const idAnggota = req.params.id;
+  console.log("ID Anggota yang diminta:", idAnggota);
 
   const query = `
-      SELECT pg.nama 
+      SELECT pg.nama
       FROM anggota a
       JOIN pegawai pg ON a.nip_anggota = pg.nip
       WHERE a.id = ?
   `;
 
   db.query(query, [idAnggota], (error, results) => {
-    if (error) {
-      console.error("Error saat mengambil data anggota:", error);
-      return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mengambil data anggota." });
-    }
-    if (results.length === 0) {
-      return res.json({ success: false, message: "Anggota tidak ditemukan." });
-    }
-    res.json({ success: true, nama: results[0].nama });
+      if (error) {
+          console.error("Error saat mengambil data anggota:", error);
+          return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mengambil data anggota." });
+      }
+
+      console.log("Hasil query:", results);
+      if (results.length === 0) {
+          return res.json({ success: false, message: "Anggota tidak ditemukan." });
+      }
+
+      res.json({ success: true, nama: results[0].nama });
   });
 };
 

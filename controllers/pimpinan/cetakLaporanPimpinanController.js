@@ -2,6 +2,8 @@ const db = require('../../config/database');
 const ejs = require('ejs');
 const pdf = require('html-pdf');
 const path = require('path');
+const XLSX = require('xlsx');
+
 
 exports.cetakLaporan = (req, res) => {
     const { tahun, bulan, jenis, tipe } = req.query;
@@ -190,3 +192,187 @@ exports.cetakLaporan = (req, res) => {
         });
     });
 };
+
+// Fungsi export Excel
+exports.exportExcel = async (req, res) => {
+    const { tahun, bulan, jenis, tipe } = req.query;
+    
+    try {
+        let query;
+        let params = [];
+
+        if (tipe === 'simpanan') {
+            if (jenis === 'Semua') {
+                query = `
+                    SELECT 
+                        p.nip,
+                        p.nama,
+                        s.simpanan_wajib,
+                        s.simpanan_pokok,
+                        s.simpanan_sukarela,
+                        (s.simpanan_wajib + s.simpanan_pokok + s.simpanan_sukarela) AS total_simpanan
+                    FROM simpanan s
+                    JOIN anggota a ON s.id_anggota = a.id
+                    JOIN pegawai p ON a.nip_anggota = p.nip
+                    WHERE YEAR(s.tanggal) = ?
+                    AND MONTH(s.tanggal) = ?
+                `;
+                params = [tahun, bulan];
+            } else {
+                query = `
+                    SELECT 
+                        p.nip,
+                        p.nama,
+                        s.${jenis} AS jumlah
+                    FROM simpanan s
+                    JOIN anggota a ON s.id_anggota = a.id
+                    JOIN pegawai p ON a.nip_anggota = p.nip
+                    WHERE YEAR(s.tanggal) = ?
+                    AND MONTH(s.tanggal) = ?
+                `;
+                params = [tahun, bulan];
+            }
+        } else if (tipe === 'pinjaman') {
+            if (jenis === 'Semua') {
+                query = `
+                    SELECT 
+                        p.nip,
+                        p.nama,
+                        pj.kategori,
+                        pj.jumlah_pinjaman,
+                        pj.jangka_waktu,
+                        pj.margin_persen,
+                        pj.angsuran_pokok,
+                        pj.margin_per_bulan,
+                        pj.total_angsuran,
+                        pj.angsuran_ke,
+                        pj.sisa_piutang,
+                        pj.tanggal_perjanjian,
+                        pj.ket_status
+                    FROM pinjaman pj
+                    JOIN anggota a ON pj.id_anggota = a.id
+                    JOIN pegawai p ON a.nip_anggota = p.nip
+                    WHERE YEAR(pj.tanggal_perjanjian) = ?
+                    AND MONTH(pj.tanggal_perjanjian) = ?
+                `;
+                params = [tahun, bulan];
+            } else {
+                query = `
+                    SELECT 
+                        p.nip,
+                        p.nama,
+                        pj.kategori AS jenis,
+                        pj.jangka_waktu,
+                        pj.jumlah_pinjaman AS jumlah
+                    FROM pinjaman pj
+                    JOIN anggota a ON pj.id_anggota = a.id
+                    JOIN pegawai p ON a.nip_anggota = p.nip
+                    WHERE YEAR(pj.tanggal_perjanjian) = ?
+                    AND MONTH(pj.tanggal_perjanjian) = ?
+                    AND pj.kategori = ?
+                `;
+                params = [tahun, bulan, jenis];
+            }
+        } else if (tipe === 'kredit') {
+            if (jenis === 'kredit_barang') {
+                query = `
+                    SELECT 
+                        p.nip,
+                        p.nama,
+                        k.harga_pokok,
+                        k.jangka_waktu,
+                        k.pokok_dp,
+                        k.total_angsuran,
+                        k.pokok,
+                        k.margin,
+                        k.angsuran_ke,
+                        k.sisa_piutang,
+                        k.tanggal_mulai,
+                        k.ket_status
+                    FROM kredit_barang k
+                    JOIN anggota a ON k.id_anggota = a.id
+                    JOIN pegawai p ON a.nip_anggota = p.nip
+                    WHERE YEAR(k.tanggal_mulai) = ?
+                    AND MONTH(k.tanggal_mulai) = ?
+                `;
+            } else {
+                query = `
+                    SELECT 
+                        p.nip,
+                        p.nama,
+                        k.jumlah_pinjaman,
+                        k.jangka_waktu,
+                        k.margin_persen,
+                        k.pokok,
+                        k.margin,
+                        k.total_angsuran,
+                        k.angsuran_ke,
+                        k.sisa_piutang,
+                        k.tanggal_mulai,
+                        k.ket_status
+                    FROM ${jenis} k
+                    JOIN anggota a ON k.id_anggota = a.id
+                    JOIN pegawai p ON a.nip_anggota = p.nip
+                    WHERE YEAR(k.tanggal_mulai) = ?
+                    AND MONTH(k.tanggal_mulai) = ?
+                `;
+            }
+            params = [tahun, bulan];
+        }
+
+        db.query(query, params, (err, results) => {
+            if (err) {
+                console.error('Database error:', err);
+                return res.status(500).json({ message: 'Database error', error: err });
+            }
+
+            // Format data untuk Excel
+            const formattedData = results.map(row => {
+                const newRow = {};
+                for (let key in row) {
+                    if (typeof row[key] === 'number') {
+                        // Format angka dengan pemisah ribuan
+                        newRow[key] = row[key].toLocaleString('id-ID');
+                    } else if (row[key] instanceof Date) {
+                        // Format tanggal
+                        newRow[key] = row[key].toLocaleDateString('id-ID');
+                    } else {
+                        newRow[key] = row[key];
+                    }
+                }
+                return newRow;
+            });
+
+            // Buat workbook baru
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(formattedData);
+
+            // Tambahkan judul
+            const title = `Laporan ${tipe.toUpperCase()} - ${bulan}/${tahun}`;
+            XLSX.utils.sheet_add_aoa(ws, [[title]], { origin: 'A1' });
+
+            // Atur lebar kolom
+            const colWidths = results.length > 0 ? Object.keys(results[0]).map(key => ({
+                wch: Math.max(key.length, ...results.map(row => String(row[key]).length))
+            })) : [];
+            ws['!cols'] = colWidths;
+
+            // Tambahkan worksheet ke workbook
+            XLSX.utils.book_append_sheet(wb, ws, 'Report');
+
+            // Generate Excel file
+            const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'buffer' });
+
+            // Set header untuk download file
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            res.setHeader('Content-Disposition', `attachment; filename=Laporan_${tipe}_${bulan}_${tahun}.xlsx`);
+
+            // Kirim file
+            res.send(excelBuffer);
+        });
+    } catch (error) {
+        console.error('Error generating Excel:', error);
+        res.status(500).json({ message: 'Error generating Excel file', error: error.message });
+    }
+};
+

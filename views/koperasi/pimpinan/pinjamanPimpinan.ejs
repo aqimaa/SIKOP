@@ -183,6 +183,9 @@
                     <button onclick="cetakLaporan()" style="background-color: #5D8736" class="text-white px-4 py-2 rounded">
                         Cetak Laporan
                     </button>
+                    <button onclick="exportExcel()" style="background-color: #5D8736" class="text-white text-center px-4 py-2 rounded flex items-center justify-center">
+                        Export Excel
+                    </button>
                 </div>
             </div>
         </div>
@@ -343,6 +346,26 @@
             const url = `/cetak-laporan?tahun=${tahun}&bulan=${bulan}&jenis=${jenis}&tipe=${tipe}`;
             window.open(url, '_blank');
         }
+        function exportExcel() {
+        const tahun = document.getElementById('tahun').value;
+        const bulan = document.getElementById('bulan').value;
+        const jenis = document.getElementById('jenis').value;
+        const tipe = 'simpanan'; // Change this based on the view (simpanan/pinjaman/kredit)
+        
+        if (!tahun || !bulan || !jenis) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Oops...',
+                text: 'Harap lengkapi semua filter terlebih dahulu',
+                confirmButtonColor: '#5D8736',
+            });
+            return;
+        }
+        
+        // Perbaikan: Gunakan backticks (`) untuk template literal dan tambahkan forward slash
+        const url = `/export-excel?tahun=${tahun}&bulan=${bulan}&jenis=${jenis}&tipe=${tipe}`;
+        window.location.href = url;
+    }
     </script>
 </body>
 </html>

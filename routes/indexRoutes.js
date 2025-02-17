@@ -52,6 +52,7 @@ router.post("/pinjaman/filter", pinjamanPimpinanController.filterData);
 router.get("/cetak-laporan", cetakLaporanPimpinanController.cetakLaporan);
 router.get("/simpananPimpinan", simpananPimpinanController.getSimpananPimpinan);
 router.post("/simpanan/filter", simpananPimpinanController.filterData);
+router.get("/export-excel", cetakLaporanPimpinanController.exportExcel);
 
 // <!=============================================== Route Kredit ===============================================> //
 

@@ -75,6 +75,7 @@ router.get("/kreditElektronik/tambah", (req, res) => {
   res.render("koperasi/kreditKeuangan/kreditElektronik/tambahKreditElektro");
 });
 router.post("/kreditElektronik/tambah", kreditElektronikController.tambahKreditElektronik);
+router.get('/kreditElektronik/getAnggota/:id', kreditElektronikController.getAnggotaById);
 router.get("/kreditElektronik/edit/:id", kreditElektronikController.tampilkanEditKreditElektronik);
 router.put("/kreditElektronik/edit/:id", kreditElektronikController.simpanEditKreditElektronik);
 router.delete("/kreditElektronik/hapus/:id", kreditElektronikController.hapusKreditElektronik);

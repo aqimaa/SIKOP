@@ -21,7 +21,7 @@ exports.lihatPinjaman = async (req, res) => {
       FROM pinjaman p
       JOIN anggota a ON p.id_anggota = a.id
       JOIN pegawai pg ON a.nip_anggota = pg.nip
-      ORDER BY p.id DESC;  -- Urutkan berdasarkan id secara descending
+      ORDER BY p.id DESC;  
     `;
 
     db.query(query, (error, results) => {

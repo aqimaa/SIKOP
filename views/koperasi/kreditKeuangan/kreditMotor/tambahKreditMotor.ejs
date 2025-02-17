@@ -1,181 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tambah Kredit Motor</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-</head>
-<body class="flex bg-white">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  </head>
+  <body class="flex bg-white">
     <!-- Sidebar -->
     <%- include('../../../sidebar') %>
 
     <!-- Main Content -->
     <div class="flex-1 ml-72 p-8">
-        <div class="fixed top-0 left-72 right-0 flex justify-between shadow-md p-4 bg-white z-20">
-            <h1 class="text-2xl"></h1>
-            <div class="flex items-center">
-                <span>Admin Keuangan</span>
-                <img src="/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
-            </div>
+      <div class="fixed top-0 left-72 right-0 flex justify-between shadow-md p-4 bg-white z-20">
+        <h1 class="text-2xl"></h1>
+        <div class="flex items-center">
+          <span>Admin Keuangan</span>
+          <img src="/images/profile-user.png" class="w-10 h-10 rounded-full ml-2" />
         </div>
+      </div>
 
-        <div class="mt-20 text-center">
-            <h1 class="text-2xl font-bold mb-8">Tambah Kredit Motor</h1>
+      <div class="mt-20 text-center">
+        <h1 class="text-2xl font-bold mb-8">Tambah Kredit Motor</h1>
+      </div>
+
+      <form action="/kreditMotor/tambah" method="POST">
+        <div class="space-y-6">
+          <!-- Data Anggota -->
+          <div class="bg-gray-200 p-6 rounded-lg">
+            <h2 class="text-lg font-semibold mb-4">Data Anggota</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block mb-2">No. Anggota</label>
+                <input type="text" id="id_anggota" name="id_anggota" class="w-full border p-2 rounded" placeholder="Masukkan No. Anggota" required oninput="getNamaAnggota(this.value)" />
+              </div>
+              <div>
+                <label class="block mb-2">Nama Anggota</label>
+                <input type="text" id="nama_anggota" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Nama anggota akan muncul otomatis" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Data Kredit Motor -->
+          <div class="bg-gray-200 p-6 rounded-lg">
+            <h2 class="text-lg font-semibold mb-4">Data Kredit Motor</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block mb-2">Jumlah Pinjaman</label>
+                <input type="text" id="jumlah_pinjaman" name="jumlah_pinjaman" class="w-full border p-2 rounded" placeholder="Masukkan Jumlah Pinjaman" required oninput="validateNumberInput(this); hitungAngsuran()" />
+              </div>
+              <div>
+                <label class="block mb-2">Jangka Waktu (Bulan)</label>
+                <input type="number" id="jangka_waktu" name="jangka_waktu" class="w-full border p-2 rounded" placeholder="Masukkan Jangka Waktu" required oninput="hitungAngsuran()" />
+              </div>
+              <div>
+                <label class="block mb-2">Margin (%)</label>
+                <input type="text" id="margin_persen" name="margin_persen" class="w-full border p-2 rounded" placeholder="Masukkan Persen Margin per Bulan" required oninput="validateNumberInput(this); hitungAngsuran()" />
+              </div>
+              <div>
+                <label class="block mb-2">Tanggal Mulai</label>
+                <input type="date" id="tanggal_mulai" name="tanggal_mulai" class="w-full border p-2 rounded" required />
+              </div>
+            </div>
+          </div>
+
+          <!-- Hasil Perhitungan -->
+          <div class="bg-blue-100 p-6 rounded-lg">
+            <h2 class="text-lg font-semibold mb-4">Hasil Perhitungan</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block mb-2">Total Angsuran Keseluruhan</label>
+                <input type="text" id="total_angsuran_keseluruhan" name="sisa_piutang" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Dihitung otomatis" />
+              </div>
+              <div>
+                <label class="block mb-2">Total Angsuran per Bulan</label>
+                <input type="text" id="total_angsuran" name="total_angsuran" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Dihitung otomatis" />
+              </div>
+              <div>
+                <label class="block mb-2">Margin per Bulan</label>
+                <input type="text" id="margin" name="margin" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Dihitung otomatis" />
+              </div>
+              <div>
+                <label class="block mb-2">Angsuran Pokok per Bulan</label>
+                <input type="text" id="pokok" name="pokok" class="w-full border p-2 rounded bg-gray-100" readonly placeholder="Dihitung otomatis" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Buttons -->
+          <div class="flex space-x-4">
+            <button type="button" id="batalButton" class="flex-1 border border-green-800 text-green-800 py-2 px-4 rounded-md mt-4" style="border-color: #5d8736; color: #5d8736">Batal</button>
+            <button type="submit" class="flex-1 text-white py-2 px-4 rounded-md mt-4" style="background-color: #5d8736">Simpan</button>
+          </div>
         </div>
-
-        <form action="/kreditMotor/tambah" method="POST">
-            <!-- Data Anggota -->
-            <div class="bg-gray-200 p-6 rounded-lg">
-                <h2 class="text-lg font-semibold mb-4">Data Anggota</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Nomor Anggota</label>
-                        <input type="text" name="id_anggota" id="id_anggota" 
-                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" 
-                            placeholder="Masukkan nomor anggota" required oninput="getNamaAnggota(this.value)">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Nama Anggota</label>
-                        <input type="text" id="nama_anggota" 
-                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2 bg-gray-100" 
-                            readonly placeholder="Nama anggota akan muncul otomatis">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Data Kredit Motor -->
-            <div class="bg-gray-200 p-6 rounded-lg mt-6">
-                <h2 class="text-lg font-semibold mb-4">Data Kredit Motor</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block mb-2">Jumlah Pinjaman</label>
-                        <input type="text" id="jumlah_pinjaman" name="jumlah_pinjaman" class="w-full border p-2 rounded" 
-                            placeholder="Masukkan Jumlah Pinjaman" required oninput="validateNumberInput(this)">
-                    </div>
-                    <div>
-                        <label class="block mb-2">Jangka Waktu (Bulan)</label>
-                        <input type="number" id="jangka_waktu" name="jangka_waktu" class="w-full border p-2 rounded" 
-                            placeholder="Masukkan Jangka Waktu" required>
-                    </div>
-                    <div>
-                        <label class="block mb-2">Margin (%)</label>
-                        <input type="text" id="margin" name="margin_persen" class="w-full border p-2 rounded" 
-                            placeholder="Masukkan Persen Margin per Bulan" required oninput="validateNumberInput(this)">
-                    </div>
-                    <div>
-                        <label class="block mb-2">Tanggal Mulai</label>
-                        <input type="date" name="tanggal_mulai" class="w-full border p-2 rounded" required>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Hasil Perhitungan -->
-            <div class="bg-blue-100 p-6 rounded-lg mt-6">
-                <h2 class="text-lg font-semibold mb-4">Hasil Perhitungan</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block mb-2">Total Angsuran Keseluruhan</label>
-                        <input type="text" id="totalAngsuran" name="sisa_piutang" class="w-full border p-2 rounded bg-gray-100" 
-                            readonly placeholder="Dihitung otomatis">
-                    </div>
-                    <div>
-                        <label class="block mb-2">Total Angsuran per Bulan</label>
-                        <input type="text" id="totalAngsuranPerBulan" name="total_angsuran" class="w-full border p-2 rounded bg-gray-100" 
-                            readonly placeholder="Dihitung otomatis">
-                    </div>
-                    <div>
-                        <label class="block mb-2">Margin per Bulan</label>
-                        <input type="text" id="marginPerBulan" name="margin" class="w-full border p-2 rounded bg-gray-100" 
-                            readonly placeholder="Dihitung otomatis">
-                    </div>
-                    <div>
-                        <label class="block mb-2">Angsuran Pokok per Bulan</label>
-                        <input type="text" id="pokok" name="pokok" class="w-full border p-2 rounded bg-gray-100" 
-                            readonly placeholder="Dihitung otomatis">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Buttons -->
-            <div class="flex space-x-4 mt-6">
-                <button type="button" onclick="window.location.href='/lihatKreditMotor'" 
-                    class="flex-1 border py-2 px-4 rounded-md" style="border-color: #5D8736; color: #5D8736;">Batal</button>
-                <button type="submit" class="flex-1 text-white py-2 px-4 rounded-md" 
-                    style="background-color: #5D8736;">Simpan</button>
-            </div>
-        </form>
+      </form>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const jumlahPinjamanInput = document.getElementById('jumlah_pinjaman');
-            const jangkaWaktuInput = document.getElementById('jangka_waktu');
-            const marginInput = document.getElementById('margin');
-            const totalAngsuranOutput = document.getElementById('totalAngsuran');
-            const marginPerBulanOutput = document.getElementById('marginPerBulan');
-            const totalAngsuranPerBulanOutput = document.getElementById('totalAngsuranPerBulan');
-            const pokokOutput = document.getElementById('pokok');
+      document.addEventListener("DOMContentLoaded", function () {
+        const jumlahPinjamanInput = document.getElementById("jumlah_pinjaman");
+        const jangkaWaktuInput = document.getElementById("jangka_waktu");
+        const marginPersenInput = document.getElementById("margin_persen");
+        const pokokInput = document.getElementById("pokok");
+        const totalAngsuranOutput = document.getElementById("total_angsuran_keseluruhan");
+        const marginPerBulanOutput = document.getElementById("margin");
+        const totalAngsuranPerBulanOutput = document.getElementById("total_angsuran");
 
-            function calculateResults() {
-                const jumlahPinjaman = parseFloat(jumlahPinjamanInput.value.replace(/,/g, '')) || 0;
-                const jangkaWaktu = parseFloat(jangkaWaktuInput.value) || 0;
-                const margin = parseFloat(marginInput.value) || 0;
+        // Fungsi untuk mengonversi input dengan koma ke angka
+        const parseNumberWithComma = (value) => {
+          return parseFloat(value.replace(/\./g, "").replace(",", "."));
+        };
 
-                const marginPerBulan = (jumlahPinjaman * margin) / 100;
-                const angsuranPokokPerBulan = jumlahPinjaman / jangkaWaktu;
-                const totalAngsuranPerBulan = angsuranPokokPerBulan + marginPerBulan;
-                const totalAngsuran = totalAngsuranPerBulan * jangkaWaktu;
+        // Fungsi untuk memformat angka dengan koma
+        const formatNumberWithComma = (value) => {
+          return value.toLocaleString("id-ID", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        };
 
-                totalAngsuranOutput.value = totalAngsuran.toLocaleString('id-ID', {maximumFractionDigits: 2});
-                marginPerBulanOutput.value = marginPerBulan.toLocaleString('id-ID', {maximumFractionDigits: 2});
-                totalAngsuranPerBulanOutput.value = totalAngsuranPerBulan.toLocaleString('id-ID', {maximumFractionDigits: 2});
-                pokokOutput.value = angsuranPokokPerBulan.toLocaleString('id-ID', {maximumFractionDigits: 2});
-            }
+        // Fungsi untuk mengisi tanggal mulai dengan hari ini
+        const setTanggalMulai = () => {
+          const today = new Date();
+          const year = today.getFullYear();
+          const month = String(today.getMonth() + 1).padStart(2, "0");
+          const day = String(today.getDate()).padStart(2, "0");
+          const formattedDate = `${year}-${month}-${day}`;
+          document.getElementById("tanggal_mulai").value = formattedDate;
+        };
 
-            jumlahPinjamanInput.addEventListener('input', calculateResults);
-            jangkaWaktuInput.addEventListener('input', calculateResults);
-            marginInput.addEventListener('input', calculateResults);
+        // Panggil fungsi untuk mengisi tanggal mulai
+        setTanggalMulai();
+        
+
+        function calculateResults() {
+          const jumlahPinjaman = parseNumberWithComma(jumlahPinjamanInput.value) || 0;
+          const jangkaWaktu = parseFloat(jangkaWaktuInput.value) || 0;
+          const marginPersen = parseNumberWithComma(marginPersenInput.value) || 0;
+
+          // Hitung hasil
+          const totalMargin = (jumlahPinjaman * marginPersen * jangkaWaktu) / 100;
+          const marginPerBulan = (jumlahPinjaman * marginPersen) / 100;
+          const pokokPerBulan = jumlahPinjaman / jangkaWaktu;
+          const totalAngsuranPerBulan = pokokPerBulan + marginPerBulan;
+          const totalAngsuranKeseluruhan = totalAngsuranPerBulan * jangkaWaktu;
+
+          totalAngsuranOutput.value = formatNumberWithComma(totalAngsuranKeseluruhan);
+          marginPerBulanOutput.value = formatNumberWithComma(marginPerBulan);
+          totalAngsuranPerBulanOutput.value = formatNumberWithComma(totalAngsuranPerBulan);
+          pokokInput.value = formatNumberWithComma(pokokPerBulan);
+        }
+
+        jumlahPinjamanInput.addEventListener("input", calculateResults);
+        jangkaWaktuInput.addEventListener("input", calculateResults);
+        marginPersenInput.addEventListener("input", calculateResults);
+
+        // Event listener untuk tombol "Batal"
+        document.getElementById("batalButton").addEventListener("click", function () {
+          window.location.href = "/lihatKreditMotor"; 
         });
+      });
 
-        // Get nama anggota by ID
-        function getNamaAnggota(idAnggota) {
-            const namaAnggotaInput = document.getElementById('nama_anggota');
-            
-            if (!idAnggota) {
-                namaAnggotaInput.value = '';
-                return;
-            }
-
-            fetch(`/kreditMotor/getAnggota/${idAnggota}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        namaAnggotaInput.value = data.nama;
-                    } else {
-                        namaAnggotaInput.value = '';
-                        // Tidak perlu menampilkan alert disini karena akan membuat UX terganggu
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    namaAnggotaInput.value = '';
-                    // Hanya tampilkan alert jika benar-benar error server
-                    if (!error.message.includes('404')) {
-                        alert('Terjadi kesalahan saat mencari data anggota.');
-                    }
-                });
+      function getNamaAnggota(idAnggota) {
+        if (idAnggota) {
+          fetch(`/kreditMotor/getAnggota/${idAnggota}`)
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.success) {
+                document.getElementById("nama_anggota").value = data.nama;
+              } else {
+                document.getElementById("nama_anggota").value = "";
+              }
+            })
+            .catch((error) => console.error("Error:", error));
+        } else {
+          document.getElementById("nama_anggota").value = "";
         }
+      }
 
-        function validateNumberInput(input) {
-            input.value = input.value.replace(/[^0-9.]/g, '');
-        }
+      function validateNumberInput(input) {
+        input.value = input.value.replace(/[^0-9,.]/g, "");
+      }
     </script>
-</body>
+  </body>
 </html>

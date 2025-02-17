@@ -24,6 +24,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
+            font-size: 12px;
         }
         .table th, .table td {
             border: 1px solid #000;
@@ -47,24 +48,72 @@
 <body>
     <div class="header">
         <h1>Laporan <%= tipe.toUpperCase() %> Koperasi</h1>
+        <% if (tipe === 'kredit') { %>
+            <h2>Jenis: <%= jenisKredit %></h2>
+        <% } %>
         <p>Periode: <%= bulan %> <%= tahun %></p>
     </div>
+
     <table class="table">
         <thead>
             <tr>
                 <th>No</th>
                 <th>NIP</th>
                 <th>Nama</th>
+                
                 <% if (tipe === 'simpanan') { %>
-                    <th>Jenis Simpanan</th>
+                    <% if (jenisSimpanan === 'Semua') { %>
+                        <th>Simpanan Wajib</th>
+                        <th>Simpanan Pokok</th>
+                        <th>Simpanan Sukarela</th>
+                        <th>Total Simpanan</th>
+                    <% } else { %>
+                        <th>Jenis Simpanan</th>
+                        <th>Jumlah</th>
+                    <% } %>
                 <% } else if (tipe === 'pinjaman') { %>
-                    <th>Jenis Pinjaman</th>
-                    <th>Jatuh Tempo</th>
+                    <% if (jenis === 'Semua') { %>
+                        <th>Kategori</th>
+                        <th>Jumlah Pinjaman</th>
+                        <th>Jangka Waktu</th>
+                        <th>Margin %</th>
+                        <th>Angsuran Pokok</th>
+                        <th>Angsuran Margin</th>
+                        <th>Total Angsuran</th>
+                        <th>Angsuran Ke-</th>
+                        <th>Sisa Piutang</th>
+                        <th>Tanggal Perjanjian</th>
+                        <th>Status</th>
+                    <% } else { %>
+                        <th>Jenis Pinjaman</th>
+                        <th>Jangka Waktu</th>
+                        <th>Jumlah</th>
+                    <% } %>
                 <% } else if (tipe === 'kredit') { %>
-                    <th>Jenis Kredit</th>
-                    <th>Jatuh Tempo</th>
+                    <% if (jenis === 'kredit_barang') { %>
+                        <th>Harga Pokok</th>
+                        <th>Jangka Waktu</th>
+                        <th>Pokok DP</th>
+                        <th>Total Angsuran</th>
+                        <th>Pokok</th>
+                        <th>Margin</th>
+                        <th>Angsuran Ke-</th>
+                        <th>Sisa Piutang</th>
+                        <th>Tanggal Mulai</th>
+                        <th>Status</th>
+                    <% } else { %>
+                        <th>Jumlah Pinjaman</th>
+                        <th>Jangka Waktu</th>
+                        <th>Margin %</th>
+                        <th>Total Angsuran</th>
+                        <th>Pokok</th>
+                        <th>Margin</th>
+                        <th>Angsuran Ke-</th>
+                        <th>Sisa Piutang</th>
+                        <th>Tanggal Mulai</th>
+                        <th>Status</th>
+                    <% } %>
                 <% } %>
-                <th>Jumlah</th>
             </tr>
         </thead>
         <tbody>
@@ -73,22 +122,81 @@
                     <td><%= index + 1 %></td>
                     <td><%= row.nip %></td>
                     <td><%= row.nama %></td>
+                    
                     <% if (tipe === 'simpanan') { %>
-                        <td><%= jenisSimpanan.charAt(0).toUpperCase() + jenisSimpanan.slice(1).toLowerCase() %></td>
-                    <% } else if (tipe === 'pinjaman' || tipe === 'kredit') { %>
-                        <td><%= row.jenis.replace('kredit_', '').replace('pinjaman_', '').replace(/\b\w/g, char => char.toUpperCase()) %></td>
-                        <td><%= row.jangka_waktu %> Bulan</td>
+                        <% if (jenisSimpanan === 'Semua') { %>
+                            <td><%= Number(row.simpanan_wajib).toLocaleString('id-ID') %></td>
+                            <td><%= Number(row.simpanan_pokok).toLocaleString('id-ID') %></td>
+                            <td><%= Number(row.simpanan_sukarela).toLocaleString('id-ID') %></td>
+                            <td><%= Number(row.total_simpanan).toLocaleString('id-ID') %></td>
+                        <% } else { %>
+                            <td><%= jenisSimpanan.charAt(0).toUpperCase() + jenisSimpanan.slice(1).toLowerCase() %></td>
+                            <td><%= Number(row.jumlah).toLocaleString('id-ID') %></td>
+                        <% } %>
+                    <% } else if (tipe === 'pinjaman') { %>
+                        <% if (jenis === 'Semua') { %>
+                            <td><%= row.kategori %></td>
+                            <td><%= Number(row.jumlah_pinjaman).toLocaleString('id-ID') %></td>
+                            <td><%= row.jangka_waktu %></td>
+                            <td><%= row.margin_persen %></td>
+                            <td><%= Number(row.angsuran_pokok).toLocaleString('id-ID') %></td>
+                            <td><%= Number(row.margin_per_bulan).toLocaleString('id-ID') %></td>
+                            <td><%= Number(row.total_angsuran).toLocaleString('id-ID') %></td>
+                            <td><%= row.angsuran_ke %></td>
+                            <td><%= Number(row.sisa_piutang).toLocaleString('id-ID') %></td>
+                            <td><%= new Date(row.tanggal_perjanjian).toISOString().split('T')[0] %></td>
+                            <td><%= row.ket_status %></td>
+                        <% } else { %>
+                            <td><%= row.jenis.replace(/\b\w/g, char => char.toUpperCase()) %></td>
+                            <td><%= row.jangka_waktu %></td>
+                            <td><%= Number(row.jumlah).toLocaleString('id-ID') %></td>
+                        <% } %>
+                    <% } else if (tipe === 'kredit') { %>
+                        <% if (jenis === 'kredit_barang') { %>
+                            <td><%= Number(row.harga_pokok).toLocaleString('id-ID') %></td>
+                            <td><%= row.jangka_waktu %></td>
+                            <td><%= Number(row.pokok_dp).toLocaleString('id-ID') %></td>
+                            <td><%= Number(row.total_angsuran).toLocaleString('id-ID') %></td>
+                            <td><%= Number(row.pokok).toLocaleString('id-ID') %></td>
+                            <td><%= Number(row.margin).toLocaleString('id-ID') %></td>
+                            <td><%= row.angsuran_ke %></td>
+                            <td><%= Number(row.sisa_piutang).toLocaleString('id-ID') %></td>
+                            <td><%= new Date(row.tanggal_mulai).toISOString().split('T')[0] %></td>
+                            <td><%= row.ket_status %></td>
+                        <% } else { %>
+                            <td><%= Number(row.jumlah_pinjaman).toLocaleString('id-ID') %></td>
+                            <td><%= row.jangka_waktu %></td>
+                            <td><%= row.margin_persen %></td>
+                            <td><%= Number(row.total_angsuran).toLocaleString('id-ID') %></td>
+                            <td><%= Number(row.pokok).toLocaleString('id-ID') %></td>
+                            <td><%= Number(row.margin).toLocaleString('id-ID') %></td>
+                            <td><%= row.angsuran_ke %></td>
+                            <td><%= Number(row.sisa_piutang).toLocaleString('id-ID') %></td>
+                            <td><%= new Date(row.tanggal_mulai).toISOString().split('T')[0] %></td>
+                            <td><%= row.ket_status %></td>
+                        <% } %>
                     <% } %>
-                    <td><%= Number(row.jumlah).toLocaleString('id-ID') %></td>
                 </tr>
             <% }) %>
+
+            <% if (tipe === 'simpanan' && jenisSimpanan === 'Semua') { %>
+                <tr>
+                    <td colspan="6" style="text-align: right;"><strong>Total Jumlah Simpanan</strong></td>
+                    <td><strong><%= data.reduce((total, row) => total + Number(row.total_simpanan), 0).toLocaleString('id-ID') %></strong></td>
+                </tr>
+            <% } else if (tipe === 'pinjaman' && jenis === 'Semua') { %>
+                <tr>
+                    <td colspan="4" style="text-align: right;"><strong>Total Pinjaman</strong></td>
+                    <td><strong><%= data.reduce((total, row) => total + Number(row.jumlah_pinjaman), 0).toLocaleString('id-ID') %></strong></td>
+                </tr>
+            <% } %>
         </tbody>
     </table>
-    
+
     <div class="footer">
         <p>Dicetak pada: <%= new Date().toLocaleDateString() %></p>
     </div>
-    
+
     <div class="signature">
         <p>Pimpinan</p>
         <br><br>

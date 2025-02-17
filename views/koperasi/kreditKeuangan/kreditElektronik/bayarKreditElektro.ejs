@@ -1,88 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Input Kredit Barang Elektronik</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-</head>
-<body class="flex">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bayar Kredit Elektronik</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  </head>
+
+  <body class="flex bg-gray-100">
     <!-- Sidebar -->
     <%- include('../../../sidebar') %>
 
     <!-- Main Content -->
-    <div class="flex-1 p-8 ml-72">
-        <h1 class="text-2xl mb-6">Form Input Kredit Elektronik</h1>
+    <div class="flex-1 ml-72 p-8">
+      <div class="fixed top-0 left-72 right-0 flex justify-between shadow-md p-4 bg-white z-20">
+        <h1 class="text-2xl"></h1>
+        <div class="flex items-center">
+          <span>Admin Keuangan</span>
+          <img src="/images/profile-user.png" class="w-10 h-10 rounded-full ml-2" />
+        </div>
+      </div>
 
-        <!-- Form Section -->
-        <form action="/kreditElektronik/bayar/<%= kredit.id %>" method="POST" class="space-y-6">
-            <div class="bg-blue-100 p-4 rounded-lg mb-6">
-              <h2 class="text-lg font-semibold mb-2">Informasi Kredit</h2>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <p><strong>No. Anggota:</strong> <%= kredit.id_anggota %></p>
-                <p><strong>Nama Anggota:</strong> <%= kredit.nama_anggota %></p>
-                <p><strong>Pinjaman:</strong> <%= kredit.jumlah_pinjaman.toLocaleString() %></p>
-                <p><strong>Jangka Waktu:</strong> <%= kredit.jangka_waktu %> Bulan</p>
-                <p><strong>Angsuran Ke:</strong> <%= kredit.angsuran_ke || 0 %> dari <%= kredit.jangka_waktu %></p>
-                <p><strong>Sisa Piutang:</strong> <%= kredit.sisa_piutang.toLocaleString() %></p>
-              </div>
-            </div>
+      <div class="mt-20 text-center">
+        <h1 class="text-2xl font-bold mb-8">Bayar Angsuran Kredit Elektronik</h1>
+      </div>
 
-            <div class="bg-green-100 p-4 rounded-lg mb-6">
-              <h2 class="text-lg font-semibold mb-2">Detail Pembayaran</h2>
-              <div class="space-y-4">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700">Tanggal Pembayaran</label>
-                  <input type="date" name="tanggal_bayar" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" required>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700">Jumlah Bayar</label>
-                  <input type="text" name="jumlah_bayar" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" required>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700">Keterangan</label>
-                  <input type="text" name="keterangan" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2">
-                </div>
-              </div>
-            </div>
+      <!-- Informasi Kredit -->
+      <div class="bg-blue-100 p-6 rounded-md shadow-md mb-6">
+        <h3 class="text-xl font-semibold mb-4">Informasi Kredit</h3>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <p>No. Anggota</p>
+            <p class="font-bold"><%= kredit.id_anggota %></p>
+          </div>
+          <div>
+            <p>Nama Anggota</p>
+            <p class="font-bold"><%= kredit.nama_anggota %></p>
+          </div>
+          <div>
+            <p>Jumlah Pinjaman</p>
+            <p class="font-bold"><%= kredit.jumlah_pinjaman.toLocaleString() %></p>
+          </div>
+          <div>
+            <p>Jangka Waktu (bulan)</p>
+            <p class="font-bold"><%= kredit.jangka_waktu %></p>
+          </div>
+          <div>
+            <p>Angsuran Ke</p>
+            <p class="font-bold"><%= kredit.angsuran_ke || 0 %> dari <%= kredit.jangka_waktu %></p>
+          </div>
+          <div>
+            <p>Sisa Piutang</p>
+            <p class="font-bold"><%= kredit.sisa_piutang.toLocaleString() %></p>
+          </div>
+          <div>
+            <p>Angsuran Pokok Per Bulan</p>
+            <p class="font-bold"><%= kredit.pokok.toLocaleString() %></p>
+          </div>
+          <div>
+            <p>Margin Per Bulan</p>
+            <p class="font-bold"><%= kredit.margin.toLocaleString() %></p>
+          </div>
+        </div>
+      </div>
 
-            <!-- Riwayat Pembayaran -->
-            <div class="bg-white p-6 rounded-md shadow-md mb-6">
-                <h3 class="text-xl font-semibold mb-4">Rincian Pembayaran</h3>
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Angsuran Ke</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keterangan</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        <% if (riwayatPembayaran && riwayatPembayaran.length > 0) { %>
-                            <% riwayatPembayaran.forEach(pembayaran => { %>
-                                <tr>
-                                    <td class="border px-4 py-2"><%= pembayaran.tanggal_bayar.toISOString().split('T')[0] %></td>
-                                    <td class="border px-4 py-2"><%= pembayaran.angsuran_ke %></td>
-                                    <td class="border px-4 py-2"><%= pembayaran.jumlah_bayar.toLocaleString() %></td>
-                                    <td class="border px-4 py-2"><%= pembayaran.ket %></td>
-                                </tr>
-                            <% }) %>
-                        <% } else { %>
-                            <tr>
-                                <td colspan="4" class="px-6 py-4 text-center">Belum ada riwayat pembayaran</td>
-                            </tr>
-                        <% } %>
-                    </tbody>
-                </table>
+      <!-- Form Pembayaran -->
+      <form action="/kreditElektronik/bayar/<%= kredit.id %>" method="POST">
+        <div class="bg-green-100 p-6 rounded-md shadow-md mb-6">
+          <h3 class="text-xl font-semibold mb-4">Detail Pembayaran</h3>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Tanggal Pembayaran</label>
+              <input type="date" name="tanggal_bayar" id="tanggal_bayar" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" required />
             </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Pembayaran Pokok</label>
+              <input type="text" id="pembayaran_pokok" name="pembayaran_pokok" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" required oninput="formatRupiah(this); calculateTotal();" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Biaya Margin</label>
+              <input type="text" id="biaya_margin" name="pembayaran_margin" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2 bg-gray-100" value="<%= kredit.margin.toLocaleString() %>" readonly />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Total Keseluruhan Pembayaran</label>
+              <input type="text" id="total_pembayaran" name="total_pembayaran" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2 bg-gray-100" readonly />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Keterangan</label>
+              <input type="text" name="keterangan" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" />
+            </div>
+          </div>
+        </div>
 
-            <div class="flex justify-end space-x-4">
-              <button type="button" onclick="window.history.back()" class="bg-gray-400 text-white px-4 py-2 rounded">Batal</button>
-              <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Simpan</button>
-            </div>
-        </form>
+        <!-- Tabel Riwayat Pembayaran -->
+        <div class="bg-white p-6 rounded-md shadow-md mt-6">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-semibold mb-4">Riwayat Pembayaran</h3>
+          </div>
+
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Pembayaran</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Angsuran Ke</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah Pembayaran</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keterangan</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <% if (riwayatPembayaran && riwayatPembayaran.length > 0) { %> <% riwayatPembayaran.forEach((pembayaran) => { %>
+              <tr>
+                <td class="px-6 py-4"><%= pembayaran.tanggal_bayar ? new Date(pembayaran.tanggal_bayar).toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta' }) : '-' %></td>
+                <td class="px-6 py-4"><%= pembayaran.angsuran_ke %></td>
+                <td class="px-6 py-4"><%= pembayaran.jumlah_bayar.toLocaleString() %></td>
+                <td class="px-6 py-4"><%= pembayaran.ket %></td>
+              </tr>
+              <% }) %> <% } else { %>
+              <tr>
+                <td colspan="6" class="px-6 py-4 text-center">Tidak ada riwayat pembayaran.</td>
+              </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex space-x-4 mt-8">
+          <button type="button" onclick="window.history.back()" class="flex-1 border py-2 px-4 rounded-md" style="border-color: #5d8736; color: #5d8736">Batal</button>
+          <button type="submit" class="flex-1 bg-[#5D8736] text-white py-2 px-4 rounded-md" style="background-color: #5d8736">Simpan</button>
+        </div>
+      </form>
+
+      <script>
+        function formatRupiah(input) {
+          let value = input.value.replace(/[^0-9,]/g, ""); 
+          let parts = value.split(",");
+          parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, "."); 
+          input.value = parts.join(","); 
+        }
+
+        function calculateTotal() {
+          const pembayaranPokok = parseFloat(document.getElementById("pembayaran_pokok").value.replace(/\./g, "").replace(",", ".")) || 0;
+          const biayaMargin = parseFloat(document.getElementById("biaya_margin").value.replace(/\./g, "").replace(",", ".")) || 0;
+
+          const totalPembayaran = pembayaranPokok + biayaMargin;
+          document.getElementById("total_pembayaran").value = totalPembayaran.toLocaleString("id-ID", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+          // Set tanggal pembayaran otomatis ke hari ini
+          const today = new Date().toISOString().split("T")[0];
+          document.getElementById("tanggal_bayar").value = today;
+
+          const angsuranPokok = "<%= kredit.pokok %>";
+          const pembayaranPokokInput = document.getElementById("pembayaran_pokok");
+          if (pembayaranPokokInput && angsuranPokok) {
+            pembayaranPokokInput.value = parseFloat(angsuranPokok).toLocaleString("id-ID", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            });
+          } else {
+            console.error("Nilai angsuran pokok tidak valid atau input tidak ditemukan.");
+          }
+
+          calculateTotal();
+        });
+
+      </script>
     </div>
-</body>
+  </body>
 </html>

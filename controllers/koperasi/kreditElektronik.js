@@ -244,7 +244,7 @@ exports.tampilkanBayarKreditElektronik = async (req, res) => {
       return res.status(404).send("Data kredit elektronik tidak ditemukan.");
     }
 
-    const kreditElektronik = resultsKreditElektronik[0];
+    const kredit = resultsKreditElektronik[0];
 
     db.query(queryPembayaran, [id], (error, resultsPembayaran) => {
       if (error) {
@@ -253,7 +253,7 @@ exports.tampilkanBayarKreditElektronik = async (req, res) => {
       }
 
       res.render("koperasi/kreditKeuangan/kreditElektronik/bayarKreditElektro", {
-        kredit: kreditElektronik,
+        kredit: kredit,
         riwayatPembayaran: resultsPembayaran,
       });
     });

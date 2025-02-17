@@ -5,7 +5,12 @@ const pdf = require('html-pdf');
 
 const lihatSimpanan = (req, res) => {
     try {
-        res.render("koperasi/simpananKeuangan/lihatsimpanan");
+        const months = [
+            "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+            "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+        ];
+        
+        res.render("koperasi/simpananKeuangan/lihatsimpanan", { months });
     } catch (error) {
         console.log("error", error);
         res.status(500).json({ message: error });
@@ -687,7 +692,6 @@ const exportSimpananPDF = (req, res) => {
         });
     });
 };
-
 
 module.exports = {
     lihatSimpanan,

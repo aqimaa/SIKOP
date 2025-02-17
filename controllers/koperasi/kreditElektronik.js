@@ -99,15 +99,19 @@ exports.tambahKreditElektronik = async (req, res) => {
   const formattedMarginPersen = parseNumberWithComma(margin_persen);
 
   // Hitung total margin, pokok, dan total angsuran
-  const totalMargin = (formattedJumlahPinjaman * formattedMarginPersen) / 100;
   const pokokPerBulan = formattedJumlahPinjaman / jangka_waktu;
-  const marginPerBulan = totalMargin / jangka_waktu; // Margin per bulan
+  
+  // Perbaikan perhitungan margin
+  const marginPerBulan = (formattedJumlahPinjaman * formattedMarginPersen) / 100;
+  const totalMargin = marginPerBulan * jangka_waktu;
+  
   const totalAngsuranPerBulan = pokokPerBulan + marginPerBulan;
   const totalAngsuranKeseluruhan = totalAngsuranPerBulan * jangka_waktu;
+  
 
   // Query untuk menyimpan data ke database
   const query = `
-    INSERT INTO kredit_elektronik 
+    INSERT INTO kredit_elektronik
     (id_anggota, jumlah_pinjaman, jangka_waktu, margin_persen, pokok, margin, total_angsuran, sisa_piutang, tanggal_mulai, ket_status, angsuran_ke)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
@@ -118,9 +122,9 @@ exports.tambahKreditElektronik = async (req, res) => {
     jangka_waktu,
     formattedMarginPersen,
     pokokPerBulan,
-    marginPerBulan, // Margin per bulan disimpan di sini
-    totalAngsuranKeseluruhan, // Total angsuran keseluruhan
-    formattedJumlahPinjaman, // Sisa piutang awal sama dengan jumlah pinjaman
+    marginPerBulan,
+    totalAngsuranPerBulan,
+    formattedJumlahPinjaman,
     tanggal_mulai,
     "Belum Lunas",
     0
@@ -129,7 +133,10 @@ exports.tambahKreditElektronik = async (req, res) => {
   db.query(query, values, (error, results) => {
     if (error) {
       console.error("Error saat menambahkan kredit elektronik:", error);
-      return res.status(500).json({ success: false, message: "Terjadi kesalahan saat menambahkan kredit elektronik." });
+      return res.status(500).json({ 
+        success: false, 
+        message: "Terjadi kesalahan saat menambahkan kredit elektronik." 
+      });
     }
     res.redirect("/lihatKreditElektronik");
   });

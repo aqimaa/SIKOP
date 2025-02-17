@@ -56,18 +56,21 @@ router.get("/export-excel", cetakLaporanPimpinanController.exportExcel);
 
 // <!=============================================== Route Kredit ===============================================> //
 
-router.get("/kredit-barang", kreditController.getAllKreditBarang);
-router.post("/kredit-barang", kreditController.createKreditBarang);
-router.get("/kredit-barang/:id", kreditController.getKreditBarangById);
-router.put("/kredit-barang/:id", kreditController.updateKreditBarang);
-router.delete("/kredit-barang/:id", kreditController.deleteKreditBarang);
-router.get('/bayarKreditBarang/:id', kreditController.getBayarKreditBarang);
-router.post('/bayarKreditBarang/:id', kreditController.prosesBayarKreditBarang);
-router.get('/api/anggotaKredit', kreditController.getAnggotaListKredit);
+// Kredit Barang Routes
+router.get('/kredit-barang', kreditController.getAllKreditBarang);
 router.get("/tambahKreditBarang", kreditController.getTambahKredit);
+router.post('/kredit-barang', kreditController.createKreditBarang);
 router.get('/kredit-barang/edit/:id', kreditController.getEditKreditBarang);
 router.put('/kredit-barang/:id', kreditController.updateKreditBarang);
-router.get("/api/kredit-barang/search", kreditController.searchKreditBarang);
+router.delete('/kredit-barang/:id', kreditController.deleteKreditBarang);
+
+// API Routes for Kredit Barang
+router.get('/api/kredit-barang/search', kreditController.searchKreditBarang);
+router.get('/api/anggota', kreditController.getAnggota);
+
+// Bayar Kredit Barang Routes
+router.get('/bayarKreditBarang/:id', kreditController.getBayarKreditBarang);
+router.post('/bayarKreditBarang/:id', kreditController.prosesBayarKreditBarang);
 
 router.get("/lihatKreditElektronik", kreditElektronikController.lihatKreditElektronik);
 router.get("/kreditElektronik/tambah", (req, res) => {

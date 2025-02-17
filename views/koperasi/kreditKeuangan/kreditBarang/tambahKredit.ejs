@@ -3,17 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Input Kredit Barang</title>
+    <title>Tambah Kredit Barang</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
     <style>
-        .select2-container {
-            width: 100% !important;
-        }
+        .select2-container { width: 100% !important; }
         .select2-container--default .select2-selection--single {
             height: 42px;
             padding: 6px;
@@ -28,36 +25,28 @@
             border-color: #e2e8f0;
             border-radius: 0.375rem;
         }
-        .select2-search__field {
-            padding: 8px;
-            border-radius: 0.375rem !important;
-        }
-        .select2-results__option {
-            padding: 8px;
-        }
         .select2-container--default .select2-results__option--highlighted[aria-selected] {
             background-color: #5D8736;
         }
-        .select2-container--default .select2-selection--single .select2-selection__rendered {
-            line-height: 28px;
-        }
-        .select2-container--default .select2-search--dropdown .select2-search__field {
-            border: 1px solid #e2e8f0;
-        }
     </style>
-
 </head>
-<body class="flex">
-    <!-- Sidebar -->
+<body class="flex bg-white">
     <%- include('../../../sidebar') %>
+    
+    <div class="flex-1 ml-72 p-8">
+        <div class="fixed top-0 left-72 right-0 flex justify-between shadow-md p-4 bg-white z-20">
+            <h1 class="text-2xl"></h1>
+            <div class="flex items-center">
+                <span>Admin Keuangan</span>
+                <img src="/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
+            </div>
+        </div>
 
-    <!-- Main Content -->
-    <div class="flex-1 p-6 ml-72">
-        <h1 class="text-2xl mb-6">Form Input Kredit Barang</h1>
+        <div class="mt-20 text-center">
+            <h1 class="text-2xl font-bold mb-8">Tambah Kredit Barang</h1>
+        </div>
 
-        <!-- Form Section -->
-        <form class="space-y-6">
-
+        <form id="formKreditBarang" class="space-y-6">
             <!-- Data Anggota -->
             <div class="bg-gray-100 p-6 rounded-lg">
                 <h2 class="text-lg font-semibold mb-4">Data Anggota</h2>
@@ -77,23 +66,29 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block mb-2">Harga Pokok</label>
-                        <input type="number" id="harga_pokok" name="harga_pokok" class="w-full border p-2 rounded" required oninput="hitungKredit()">
+                        <input type="text" id="harga_pokok" name="harga_pokok" 
+                               class="w-full border p-2 rounded" required 
+                               oninput="formatRupiah(this); hitungKredit()">
                     </div>
+
                     <div>
                         <label class="block mb-2">Jangka Waktu (Bulan)</label>
-                        <input type="number" id="jangka_waktu" name="jangka_waktu" class="w-full border p-2 rounded" required oninput="hitungKredit()">
+                        <input type="number" id="jangka_waktu" name="jangka_waktu" 
+                               class="w-full border p-2 rounded" required 
+                               oninput="hitungKredit()">
                     </div>
-                    <div>
-                        <label class="block mb-2">Pokok DP (Angsuran 1)</label>
-                        <input type="number" id="pokok_dp" name="pokok_dp" class="w-full border p-2 rounded bg-gray-200" readonly>
-                    </div>
+
                     <div>
                         <label class="block mb-2">Margin (%)</label>
-                        <input type="number" id="margin" name="margin" class="w-full border p-2 rounded" required oninput="hitungKredit()">
+                        <input type="number" id="margin" name="margin" 
+                               class="w-full border p-2 rounded" required 
+                               oninput="hitungKredit()">
                     </div>
+
                     <div>
-                        <label class="block mb-2">Tanggal Perjanjian</label>
-                        <input type="date" id="tanggal_perjanjian" name="tanggal_perjanjian" class="w-full border p-2 rounded" required>
+                        <label class="block mb-2">Tanggal Mulai</label>
+                        <input type="date" id="tanggal_mulai" name="tanggal_mulai" 
+                               class="w-full border p-2 rounded" required>
                     </div>
                 </div>
             </div>
@@ -103,34 +98,48 @@
                 <h2 class="text-lg font-semibold mb-4">Hasil Perhitungan</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block mb-2">Angsuran Pokok (Pokok DP + Margin per Bulan)</label>
-                        <input type="number" id="angsuran_pokok" name="pokok" class="w-full border p-2 rounded bg-gray-200" readonly>
+                        <label class="block mb-2">Angsuran Pokok per Bulan</label>
+                        <input type="text" id="pokok_dp" name="pokok_dp" 
+                               class="w-full border p-2 rounded bg-gray-200" readonly>
                     </div>
+
                     <div>
                         <label class="block mb-2">Margin per Bulan</label>
-                        <input type="number" id="margin_per_bulan" class="w-full border p-2 rounded bg-gray-200" readonly>
+                        <input type="text" id="margin_per_bulan" name="margin_per_bulan" 
+                               class="w-full border p-2 rounded bg-gray-200" readonly>
                     </div>
+
                     <div>
                         <label class="block mb-2">Total Angsuran per Bulan</label>
-                        <input type="number" id="total_angsuran" name="total_angsuran" class="w-full border p-2 rounded bg-gray-200" readonly>
+                        <input type="text" id="total_angsuran" name="total_angsuran" 
+                               class="w-full border p-2 rounded bg-gray-200" readonly>
                     </div>
+
                     <div>
                         <label class="block mb-2">Total Margin</label>
-                        <input type="number" id="total_margin" class="w-full border p-2 rounded bg-gray-200" readonly>
+                        <input type="text" id="total_margin" name="total_margin" 
+                               class="w-full border p-2 rounded bg-gray-200" readonly>
                     </div>
                 </div>
             </div>
 
-            <!-- Action Buttons -->
+            <!-- Buttons -->
             <div class="flex justify-end space-x-4">
-                <button type="reset" class="bg-gray-400 text-white px-4 py-2 rounded">Batal</button>
-                <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Simpan</button>
+                <button type="button" onclick="window.location.href='/kredit-barang'"
+                        class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">
+                    Batal
+                </button>
+                <button type="submit"
+                        class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                    Simpan
+                </button>
             </div>
         </form>
     </div>
 
     <script>
         $(document).ready(function() {
+            // Initialize Select2
             $('#id_anggota').select2({
                 placeholder: 'Cari Anggota (Nama/ID)',
                 allowClear: true,
@@ -139,13 +148,11 @@
                     dataType: 'json',
                     delay: 250,
                     data: function(params) {
-                        console.log('Search params:', params); // Debug
                         return {
                             search: params.term || ''
                         };
                     },
                     processResults: function(data) {
-                        console.log('API Response:', data); // Debug
                         return {
                             results: data.map(function(item) {
                                 return {
@@ -157,73 +164,64 @@
                     },
                     cache: true
                 },
-                minimumInputLength: 1,
+                minimumInputLength: 1
             });
+
+            // Set default tanggal hari ini
+            document.getElementById('tanggal_mulai').valueAsDate = new Date();
         });
 
-
-        function hitungKredit() {
-            let hargaPokok = parseFloat(document.getElementById("harga_pokok").value) || 0;
-            let jangkaWaktu = parseInt(document.getElementById("jangka_waktu").value) || 0;
-            let marginPersen = parseFloat(document.getElementById("margin").value) || 0;
-
-            if (hargaPokok > 0 && jangkaWaktu > 0) {
-                // Pokok DP (Angsuran 1) = Harga Pokok ÷ Jangka Waktu
-                let pokokDP = hargaPokok / jangkaWaktu;
-                document.getElementById("pokok_dp").value = pokokDP.toFixed(2);
-                
-                // Margin per Bulan = Harga Pokok × (Margin % ÷ 100)
-                let marginPerBulan = (hargaPokok * marginPersen) / 100;
-                document.getElementById("margin_per_bulan").value = marginPerBulan.toFixed(2);
-
-                // Angsuran Pokok = Pokok DP + Margin per Bulan
-                let angsuranPokok = pokokDP + marginPerBulan;
-                document.getElementById("angsuran_pokok").value = angsuranPokok.toFixed(2);
-
-                // Total Angsuran per Bulan = Angsuran Pokok × Jangka Waktu
-                let totalAngsuran = angsuranPokok * jangkaWaktu;
-                document.getElementById("total_angsuran").value = totalAngsuran.toFixed(2);
-
-                // Total Margin = Margin per Bulan × Jangka Waktu
-                let totalMargin = marginPerBulan * jangkaWaktu;
-                document.getElementById("total_margin").value = totalMargin.toFixed(2);
-            } else {
-                document.getElementById("pokok_dp").value = "";
-                document.getElementById("margin_per_bulan").value = "";
-                document.getElementById("angsuran_pokok").value = "";
-                document.getElementById("total_angsuran").value = "";
-                document.getElementById("total_margin").value = "";
+        function formatRupiah(input) {
+            let value = input.value.replace(/[^0-9]/g, '');
+            if (value) {
+                value = parseInt(value).toLocaleString('id-ID');
+                input.value = value;
             }
         }
 
-        function resetForm() {
-            $('#id_anggota').val(null).trigger('change');
-            document.getElementById('harga_pokok').value = '';
-            document.getElementById('jangka_waktu').value = '';
-            document.getElementById('margin').value = '';
-            document.getElementById('tanggal_perjanjian').value = '';
-            document.getElementById('pokok_dp').value = '';
-            document.getElementById('margin_per_bulan').value = '';
-            document.getElementById('angsuran_pokok').value = '';
-            document.getElementById('total_angsuran').value = '';
-            document.getElementById('total_margin').value = '';
+        function hitungKredit() {
+            const hargaPokok = parseInt(document.getElementById('harga_pokok').value.replace(/\./g, '')) || 0;
+            const jangkaWaktu = parseInt(document.getElementById('jangka_waktu').value) || 0;
+            const marginPersen = parseFloat(document.getElementById('margin').value) || 0;
+
+            if (hargaPokok > 0 && jangkaWaktu > 0) {
+                // Hitung pokok per bulan
+                const pokokPerBulan = hargaPokok / jangkaWaktu;
+                document.getElementById('pokok_dp').value = pokokPerBulan.toLocaleString('id-ID');
+
+                // Hitung margin per bulan
+                const marginPerBulan = (hargaPokok * marginPersen) / 100;
+                document.getElementById('margin_per_bulan').value = marginPerBulan.toLocaleString('id-ID');
+
+                // Hitung total angsuran per bulan
+                const totalAngsuran = pokokPerBulan + marginPerBulan;
+                document.getElementById('total_angsuran').value = totalAngsuran.toLocaleString('id-ID');
+
+                // Hitung total margin
+                const totalMargin = marginPerBulan * jangkaWaktu;
+                document.getElementById('total_margin').value = totalMargin.toLocaleString('id-ID');
+            } else {
+                document.getElementById('pokok_dp').value = "";
+                document.getElementById('margin_per_bulan').value = "";
+                document.getElementById('total_angsuran').value = "";
+                document.getElementById('total_margin').value = "";
+            }
         }
 
         // Handle form submission
-        document.querySelector('form').addEventListener('submit', async (e) => {
+        document.getElementById('formKreditBarang').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const formData = {
                 id_anggota: document.getElementById('id_anggota').value,
-                harga_pokok: parseFloat(document.getElementById('harga_pokok').value),
-                jangka_waktu: parseInt(document.getElementById('jangka_waktu').value),
-                pokok_dp: parseFloat(document.getElementById('pokok_dp').value),
-                margin: parseFloat(document.getElementById('margin').value),
-                total_angsuran: parseFloat(document.getElementById('total_angsuran').value),
-                angsuran_pokok: parseFloat(document.getElementById('angsuran_pokok').value),
-                margin_per_bulan: parseFloat(document.getElementById('margin_per_bulan').value),
-                total_margin: parseFloat(document.getElementById('total_margin').value),
-                tanggal_perjanjian: document.getElementById('tanggal_perjanjian').value
+                harga_pokok: document.getElementById('harga_pokok').value.replace(/\./g, ''),
+                jangka_waktu: document.getElementById('jangka_waktu').value,
+                margin: document.getElementById('margin').value,
+                pokok_dp: document.getElementById('pokok_dp').value.replace(/\./g, ''),
+                total_angsuran: document.getElementById('total_angsuran').value.replace(/\./g, ''),
+                margin_per_bulan: document.getElementById('margin_per_bulan').value.replace(/\./g, ''),
+                total_margin: document.getElementById('total_margin').value.replace(/\./g, ''),
+                tanggal_mulai: document.getElementById('tanggal_mulai').value
             };
 
             try {
@@ -236,20 +234,41 @@
                 });
 
                 const data = await response.json();
-                
+
                 if (data.success) {
-                    alert(data.message);
-                    window.location.href = '/kredit-barang';
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: data.message,
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.href = '/kredit-barang';
+                    });
                 } else {
-                    throw new Error(data.message);
+                    throw new Error(data.message || 'Terjadi kesalahan saat menyimpan data');
                 }
             } catch (error) {
-                alert(error.message || 'Terjadi kesalahan saat menyimpan data');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: error.message,
+                    confirmButtonText: 'OK'
+                });
             }
         });
 
-    
-    </script>
+        // Validasi input angka
+        function validateNumberInput(input) {
+            input.value = input.value.replace(/[^0-9]/g, '');
+            hitungKredit();
+        }
 
+        // Reset form
+        function resetForm() {
+            document.getElementById('formKreditBarang').reset();
+            $('#id_anggota').val(null).trigger('change');
+            document.getElementById('tanggal_mulai').valueAsDate = new Date();
+        }
+    </script>
 </body>
 </html>

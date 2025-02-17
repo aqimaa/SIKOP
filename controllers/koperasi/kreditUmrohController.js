@@ -20,6 +20,7 @@ exports.lihatKreditUmroh = async (req, res) => {
       FROM kredit_umroh ku
       JOIN anggota a ON ku.id_anggota = a.id
       JOIN pegawai pg ON a.nip_anggota = pg.nip
+      ORDER BY ku.id DESC;  
     `;
 
     db.query(query, (error, results) => {

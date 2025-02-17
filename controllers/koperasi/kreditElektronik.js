@@ -244,7 +244,7 @@ exports.tampilkanBayarKreditElektronik = async (req, res) => {
       return res.status(404).send("Data kredit elektronik tidak ditemukan.");
     }
 
-    const kreditElektronik = resultsKreditElektronik[0];
+    const kredit = resultsKreditElektronik[0];
 
     db.query(queryPembayaran, [id], (error, resultsPembayaran) => {
       if (error) {
@@ -253,7 +253,7 @@ exports.tampilkanBayarKreditElektronik = async (req, res) => {
       }
 
       res.render("koperasi/kreditKeuangan/kreditElektronik/bayarKreditElektro", {
-        kredit: kreditElektronik,
+        kredit: kredit,
         riwayatPembayaran: resultsPembayaran,
       });
     });
@@ -338,7 +338,8 @@ exports.tampilkanEditKreditElektronik = async (req, res) => {
       ke.margin,
       ke.total_angsuran,
       ke.sisa_piutang,
-      ke.tanggal_mulai
+      ke.tanggal_mulai,
+      ke.ket_status
     FROM kredit_elektronik ke
     JOIN anggota a ON ke.id_anggota = a.id
     JOIN pegawai pg ON a.nip_anggota = pg.nip
@@ -361,10 +362,20 @@ exports.tampilkanEditKreditElektronik = async (req, res) => {
 
 exports.simpanEditKreditElektronik = async (req, res) => {
   const id = req.params.id;
-  const { id_anggota, jumlah_pinjaman, jangka_waktu, margin_persen, tanggal_mulai, pokok, margin, total_angsuran, sisa_piutang } = req.body;
+  const {
+    id_anggota,
+    jumlah_pinjaman,
+    jangka_waktu,
+    margin_persen,
+    tanggal_mulai,
+    pokok,
+    margin,
+    total_angsuran,
+    sisa_piutang,
+  } = req.body;
 
   const cleanNumberFormat = (value) => {
-    return parseFloat(value.replace(/\./g, "").replace(",", "."));
+    return parseFloat(value.replace(/\./g, '').replace(',', '.'));
   };
 
   const formattedJumlahPinjaman = cleanNumberFormat(jumlah_pinjaman);
@@ -389,7 +400,19 @@ exports.simpanEditKreditElektronik = async (req, res) => {
     WHERE id = ?
   `;
 
-  const values = [id_anggota, formattedJumlahPinjaman, jangka_waktu, margin_persen, tanggal_mulai, formattedPokok, formattedMargin, formattedTotalAngsuran, formattedSisaPiutang, formattedSisaPiutang <= 0 ? "Lunas" : "Belum Lunas", id];
+  const values = [
+    id_anggota,
+    formattedJumlahPinjaman,
+    jangka_waktu,
+    margin_persen,
+    tanggal_mulai,
+    formattedPokok,
+    formattedMargin,
+    formattedTotalAngsuran,
+    formattedSisaPiutang,
+    formattedSisaPiutang <= 0 ? "Lunas" : "Belum Lunas",
+    id
+  ];
 
   db.query(query, values, (error, results) => {
     if (error) {
@@ -399,6 +422,6 @@ exports.simpanEditKreditElektronik = async (req, res) => {
     if (results.affectedRows === 0) {
       return res.status(404).json({ success: false, message: "Data kredit elektronik tidak ditemukan." });
     }
-    res.redirect("/lihatKreditElektronik");
+    res.redirect('/lihatKreditElektronik');
   });
 };

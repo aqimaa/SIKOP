@@ -120,6 +120,7 @@
                         <th class="p-4">NIP</th>
                         <th class="p-4">Nama</th>
                         <th class="p-4">Wilayah</th>
+                        <th class="p-4">Tipe Pegawai</th>
                         <th class="p-4">Aksi</th>
                     </tr>
                 </thead>
@@ -130,6 +131,7 @@
                             <td class="p-4"><%= pegawai.nip %></td>
                             <td class="p-4"><%= pegawai.nama %></td>
                             <td class="p-4"><%= pegawai.wilayah %></td>
+                            <td class="p-4"><%= pegawai.tipe_pegawai %></td>
                             <td class="p-4">
                                 <form action="/master/pegawai/ubahPegawai/<%= pegawai.nip %>" method="GET" class="inline">
                                     <button type="submit" class="bg-blue-600 text-white p-2 rounded hover:bg-blue-700" title="Edit Pegawai">

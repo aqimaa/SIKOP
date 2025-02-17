@@ -32,40 +32,43 @@
       }
 
       function submitForm(event) {
-        event.preventDefault(); // Mencegah submit default form
+    event.preventDefault(); // Mencegah submit default form
 
-        // Ambil data dari form
-        const nip = document.querySelector('input[name="nip"]').value;
-        const nama = document.querySelector('input[name="nama"]').value;
-        const wilayah = document.querySelector('select[name="wilayah"]').value;
+    // Ambil data dari form
+    const nip = document.querySelector('input[name="nip"]').value;
+    const nama = document.querySelector('input[name="nama"]').value;
+    const wilayah = document.querySelector('select[name="wilayah"]').value;
+    const tipe_pegawai = document.querySelector('select[name="tipe_pegawai"]').value; // Ambil tipe_pegawai dari dropdown
 
-        if (!nip || !nama || !wilayah) {
-            alert("Semua field harus diisi!");
-            return;
-        }
-
-        // Kirim request ke backend dalam format JSON
-        fetch("/master/pegawai/tambahPegawai", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ nip, nama, wilayah }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert("Pegawai berhasil ditambahkan!");
-                window.location.href = "/master/pegawai"; // Redirect setelah sukses
-            } else {
-                alert("Gagal menambahkan pegawai: " + data.message);
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            alert("Terjadi kesalahan, coba lagi nanti.");
-        });
+    // Validasi: Pastikan semua field diisi
+    if (!nip || !nama || !wilayah || !tipe_pegawai) {
+        alert("Semua field harus diisi!");
+        return;
     }
+
+    // Kirim request ke backend dalam format JSON
+    fetch("/master/pegawai/tambahPegawai", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ nip, nama, wilayah, tipe_pegawai }), // Sertakan tipe_pegawai
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("Pegawai berhasil ditambahkan!");
+            window.location.href = "/master/pegawai"; // Redirect setelah sukses
+        } else {
+            alert("Gagal menambahkan pegawai: " + data.message);
+        }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        alert("Terjadi kesalahan, coba lagi nanti.");
+    });
+}
+
       </script>
 </head>
 <body class="flex">
@@ -153,12 +156,17 @@
           </div>
           <div>
             <label class="block text-gray-700 mb-1">Wilayah</label>
-            <select class="w-full p-2 border border-gray-300 rounded mb-8" name="wilayah" required>
+            <select class="w-full p-2 border border-gray-300 rounded mb-2" name="wilayah" required>
               <option value="">Pilih Wilayah</option>
-              <option value="Jambi">Jambi</option>
-              <option value="Kep. Riau">Kep. Riau</option>
-              <option value="Riau">Riau</option>
-              <option value="Sumatra Barat">Sumatra Barat</option>
+              <option value="Jambi & Sumbar">Jambi & Sumatra Barat</option>
+              <option value="Kep. Riau & Riau">Kep. Riau & Riau</option>
+            </select>
+          </div>
+          <div>
+            <label for="tipe_pegawai" class="block">Tipe Pegawai</label>
+            <select id="tipe_pegawai" name="tipe_pegawai" required class="border p-2 w-full">
+              <option value="Biasa">Biasa</option>
+              <option value="Luar Biasa">Luar Biasa</option>
             </select>
           </div>
           <div class="text-center mt-12 flex justify-between">

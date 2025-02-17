@@ -20,6 +20,7 @@ exports.lihatKreditMotor = async (req, res) => {
       FROM kredit_motor km
       JOIN anggota a ON km.id_anggota = a.id
       JOIN pegawai pg ON a.nip_anggota = pg.nip
+      ORDER BY km.id DESC;  
     `;
 
     db.query(query, (error, results) => {
@@ -278,51 +279,83 @@ exports.prosesBayarKreditMotor = async (req, res) => {
   const { tanggal_bayar, jumlah_bayar, keterangan } = req.body;
 
   try {
+    // Pastikan jumlah_bayar ada dan tidak undefined
+    if (!jumlah_bayar) {
+      return res.status(400).json({ success: false, message: "Jumlah pembayaran harus diisi." });
+    }
+
+    // Bersihkan dan format jumlah_bayar
+    const jumlahBayar = parseFloat(jumlah_bayar.replace(/[^0-9,]/g, '').replace(',', '.'));
+
+    // Pastikan jumlahBayar adalah angka yang valid
+    if (isNaN(jumlahBayar)) {
+      return res.status(400).json({ success: false, message: "Jumlah pembayaran tidak valid." });
+    }
 
     const queryKreditMotor = `
-            SELECT * FROM kredit_motor
-            WHERE id = ?
-        `;
+      SELECT 
+        sisa_piutang,
+        angsuran_ke,
+        total_angsuran,
+        pokok,
+        margin
+      FROM kredit_motor
+      WHERE id = ?
+    `;
 
     db.query(queryKreditMotor, [id], (error, results) => {
       if (error) {
         console.error("Error saat mengambil data kredit motor:", error);
-        return res.status(500).send("Terjadi kesalahan saat mengambil data kredit motor.");
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mengambil data kredit motor." });
       }
+
       if (results.length === 0) {
-        return res.status(404).send("Data kredit motor tidak ditemukan.");
+        return res.status(404).json({ success: false, message: "Data kredit motor tidak ditemukan." });
       }
 
       const kreditMotor = results[0];
-      const angsuranKe = kreditMotor.angsuran_ke + 1;
-      const sisaPiutang = kreditMotor.sisa_piutang - jumlah_bayar;
-      const ketStatus = sisaPiutang <= 0 ? 'Lunas' : 'Belum Lunas';
-      const queryInsertPembayaran = `
-                INSERT INTO pembayaran (id_kredit_motor, tanggal_bayar, angsuran_ke, jumlah_bayar, ket)
-                VALUES (?, ?, ?, ?, ?)
-            `;
+      const sisaPiutangBaru = kreditMotor.sisa_piutang - jumlahBayar;
+      const angsuranKeBaru = kreditMotor.angsuran_ke + 1;
+      const statusPinjaman = sisaPiutangBaru <= 0 ? 'Lunas' : 'Belum Lunas';
 
-      db.query(queryInsertPembayaran, [id, tanggal_bayar, angsuranKe, jumlah_bayar, keterangan], (error, results) => {
-        if (error) {
-          console.error("Error saat menyimpan data pembayaran:", error);
-          return res.status(500).send("Terjadi kesalahan saat menyimpan data pembayaran.");
-        }
+      const insertPembayaranQuery = `
+        INSERT INTO pembayaran 
+          (id_kredit_motor, tanggal_bayar, jumlah_bayar, ket, angsuran_ke)
+        VALUES (?, ?, ?, ?, ?)
+      `;
 
-        const queryUpdateKreditMotor = `
-                    UPDATE kredit_motor
-                    SET angsuran_ke = ?, sisa_piutang = ?, ket_status = ?
-                    WHERE id = ?
-                `;
-
-        db.query(queryUpdateKreditMotor, [angsuranKe, sisaPiutang, ketStatus, id], (error, results) => {
+      db.query(
+        insertPembayaranQuery,
+        [id, tanggal_bayar, jumlahBayar, keterangan, angsuranKeBaru],
+        (error, results) => {
           if (error) {
-            console.error("Error saat mengupdate data kredit motor:", error);
-            return res.status(500).send("Terjadi kesalahan saat mengupdate data kredit motor.");
+            console.error("Error saat mencatat pembayaran:", error);
+            return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mencatat pembayaran." });
           }
 
-          res.redirect('/lihatKreditMotor');
-        });
-      });
+          const updateKreditMotorQuery = `
+            UPDATE kredit_motor
+            SET 
+              sisa_piutang = ?,
+              angsuran_ke = ?,
+              ket_status = ?
+            WHERE id = ?
+          `;
+
+          db.query(
+            updateKreditMotorQuery,
+            [sisaPiutangBaru, angsuranKeBaru, statusPinjaman, id],
+            (updateError, updateResults) => {
+              if (updateError) {
+                console.error("Error saat mengupdate sisa piutang dan angsuran_ke:", updateError);
+                return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mengupdate sisa piutang dan angsuran_ke." });
+              }
+
+              res.redirect('/lihatKreditMotor');
+            }
+          );
+        }
+      );
     });
   } catch (error) {
     console.error("Error:", error);

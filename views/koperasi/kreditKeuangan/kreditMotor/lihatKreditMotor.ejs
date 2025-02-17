@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,11 +8,10 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-
 <body class="flex bg-gray-100">
     <!-- Sidebar -->
     <%- include('../../../sidebar') %>
-
+    
     <!-- Main Content -->
     <div class="flex-1 ml-72">
         <div class="fixed top-0 left-72 right-0 flex justify-between shadow-md p-4 bg-white z-20">
@@ -23,31 +21,35 @@
                 <img src="/images/profile-user.png" class="w-10 h-10 rounded-full ml-2">
             </div>
         </div>
-
+        
         <div class="flex-1 p-8 mt-12">
             <!-- Fixed Search and Filter -->
             <div class="fixed top-16 left-72 right-0 bg-gray-100 z-10 p-4">
                 <div class="text-center mb-4">
                     <h2 class="text-2xl font-bold mt-3">Data Kredit Motor</h2>
                 </div>
-
-                <div class="bg-white p-6 rounded shadow"> 
+                
+                <div class="bg-white p-6 rounded shadow">
                     <div class="flex items-center space-x-8 justify-between mb-4">
                         <!-- Search Bar -->
                         <div class="flex items-center space-x-2 flex-1 mt-1">
-                            <input type="text" id="searchInput" placeholder="Cari Anggota" class="border border-gray-300 p-2 rounded flex-1" oninput="cariAnggota()">
+                            <input type="text" id="searchInput" placeholder="Cari Anggota" 
+                                   class="border border-gray-300 p-2 rounded flex-1" 
+                                   oninput="cariKreditMotor()">
                         </div>
-        
+                        
                         <!-- Tambah Button -->
-                        <a href="/kreditMotor/tambah" class="px-4 py-2 rounded text-white flex items-center space-x-2 hover:bg-[#4c6e2f]" style="background-color: #5D8736;">
+                        <a href="/kreditMotor/tambah" 
+                           class="px-4 py-2 rounded text-white flex items-center space-x-2 hover:bg-[#4c6e2f]" 
+                           style="background-color: #5D8736;">
                             <span class="material-icons text-white">add</span>
                             <span>Kredit Baru</span>
                         </a>
                     </div>
 
-                    <!-- Tabel Kredit Motor -->
+                    <!-- Scrollable Table -->
                     <div class="bg-white rounded-lg shadow overflow-x-auto"
-                        style="max-height: calc(100vh - 220px); overflow-y: auto;">
+                         style="max-height: calc(100vh - 220px); overflow-y: auto;">
                         <table class="w-full border-collapse">
                             <thead style="background-color: #5D8736; position: sticky; top: 0; z-index: 5;">
                                 <tr>
@@ -56,13 +58,13 @@
                                     <th class="px-6 py-3 text-left text-white">Nama Anggota</th>
                                     <th class="px-6 py-3 text-left text-white">Jumlah Pinjaman</th>
                                     <th class="px-6 py-3 text-left text-white">Jangka Waktu</th>
-                                    <th class="px-6 py-3 text-left text-white">Margin Persen</th>
+                                    <th class="px-6 py-3 text-left text-white">Margin (%)</th>
                                     <th class="px-6 py-3 text-left text-white">Angsuran Pokok</th>
-                                    <th class="px-6 py-3 text-left text-white">Angsuran Margin</th>
+                                    <th class="px-6 py-3 text-left text-white">Margin per Bulan</th>
                                     <th class="px-6 py-3 text-left text-white">Total Angsuran</th>
                                     <th class="px-6 py-3 text-left text-white">Angsuran Ke</th>
                                     <th class="px-6 py-3 text-left text-white">Sisa Piutang</th>
-                                    <th class="px-6 py-3 text-left text-white">Tanggal Perjanjian</th>
+                                    <th class="px-6 py-3 text-left text-white">Tanggal Mulai</th>
                                     <th class="px-6 py-3 text-left text-white">Status</th>
                                     <th class="px-6 py-3 text-left text-white">Bayar</th>
                                     <th class="px-6 py-3 text-left text-white">Aksi</th>
@@ -70,269 +72,207 @@
                             </thead>
                             <tbody id="kreditMotorTableBody">
                                 <% if (kreditMotor && kreditMotor.length > 0) { %>
-                                <% kreditMotor.forEach((motor, index) => { %>
-                                <tr class="border-b border-gray-200">
-                                    <td class="px-6 py-4"><%= index + 1 %></td>
-                                    <td class="px-6 py-4"><%= motor.id_anggota %></td>
-                                    <td class="px-6 py-4"><%= motor.nama_anggota %></td>
-                                    <td class="px-6 py-4"><%= motor.jumlah_pinjaman.toLocaleString() %></td>
-                                    <td class="px-6 py-4"><%= motor.jangka_waktu %> Bulan</td>
-                                    <td class="px-6 py-4">
-                                        <%= motor.margin_persen ? motor.margin_persen.toFixed(2) : '0.00' %>%
-                                    </td>
-                                    <td class="px-6 py-4"><%= motor.pokok ? motor.pokok.toLocaleString() : '0' %></td>
-                                    <td class="px-6 py-4"><%= motor.margin ? motor.margin.toLocaleString() : '0' %></td>
-                                    <td class="px-6 py-4">
-                                        <%= motor.total_angsuran ? motor.total_angsuran.toLocaleString() : '0' %></td>
-                                    <td class="px-6 py-4"><%= motor.angsuran_ke || 0 %></td>
-                                    <td class="px-6 py-4"><%= motor.sisa_piutang.toLocaleString() %></td>
-                                    <td class="px-6 py-4"><%= motor.tanggal_mulai.toISOString().split('T')[0] %></td>
-                                    <td class="px-6 py-4">
-                                        <% if (motor.ket_status === 'Lunas') { %>
-                                        <span
-                                            class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm whitespace-nowrap">Lunas</span>
-                                        <% } else { %>
-                                        <span
-                                            class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm whitespace-nowrap">Belum
-                                            Lunas</span>
-                                        <% } %>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex space-x-2">
-                                            <button onclick="bayarKreditMotor('<%= motor.id %>')"
-                                                class="border border-gray-300 px-2 py-1 rounded p-1"
-                                                style="background-color: #5D8736; color: white;">Bayar</button>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex space-x-2">
-                                            <a href="/kreditMotor/edit/<%= motor.id %>"
-                                                class="bg-blue-600 text-white p-2 rounded hover:bg-blue-700" title="Edit">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24"
-                                                    fill="none" stroke="currentColor" stroke-width="2"
-                                                    stroke-linecap="round" stroke-linejoin="round">
-                                                    <path d="M12 20h9" />
-                                                    <path d="M16.5 3.5a2.121 2.121 0 113 3L7 19l-4 1 1-4 12.5-12.5z" />
-                                                </svg>
-                                            </a>
-                                            <button onclick="hapusKreditMotor('<%= motor.id %>')"
-                                                class="bg-red-600 text-white p-2 rounded hover:bg-red-700" title="Hapus">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                                                    viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M6 18L18 6M6 6l12 12" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <% }) %>
+                                    <% kreditMotor.forEach((motor, index) => { %>
+                                        <tr class="border-b border-gray-200">
+                                            <td class="px-6 py-4"><%= index + 1 %></td>
+                                            <td class="px-6 py-4"><%= motor.id_anggota %></td>
+                                            <td class="px-6 py-4"><%= motor.nama_anggota %></td>
+                                            <td class="px-6 py-4"><%= motor.jumlah_pinjaman.toLocaleString() %></td>
+                                            <td class="px-6 py-4"><%= motor.jangka_waktu %> Bulan</td>
+                                            <td class="px-6 py-4"><%= motor.margin_persen ? motor.margin_persen.toFixed(2) : '0.00' %>%</td>
+                                            <td class="px-6 py-4"><%= motor.pokok ? motor.pokok.toLocaleString() : '0' %></td>
+                                            <td class="px-6 py-4"><%= motor.margin ? motor.margin.toLocaleString() : '0' %></td>
+                                            <td class="px-6 py-4"><%= motor.total_angsuran ? motor.total_angsuran.toLocaleString() : '0' %></td>
+                                            <td class="px-6 py-4"><%= motor.angsuran_ke || 0 %></td>
+                                            <td class="px-6 py-4"><%= motor.sisa_piutang.toLocaleString() %></td>
+                                            <td class="px-6 py-4"><%= motor.tanggal_mulai ? new Date(motor.tanggal_mulai).toLocaleDateString('id-ID') : '-' %></td>
+                                            <td class="px-6 py-4">
+                                                <% if (motor.ket_status === 'Lunas') { %>
+                                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm whitespace-nowrap">Lunas</span>
+                                                <% } else { %>
+                                                    <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm whitespace-nowrap">Belum Lunas</span>
+                                                <% } %>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex space-x-2">
+                                                    <button onclick="bayarKreditMotor('<%= motor.id %>')" 
+                                                            class="border border-gray-300 px-2 py-1 rounded p-1"
+                                                            style="background-color: #5D8736; color: white;">Bayar</button>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex space-x-2">
+                                                    <a href="/kreditMotor/edit/<%= motor.id %>" 
+                                                       class="bg-blue-600 text-white p-2 rounded hover:bg-blue-700" 
+                                                       title="Edit">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" 
+                                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                                                             stroke-width="2" stroke-linecap="round" 
+                                                             stroke-linejoin="round">
+                                                            <path d="M12 20h9" />
+                                                            <path d="M16.5 3.5a2.121 2.121 0 113 3L7 19l-4 1 1-4 12.5-12.5z" />
+                                                        </svg>
+                                                    </a>
+                                                    <button onclick="hapusKreditMotor('<%= motor.id %>')" 
+                                                            class="bg-red-600 text-white p-2 rounded hover:bg-red-700" 
+                                                            title="Hapus">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" 
+                                                             fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" 
+                                                                  stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
                                 <% } else { %>
-                                <tr>
-                                    <td colspan="15" class="px-6 py-4 text-center">Tidak ada data kredit motor.</td>
-                                </tr>
+                                    <tr>
+                                        <td colspan="15" class="px-6 py-4 text-center">Tidak ada data kredit motor.</td>
+                                    </tr>
                                 <% } %>
                             </tbody>
                         </table>
                     </div>
                 </div>
-
-                <script>
-                    // Event listener untuk pencarian real-time
-                    document.getElementById('searchInput').addEventListener('input', function() {
-                        const keyword = this.value;
-                        
-                        // Hanya cari jika panjang keyword minimal 1 karakter
-                        if (keyword.length > 0) {
-                            fetch(`/kreditMotor/cari?search=${encodeURIComponent(keyword)}`)
-                                .then(response => response.json())
-                                .then(data => {
-                                    const tableBody = document.getElementById('kreditMotorTableBody');
-                                    tableBody.innerHTML = ''; // Kosongkan tabel sebelum menambahkan data baru
-                
-                                    if (data.length > 0) {
-                                        data.forEach((motor, index) => {
-                                            const row = `
-                                                <tr class="border-b border-gray-200">
-                                                    <td class="px-6 py-4">${index + 1}</td>
-                                                    <td class="px-6 py-4">${motor.id_anggota}</td>
-                                                    <td class="px-6 py-4">${motor.nama_anggota}</td>
-                                                    <td class="px-6 py-4">${motor.jumlah_pinjaman.toLocaleString()}</td>
-                                                    <td class="px-6 py-4">${motor.jangka_waktu} Bulan</td>
-                                                    <td class="px-6 py-4">${motor.margin_persen ? motor.margin_persen.toFixed(2) : '0.00'}%</td>
-                                                    <td class="px-6 py-4">${motor.pokok ? motor.pokok.toLocaleString() : '0'}</td>
-                                                    <td class="px-6 py-4">${motor.margin ? motor.margin.toLocaleString() : '0'}</td>
-                                                    <td class="px-6 py-4">${motor.total_angsuran ? motor.total_angsuran.toLocaleString() : '0'}</td>
-                                                    <td class="px-6 py-4">${motor.angsuran_ke || 0}</td>
-                                                    <td class="px-6 py-4">${motor.sisa_piutang.toLocaleString()}</td>
-                                                    <td class="px-6 py-4">${motor.tanggal_mulai.split('T')[0]}</td>
-                                                    <td class="px-6 py-4">
-                                                        ${motor.ket_status === 'Lunas' ?
-                                                            '<span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm">Lunas</span>' :
-                                                            '<span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm">Belum Lunas</span>'}
-                                                    </td>
-                                                    <td class="px-6 py-4">
-                                                        <div class="flex space-x-2">
-                                                            <button onclick="bayarKreditMotor('${motor.id}')" class="border border-gray-300 px-2 py-1 rounded p-1" style="background-color: #5D8736; color: white;">Bayar</button>
-                                                        </div>
-                                                    </td>
-                                                    <td class="px-6 py-4">
-                                                        <div class="flex space-x-2">
-                                                            <a href="/kreditMotor/edit/${motor.id}" class="bg-blue-600 text-white p-2 rounded hover:bg-blue-700" title="Edit">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                                    <path d="M12 20h9" />
-                                                                    <path d="M16.5 3.5a2.121 2.121 0 113 3L7 19l-4 1 1-4 12.5-12.5z" />
-                                                                </svg>
-                                                            </a>
-                                                            <button onclick="hapusKreditMotor('${motor.id}')" class="bg-red-600 text-white p-2 rounded hover:bg-red-700" title="Hapus">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                                                </svg>
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            `;
-                                            tableBody.innerHTML += row;
-                                        });
-                                    } else {
-                                        tableBody.innerHTML = `
-                                            <tr>
-                                                <td colspan="15" class="px-6 py-4 text-center">Tidak ada data kredit motor.</td>
-                                            </tr>
-                                        `;
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('Error:', error);
-                                    alert('Terjadi kesalahan saat mencari data.');
-                                });
-                        } else {
-                            // Jika keyword kosong, muat ulang tabel default
-                            location.reload();
-                        }
-                    });
-                
-                    function cariAnggota() {
-                        const keyword = document.getElementById('searchInput').value;
-                        fetch(`/kreditMotor/cari?keyword=${keyword}`)
-                            .then(response => response.json())
-                            .then(data => {
-                                const tableBody = document.getElementById('kreditMotorTableBody');
-                                tableBody.innerHTML = ''; // Kosongkan tabel sebelum menambahkan data baru
-                
-                                if (data.length > 0) {
-                                    data.forEach((motor, index) => {
-                                        const row = `
-                                            <tr class="border-b border-gray-200">
-                                                <td class="px-6 py-4">${index + 1}</td>
-                                                <td class="px-6 py-4">${motor.id_anggota}</td>
-                                                <td class="px-6 py-4">${motor.nama_anggota}</td>
-                                                <td class="px-6 py-4">${motor.jumlah_pinjaman.toLocaleString()}</td>
-                                                <td class="px-6 py-4">${motor.jangka_waktu} Bulan</td>
-                                                <td class="px-6 py-4">${motor.margin_persen ? motor.margin_persen.toFixed(2) : '0.00'}%</td>
-                                                <td class="px-6 py-4">${motor.pokok ? motor.pokok.toLocaleString() : '0'}</td>
-                                                <td class="px-6 py-4">${motor.margin ? motor.margin.toLocaleString() : '0'}</td>
-                                                <td class="px-6 py-4">${motor.total_angsuran ? motor.total_angsuran.toLocaleString() : '0'}</td>
-                                                <td class="px-6 py-4">${motor.angsuran_ke || 0}</td>
-                                                <td class="px-6 py-4">${motor.sisa_piutang.toLocaleString()}</td>
-                                                <td class="px-6 py-4">${motor.tanggal_mulai.split('T')[0]}</td>
-                                                <td class="px-6 py-4">
-                                                    ${motor.ket_status === 'Lunas' ?
-                                                        '<span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm">Lunas</span>' :
-                                                        '<span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm">Belum Lunas</span>'}
-                                                </td>
-                                                <td class="px-6 py-4">
-                                                    <div class="flex space-x-2">
-                                                        <button onclick="bayarKreditMotor('${motor.id}')" class="border border-gray-300 px-2 py-1 rounded p-1" style="background-color: #5D8736; color: white;">Bayar</button>
-                                                    </div>
-                                                </td>
-                                                <td class="px-6 py-4">
-                                                    <div class="flex space-x-2">
-                                                        <a href="/kreditMotor/edit/${motor.id}" class="bg-blue-600 text-white p-2 rounded hover:bg-blue-700" title="Edit">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                                <path d="M12 20h9" />
-                                                                <path d="M16.5 3.5a2.121 2.121 0 113 3L7 19l-4 1 1-4 12.5-12.5z" />
-                                                            </svg>
-                                                        </a>
-                                                        <button onclick="hapusKreditMotor('${motor.id}')" class="bg-red-600 text-white p-2 rounded hover:bg-red-700" title="Hapus">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                                            </svg>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        `;
-                                            tableBody.innerHTML += row;
-                                        });
-                                    } else {
-                                        tableBody.innerHTML = `
-                                        <tr>
-                                            <td colspan="15" class="px-6 py-4 text-center">Tidak ada data kredit motor.</td>
-                                        </tr>
-                                    `;
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                                alert('Terjadi kesalahan saat mencari data.');
-                            });
-                    }
-                
-                    function editKreditMotor(id) {
-                        window.location.href = `/kreditMotor/edit/${id}`;
-                    }
-                
-                    function bayarKreditMotor(id) {
-                        window.location.href = `/kreditMotor/bayar/${id}`;
-                    }
-                
-                    function hapusKreditMotor(id) {
-                        Swal.fire({
-                            title: 'Konfirmasi Hapus',
-                            text: 'Apakah Anda yakin ingin menghapus data kredit motor ini?',
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#d33',
-                            cancelButtonColor: '#3085d6',
-                            confirmButtonText: 'Ya, Hapus!',
-                            cancelButtonText: 'Batal'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                fetch(`/kreditMotor/hapus/${id}`, {
-                                    method: 'DELETE'
-                                })
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (data.success) {
-                                        Swal.fire({
-                                            title: 'Berhasil!',
-                                            text: data.message,
-                                            icon: 'success'
-                                        }).then(() => {
-                                            location.reload();
-                                        });
-                                    } else {
-                                        Swal.fire({
-                                            title: 'Gagal!',
-                                            text: data.message,
-                                            icon: 'error'
-                                        });
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('Error:', error);
-                                    Swal.fire({
-                                        title: 'Kesalahan',
-                                        text: 'Terjadi kesalahan saat menghapus data',
-                                        icon: 'error'
-                                    });
-                                });
-                            }
-                        });
-                    }
-                </script>
+            </div>
+        </div>
     </div>
+
+    <script>
+        function cariKreditMotor() {
+            const keyword = document.getElementById('searchInput').value;
+            if (keyword.length > 0) {
+                fetch(`/kreditMotor/cari?search=${encodeURIComponent(keyword)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const tableBody = document.getElementById('kreditMotorTableBody');
+                        tableBody.innerHTML = '';
+
+                        if (data.length > 0) {
+                            data.forEach((motor, index) => {
+                                const row = `
+                                    <tr class="border-b border-gray-200">
+                                        <td class="px-6 py-4">${index + 1}</td>
+                                        <td class="px-6 py-4">${motor.id_anggota}</td>
+                                        <td class="px-6 py-4">${motor.nama_anggota}</td>
+                                        <td class="px-6 py-4">${motor.jumlah_pinjaman.toLocaleString()}</td>
+                                        <td class="px-6 py-4">${motor.jangka_waktu} Bulan</td>
+                                        <td class="px-6 py-4">${motor.margin_persen ? motor.margin_persen.toFixed(2) : '0.00'}%</td>
+                                        <td class="px-6 py-4">${motor.pokok ? motor.pokok.toLocaleString() : '0'}</td>
+                                        <td class="px-6 py-4">${motor.margin ? motor.margin.toLocaleString() : '0'}</td>
+                                        <td class="px-6 py-4">${motor.total_angsuran ? motor.total_angsuran.toLocaleString() : '0'}</td>
+                                        <td class="px-6 py-4">${motor.angsuran_ke || 0}</td>
+                                        <td class="px-6 py-4">${motor.sisa_piutang.toLocaleString()}</td>
+                                        <td class="px-6 py-4">${motor.tanggal_mulai ? new Date(motor.tanggal_mulai).toLocaleDateString('id-ID') : '-'}</td>
+                                        <td class="px-6 py-4">
+                                            ${motor.ket_status === 'Lunas' 
+                                                ? '<span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm">Lunas</span>' 
+                                                : '<span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm">Belum Lunas</span>'}
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex space-x-2">
+                                                <button onclick="bayarKreditMotor('${motor.id}')" 
+                                                        class="border border-gray-300 px-2 py-1 rounded p-1" 
+                                                        style="background-color: #5D8736; color: white;">Bayar</button>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex space-x-2">
+                                                <a href="/kreditMotor/edit/${motor.id}" 
+                                                   class="bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" 
+                                                         viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                                                         stroke-width="2" stroke-linecap="round" 
+                                                         stroke-linejoin="round">
+                                                        <path d="M12 20h9" />
+                                                        <path d="M16.5 3.5a2.121 2.121 0 113 3L7 19l-4 1 1-4 12.5-12.5z" />
+                                                    </svg>
+                                                </a>
+                                                <button onclick="hapusKreditMotor('${motor.id}')" 
+                                                   class="bg-red-600 text-white p-2 rounded hover:bg-red-700">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" 
+                                                         fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" 
+                                                              stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `;
+                                tableBody.innerHTML += row;
+                            });
+                        } else {
+                            tableBody.innerHTML = `
+                                <tr>
+                                    <td colspan="15" class="px-6 py-4 text-center">Tidak ada data kredit motor.</td>
+                                </tr>
+                            `;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Terjadi kesalahan saat mencari data.');
+                    });
+            } else {
+                // Jika keyword kosong, muat ulang tabel default
+                location.reload();
+            }
+        }
+
+        function hapusKreditMotor(id) {
+            Swal.fire({
+                title: 'Konfirmasi Hapus',
+                text: 'Apakah Anda yakin ingin menghapus data kredit motor ini?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/kreditMotor/hapus/${id}`, {
+                        method: 'DELETE'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                title: 'Berhasil!',
+                                text: data.message,
+                                icon: 'success'
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Gagal!',
+                                text: data.message,
+                                icon: 'error'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            title: 'Kesalahan',
+                            text: 'Terjadi kesalahan saat menghapus data',
+                            icon: 'error'
+                        });
+                    });
+                }
+            });
+        }
+
+        function bayarKreditMotor(id) {
+            window.location.href = `/kreditMotor/bayar/${id}`;
+        }
+
+        function editKreditMotor(id) {
+            window.location.href = `/kreditMotor/edit/${id}`;
+        }
+    </script>
 </body>
 </html>

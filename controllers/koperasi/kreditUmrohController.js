@@ -169,15 +169,19 @@ exports.tampilkanBayarKreditUmroh = async (req, res) => {
   const id = req.params.id;
 
   const queryKreditUmroh = `
-      SELECT 
+      SELECT
           ku.id,
           ku.id_anggota,
           pg.nama AS nama_anggota,
           ku.jumlah_pinjaman,
           ku.jangka_waktu,
-          ku.sisa_piutang,
           ku.total_angsuran,
-          ku.angsuran_ke
+          ku.pokok,
+          ku.margin,
+          ku.angsuran_ke,
+          ku.sisa_piutang,
+          ku.tanggal_mulai,
+          ku.ket_status
       FROM kredit_umroh ku
       JOIN anggota a ON ku.id_anggota = a.id
       JOIN pegawai pg ON a.nip_anggota = pg.nip
@@ -185,7 +189,7 @@ exports.tampilkanBayarKreditUmroh = async (req, res) => {
   `;
 
   const queryPembayaran = `
-      SELECT 
+      SELECT
           tanggal_bayar,
           angsuran_ke,
           jumlah_bayar,
@@ -196,80 +200,137 @@ exports.tampilkanBayarKreditUmroh = async (req, res) => {
   `;
 
   db.query(queryKreditUmroh, [id], (error, resultsKreditUmroh) => {
-    if (error) {
-      console.error("Error saat mengambil data kredit umroh:", error);
-      return res.status(500).send("Terjadi kesalahan saat mengambil data kredit umroh.");
-    }
-    if (resultsKreditUmroh.length === 0) {
-      return res.status(404).send("Data kredit umroh tidak ditemukan.");
-    }
-
-    const kreditUmroh = resultsKreditUmroh[0];
-
-    db.query(queryPembayaran, [id], (error, resultsPembayaran) => {
       if (error) {
-        console.error("Error saat mengambil riwayat pembayaran:", error);
-        return res.status(500).send("Terjadi kesalahan saat mengambil riwayat pembayaran.");
+          console.error("Error saat mengambil data kredit umroh:", error);
+          return res.status(500).send("Terjadi kesalahan saat mengambil data kredit umroh.");
       }
 
-      res.render("koperasi/kreditKeuangan/kreditUmroh/bayarKreditUmroh", {
-        kreditUmroh: kreditUmroh,
-        riwayatPembayaran: resultsPembayaran,
+      if (resultsKreditUmroh.length === 0) {
+          return res.status(404).send("Data kredit umroh tidak ditemukan.");
+      }
+
+      const kreditUmroh = resultsKreditUmroh[0];
+
+      db.query(queryPembayaran, [id], (error, resultsPembayaran) => {
+          if (error) {
+              console.error("Error saat mengambil riwayat pembayaran:", error);
+              return res.status(500).send("Terjadi kesalahan saat mengambil riwayat pembayaran.");
+          }
+
+          res.render("koperasi/kreditKeuangan/kreditUmroh/bayarKreditUmroh", {
+              kreditUmroh: kreditUmroh,
+              riwayatPembayaran: resultsPembayaran,
+          });
       });
-    });
   });
 };
+
 
 exports.prosesBayar = async (req, res) => {
   const idKreditUmroh = req.params.id;
   const { tanggal_bayar, jumlah_bayar, keterangan } = req.body;
-
-  const getAngsuranKeQuery = `
-      SELECT angsuran_ke, sisa_piutang
-      FROM kredit_umroh
-      WHERE id = ?
-  `;
-
-  db.query(getAngsuranKeQuery, [idKreditUmroh], (error, results) => {
-    if (error) {
-      console.error("Error saat mengambil angsuran_ke:", error);
-      return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mengambil angsuran_ke." });
-    }
-
-    const angsuranKe = results[0].angsuran_ke + 1;
-    const sisaPiutangBaru = results[0].sisa_piutang - jumlah_bayar;
-
-    const statusKreditUmroh = sisaPiutangBaru <= 0 ? 'Lunas' : 'Belum Lunas';
-
-    const insertPembayaranQuery = `
-          INSERT INTO pembayaran (id_kredit_umroh, tanggal_bayar, jumlah_bayar, ket, angsuran_ke)
-          VALUES (?, ?, ?, ?, ?)
-      `;
-
-    db.query(insertPembayaranQuery, [idKreditUmroh, tanggal_bayar, jumlah_bayar, keterangan, angsuranKe], (error, results) => {
-      if (error) {
-        console.error("Error saat mencatat pembayaran:", error);
-        return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mencatat pembayaran." });
+  
+  try {
+      // Pastikan jumlah_bayar ada dan tidak undefined
+      if (!jumlah_bayar) {
+          return res.status(400).json({ 
+              success: false, 
+              message: "Jumlah pembayaran harus diisi." 
+          });
       }
 
-      const updateKreditUmrohQuery = `
-              UPDATE kredit_umroh
-              SET sisa_piutang = ?,
-                  angsuran_ke = ?,
-                  ket_status = ?
-              WHERE id = ?
+      // Bersihkan dan format jumlah_bayar
+      const jumlahBayar = parseFloat(jumlah_bayar.replace(/[^0-9,]/g, '').replace(',', '.'));
+
+      // Pastikan jumlahBayar adalah angka yang valid
+      if (isNaN(jumlahBayar)) {
+          return res.status(400).json({ 
+              success: false, 
+              message: "Jumlah pembayaran tidak valid." 
+          });
+      }
+
+      const queryKreditUmroh = `
+          SELECT
+              sisa_piutang,
+              angsuran_ke,
+              total_angsuran,
+              pokok,
+              margin
+          FROM kredit_umroh
+          WHERE id = ?
+      `;
+
+      db.query(queryKreditUmroh, [idKreditUmroh], (error, results) => {
+          if (error) {
+              console.error("Error saat mengambil data kredit umroh:", error);
+              return res.status(500).json({ 
+                  success: false, 
+                  message: "Terjadi kesalahan saat mengambil data kredit umroh." 
+              });
+          }
+
+          if (results.length === 0) {
+              return res.status(404).json({ 
+                  success: false, 
+                  message: "Data kredit umroh tidak ditemukan." 
+              });
+          }
+
+          const kreditUmroh = results[0];
+          const sisaPiutangBaru = kreditUmroh.sisa_piutang - jumlahBayar;
+          const angsuranKeBaru = kreditUmroh.angsuran_ke + 1;
+          const statusPinjaman = sisaPiutangBaru <= 0 ? 'Lunas' : 'Belum Lunas';
+
+          const insertPembayaranQuery = `
+              INSERT INTO pembayaran 
+                  (id_kredit_umroh, tanggal_bayar, jumlah_bayar, ket, angsuran_ke)
+              VALUES (?, ?, ?, ?, ?)
           `;
 
-      db.query(updateKreditUmrohQuery, [sisaPiutangBaru, angsuranKe, statusKreditUmroh, idKreditUmroh], (updateError, updateResults) => {
-        if (updateError) {
-          console.error("Error saat mengupdate sisa piutang dan angsuran_ke:", updateError);
-          return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mengupdate sisa piutang dan angsuran_ke." });
-        }
+          db.query(
+              insertPembayaranQuery,
+              [idKreditUmroh, tanggal_bayar, jumlahBayar, keterangan, angsuranKeBaru],
+              (error, results) => {
+                  if (error) {
+                      console.error("Error saat mencatat pembayaran:", error);
+                      return res.status(500).json({ 
+                          success: false, 
+                          message: "Terjadi kesalahan saat mencatat pembayaran." 
+                      });
+                  }
 
-        res.redirect('/lihatKreditUmroh');
+                  const updateKreditUmrohQuery = `
+                      UPDATE kredit_umroh
+                      SET
+                          sisa_piutang = ?,
+                          angsuran_ke = ?,
+                          ket_status = ?
+                      WHERE id = ?
+                  `;
+
+                  db.query(
+                      updateKreditUmrohQuery,
+                      [sisaPiutangBaru, angsuranKeBaru, statusPinjaman, idKreditUmroh],
+                      (updateError, updateResults) => {
+                          if (updateError) {
+                              console.error("Error saat mengupdate sisa piutang dan angsuran_ke:", updateError);
+                              return res.status(500).json({ 
+                                  success: false, 
+                                  message: "Terjadi kesalahan saat mengupdate sisa piutang dan angsuran_ke." 
+                              });
+                          }
+
+                          res.redirect('/lihatKreditUmroh');
+                      }
+                  );
+              }
+          );
       });
-    });
-  });
+  } catch (error) {
+      console.error("Error:", error);
+      res.status(500).send("Terjadi kesalahan saat memproses pembayaran kredit umroh.");
+  }
 };
 
 exports.tampilkanEditKreditUmroh = async (req, res) => {

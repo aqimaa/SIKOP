@@ -6,11 +6,49 @@
     <title>Bayar Kredit Umroh</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .print-section,
+            .print-section * {
+                visibility: visible;
+            }
+            .print-section {
+                display: block !important;
+                width: 100% !important;
+                page-break-inside: avoid;
+                margin-bottom: 20px;
+            }
+            .print-section table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 10px;
+            }
+            .print-section th,
+            .print-section td {
+                border: 1px solid #000;
+                padding: 8px;
+                text-align: left;
+            }
+            .print-section th {
+                background-color: #f3f4f6;
+            }
+            .print-section h3 {
+                margin-top: 20px;
+                margin-bottom: 10px;
+            }
+            .print-section .flex {
+                display: block !important;
+            }
+        }
+    </style>
 </head>
 <body class="flex bg-gray-100">
     <!-- Sidebar -->
     <%- include('../../../sidebar') %>
-
+    
     <!-- Main Content -->
     <div class="flex-1 ml-72 p-8">
         <div class="fixed top-0 left-72 right-0 flex justify-between shadow-md p-4 bg-white z-20">
@@ -24,9 +62,9 @@
         <div class="mt-20 text-center">
             <h1 class="text-2xl font-bold mb-8">Bayar Angsuran Kredit Umroh</h1>
         </div>
-        
+
         <!-- Informasi Kredit -->
-        <div class="bg-blue-100 p-6 rounded-md shadow-md mb-6">
+        <div class="bg-blue-100 p-6 rounded-md shadow-md mb-6 print-section">
             <h3 class="text-xl font-semibold mb-4">Informasi Kredit</h3>
             <div class="grid grid-cols-2 gap-4">
                 <div>
@@ -54,8 +92,12 @@
                     <p class="font-bold"><%= kreditUmroh.sisa_piutang.toLocaleString() %></p>
                 </div>
                 <div>
-                    <p>Angsuran Per Bulan</p>
-                    <p class="font-bold"><%= kreditUmroh.total_angsuran.toLocaleString() %></p>
+                    <p>Angsuran Pokok Per Bulan</p>
+                    <p class="font-bold"><%= kreditUmroh.pokok.toLocaleString() %></p>
+                </div>
+                <div>
+                    <p>Margin Per Bulan</p>
+                    <p class="font-bold"><%= kreditUmroh.margin.toLocaleString() %></p>
                 </div>
             </div>
         </div>
@@ -67,56 +109,125 @@
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Tanggal Pembayaran</label>
-                        <input type="date" name="tanggal_bayar" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" required>
+                        <input type="date" name="tanggal_bayar" id="tanggal_bayar" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" required />
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Jumlah Bayar</label>
-                        <input type="text" name="jumlah_bayar" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" required oninput="validateNumberInput(this)">
+                        <label class="block text-sm font-medium text-gray-700">Pembayaran Pokok</label>
+                        <input type="text" id="pembayaran_pokok" name="pembayaran_pokok" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" required oninput="formatRupiah(this); calculateTotal();" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Biaya Margin</label>
+                        <input type="text" id="biaya_margin" name="pembayaran_margin" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2 bg-gray-100" value="<%= kreditUmroh.margin.toLocaleString() %>" readonly />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Total Keseluruhan Pembayaran</label>
+                        <input type="text" id="total_pembayaran" name="jumlah_bayar" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2 bg-gray-100" readonly />
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Keterangan</label>
-                        <input type="text" name="keterangan" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2">
+                        <input type="text" name="keterangan" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2" />
                     </div>
                 </div>
             </div>
 
             <!-- Riwayat Pembayaran -->
-            <div class="bg-white p-6 rounded-md shadow-md mb-6">
-                <h3 class="text-xl font-semibold mb-4">Rincian Pembayaran</h3>
+            <div class="bg-white p-6 rounded-md shadow-md mt-6 print-section">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold mb-4">Riwayat Pembayaran</h3>
+                    <button type="button" onclick="cetakRiwayatPembayaran()" class="bg-gray-100 py-2 px-4 rounded-md shadow-md flex items-center justify-center space-x-2 mb-3">
+                        <span class="material-icons">print</span>
+                        <span>Cetak Riwayat Pembayaran</span>
+                    </button>
+                </div>
                 <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Angsuran Ke</th> 
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keterangan</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    <% if (riwayatPembayaran.length > 0) { %>                    
-                        <% riwayatPembayaran.forEach(pembayaran => { %>
+                    <thead class="bg-gray-50">
                         <tr>
-                            <td class="border px-4 py-2"><%= pembayaran.tanggal_bayar.toISOString().split('T')[0] %></td>
-                            <td class="border px-4 py-2"><%= pembayaran.angsuran_ke %></td>
-                            <td class="border px-4 py-2"><%= pembayaran.jumlah_bayar.toLocaleString() %></td>
-                            <td class="border px-4 py-2"><%= pembayaran.ket %></td>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Pembayaran</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Angsuran Ke</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah Pembayaran</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keterangan</th>
                         </tr>
-                        <% }) %>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <% if (riwayatPembayaran && riwayatPembayaran.length > 0) { %>
+                            <% riwayatPembayaran.forEach((bayar) => { %>
+                                <tr>
+                                    <td class="px-6 py-4"><%= bayar.tanggal_bayar ? new Date(bayar.tanggal_bayar).toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta' }) : '-' %></td>
+                                    <td class="px-6 py-4"><%= bayar.angsuran_ke %></td>
+                                    <td class="px-6 py-4"><%= bayar.jumlah_bayar.toLocaleString() %></td>
+                                    <td class="px-6 py-4"><%= bayar.ket %></td>
+                                </tr>
+                            <% }) %>
                         <% } else { %>
-                        <tr>
-                            <td colspan="4" class="px-6 py-4 text-center">Belum ada riwayat pembayaran</td>
-                        </tr>
+                            <tr>
+                                <td colspan="4" class="px-6 py-4 text-center">Tidak ada riwayat pembayaran.</td>
+                            </tr>
                         <% } %>
-                </tbody>
+                    </tbody>
                 </table>
             </div>
 
             <!-- Buttons -->
             <div class="flex space-x-4 mt-8">
-                <button type="button" onclick="window.history.back()" class="flex-1 border py-2 px-4 rounded-md" style="border-color: #5D8736; color: #5D8736;">Batal</button>
-                <button type="submit" class="flex-1 bg-[#5D8736] text-white py-2 px-4 rounded-md" style="background-color: #5D8736;">Simpan</button>
+                <button type="button" onclick="window.history.back()" class="flex-1 border py-2 px-4 rounded-md" style="border-color: #5d8736; color: #5d8736">Batal</button>
+                <button type="submit" class="flex-1 bg-[#5D8736] text-white py-2 px-4 rounded-md" style="background-color: #5d8736">Simpan</button>
             </div>
         </form>
     </div>
+
+    <script>
+        function formatRupiah(input) {
+            let value = input.value.replace(/[^0-9,]/g, "");
+            let parts = value.split(",");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            input.value = parts.join(",");
+        }
+
+        function calculateTotal() {
+            const pembayaranPokok = parseFloat(document.getElementById("pembayaran_pokok").value.replace(/\./g, "").replace(",", ".")) || 0;
+            const biayaMargin = parseFloat(document.getElementById("biaya_margin").value.replace(/\./g, "").replace(",", ".")) || 0;
+            const totalPembayaran = pembayaranPokok + biayaMargin;
+
+            document.getElementById("total_pembayaran").value = totalPembayaran.toLocaleString("id-ID", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // Set tanggal pembayaran otomatis ke hari ini
+            const today = new Date().toISOString().split("T")[0];
+            document.getElementById("tanggal_bayar").value = today;
+
+            const angsuranPokok = "<%= kreditUmroh.pokok %>";
+            const pembayaranPokokInput = document.getElementById("pembayaran_pokok");
+            
+            if (pembayaranPokokInput && angsuranPokok) {
+                pembayaranPokokInput.value = parseFloat(angsuranPokok).toLocaleString("id-ID", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                });
+            } else {
+                console.error("Nilai angsuran pokok tidak valid atau input tidak ditemukan.");
+            }
+
+            calculateTotal();
+        });
+
+        function cetakRiwayatPembayaran() {
+            const printSections = document.querySelectorAll(".print-section");
+            const originalContents = document.body.innerHTML;
+            let printContents = "";
+
+            printSections.forEach((section) => {
+                printContents += section.outerHTML;
+            });
+
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+            window.location.reload();
+        }
+    </script>
 </body>
 </html>

@@ -425,40 +425,57 @@ exports.tambahKreditMotor = async (req, res) => {
       sisa_piutang
     } = req.body;
 
-    const formattedJumlahPinjaman = parseFloat(jumlah_pinjaman.replace(/,/g, ''));
-    const formattedTotalAngsuran = parseFloat(total_angsuran.replace(/,/g, ''));
-    const formattedPokok = parseFloat(pokok.replace(/,/g, ''));
-    const formattedMargin = parseFloat(margin.replace(/,/g, ''));
-    const formattedSisaPiutang = parseFloat(sisa_piutang.replace(/,/g, ''));
+    // Parse dan format angka
+    const parseNumberWithComma = (value) => {
+      if (!value || typeof value !== 'string') return 0;
+      return parseFloat(value.replace(/\./g, '').replace(',', '.'));  
+    };
+
+    const formattedJumlahPinjaman = parseNumberWithComma(jumlah_pinjaman);
+    const formattedTotalAngsuran = parseNumberWithComma(total_angsuran);
+    const formattedPokok = parseNumberWithComma(pokok);
+    const formattedMargin = parseNumberWithComma(margin);
+    const formattedSisaPiutang = formattedJumlahPinjaman; // Sisa piutang awal sama dengan jumlah pinjaman
     const formattedMarginPersen = parseFloat(margin_persen);
 
+    // Validasi input
     if (!id_anggota || !formattedJumlahPinjaman || !jangka_waktu || !tanggal_mulai) {
       throw new Error('Semua field wajib diisi');
     }
 
     const query = `
-            INSERT INTO kredit_motor 
-            (id_anggota, jumlah_pinjaman, jangka_waktu, total_angsuran, 
-             pokok, margin, sisa_piutang, tanggal_mulai, ket_status, 
-             angsuran_ke, margin_persen)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `;
+      INSERT INTO kredit_motor 
+        (id_anggota, jumlah_pinjaman, jangka_waktu, total_angsuran,
+         pokok, margin, sisa_piutang, tanggal_mulai, ket_status,
+         angsuran_ke, margin_persen)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
 
     const values = [
       id_anggota,
       formattedJumlahPinjaman,
       jangka_waktu,
       formattedTotalAngsuran,
-      formattedPokok,
+      formattedPokok, 
       formattedMargin,
-      formattedSisaPiutang,
+      formattedSisaPiutang, // Menggunakan jumlah pinjaman sebagai sisa piutang awal
       tanggal_mulai,
       'Belum Lunas',
       0,
       formattedMarginPersen
     ];
 
-    console.log("Query values:", values);
+    // Log untuk debugging
+    console.log("Data yang akan disimpan:", {
+      id_anggota,
+      jumlah_pinjaman: formattedJumlahPinjaman,
+      jangka_waktu,
+      total_angsuran: formattedTotalAngsuran,
+      pokok: formattedPokok,
+      margin: formattedMargin,
+      sisa_piutang: formattedSisaPiutang,
+      margin_persen: formattedMarginPersen
+    });
 
     db.query(query, values, (error, results) => {
       if (error) {
@@ -473,6 +490,7 @@ exports.tambahKreditMotor = async (req, res) => {
     res.status(500).send(error.message || "Terjadi kesalahan saat menambahkan kredit motor.");
   }
 };
+
 
 exports.hapusKreditMotor = (req, res) => {
   const id = req.params.id;

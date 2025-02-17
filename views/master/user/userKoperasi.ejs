@@ -133,33 +133,26 @@
                         <a href="/master/user/export/sql" class="block px-4 py-2 text-gray-700 hover:bg-gray-200">Ekspor ke SQL</a>
                         <a href="/master/user/export/json" class="block px-4 py-2 text-gray-700 hover:bg-gray-200">Ekspor ke JSON</a>
                     </div>
-                
-<!--            
+                </div>
+            
+                <!-- Tombol Ekspor Tabel Master di Kanan -->
                 <div class="relative inline-block text-left">
                     <button onclick="toggleTableDropdown()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-800">
-                        Ekspor Tabel
+                        Ekspor Tabel Master
                     </button>
                     <div id="tableExportDropdown" class="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded shadow-lg hidden">
                         <select id="tableSelect" class="block w-full px-4 py-2 border-b">
                             <option value="users">Users</option>
                             <option value="anggota">Anggota</option>
-                            <option value="kredit_barang">Kredit Barang</option>
-                            <option value="kredit_elektronik">Kredit Elektronik</option>
-                            <option value="kredit_motor">Kredit Motor</option>
-                            <option value="kredit_umroh">Kredit Umroh</option>
                             <option value="pegawai">Pegawai</option>
-                            <option value="pembayaran">Pembayaran</option>
-                            <option value="pinjaman">Pinjaman</option>
-                            <option value="simpanan">Simpanan</option>
-                            <option value="simpanan_history">Simpanan History</option>
                         </select>
-                        <a href="/master/user/exportTable/xlsx" onclick="exportTable('xlsx')" class="block px-4 py-2 text-gray-700 hover:bg-gray-200">Ekspor ke XLSX</a>
-                        <a href="/master/user/exportTable/csv"block px-4 py-2 text-gray-700 hover:bg-gray-200">Ekspor ke CSV</a>
-                        <a href="/master/user/exportTable/pdf" lass="block px-4 py-2 text-gray-700 hover:bg-gray-200">Ekspor ke PDF</a>
+                        <a href="#" onclick="exportTable('xlsx')" class="block px-4 py-2 text-gray-700 hover:bg-gray-200">Ekspor ke XLSX</a>
+                        <a href="#" onclick="exportTable('csv')" class="block px-4 py-2 text-gray-700 hover:bg-gray-200">Ekspor ke CSV</a>
+                        <a href="#" onclick="exportTable('pdf')" class="block px-4 py-2 text-gray-700 hover:bg-gray-200">Ekspor ke PDF</a>
                     </div>
                 </div>
             </div>
-        -->
+        
         <script>
             function toggleDatabaseDropdown() {
                 document.getElementById('databaseExportDropdown').classList.toggle('hidden');
@@ -171,7 +164,7 @@
             
             function exportTable(format) {
                 const selectedTable = document.getElementById('tableSelect').value;
-                window.location.href = `/master/${selectedTable}/exportTable/${format}`;
+                window.location.href = `/master/user/exportTable/${selectedTable}/${format}`;
             }
         </script>
         

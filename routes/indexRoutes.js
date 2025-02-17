@@ -174,9 +174,9 @@ router.get('/master/user/export/:format', (req, res) => {
   const format = req.params.format.toLowerCase();
   exportDatabase(req, res, format);
 });
-router.get('/master/user/exportTable/:format', (req, res) => {
-  const format = req.params.format.toLowerCase();
-  exportData(req, res, format);
+router.get('/master/user/exportTable/:table/:format', (req, res) => {
+  const { table, format } = req.params;
+  exportData(req, res, table, format);
 });
 
 module.exports = router;

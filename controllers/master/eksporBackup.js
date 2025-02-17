@@ -181,8 +181,6 @@ const exportData = (req, res, table, format) => {
                     })
                 break
 
-                
-             
                 case 'pdf':
                     (async () => {
                         try {

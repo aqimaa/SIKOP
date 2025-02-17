@@ -26,6 +26,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            margin-bottom: 20px;
         }
         th, td {
             border: 1px solid #ddd;
@@ -42,6 +43,14 @@
         .text-right {
             text-align: right;
         }
+        .summary-section {
+            margin-top: 30px;
+        }
+        .grand-total-row {
+            font-weight: bold;
+            background-color: #5D8736;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -55,6 +64,7 @@
         <% } %>
     </div>
 
+    <!-- Detail Transaksi -->
     <table>
         <thead>
             <tr>
@@ -66,10 +76,26 @@
                 <th>Simpanan Pokok</th>
                 <th>Simpanan Sukarela</th>
                 <th>Metode Bayar</th>
+                <th>Total</th>
             </tr>
         </thead>
         <tbody>
-            <% data.forEach((item, index) => { %>
+            <% 
+            let totalWajib = 0;
+            let totalPokok = 0;
+            let totalSukarela = 0;
+            let grandTotal = 0;
+            
+            data.forEach((item, index) => {
+                // Calculate row total
+                const rowTotal = item.simpanan_wajib + item.simpanan_pokok + item.simpanan_sukarela;
+                
+                // Update running totals
+                totalWajib += item.simpanan_wajib;
+                totalPokok += item.simpanan_pokok;
+                totalSukarela += item.simpanan_sukarela;
+                grandTotal += rowTotal;
+            %>
                 <tr>
                     <td><%= index + 1 %></td>
                     <td><%= item.nip %></td>
@@ -79,8 +105,19 @@
                     <td class="text-right">Rp <%= item.simpanan_pokok.toLocaleString('id-ID') %></td>
                     <td class="text-right">Rp <%= item.simpanan_sukarela.toLocaleString('id-ID') %></td>
                     <td><%= item.metode_bayar %></td>
+                    <td class="text-right">Rp <%= rowTotal.toLocaleString('id-ID') %></td>
                 </tr>
             <% }); %>
+
+            <!-- Total Row -->
+            <tr class="grand-total-row">
+                <td colspan="4" class="text-right"><strong>Total Keseluruhan</strong></td>
+                <td class="text-right">Rp <%= totalWajib.toLocaleString('id-ID') %></td>
+                <td class="text-right">Rp <%= totalPokok.toLocaleString('id-ID') %></td>
+                <td class="text-right">Rp <%= totalSukarela.toLocaleString('id-ID') %></td>
+                <td></td>
+                <td class="text-right">Rp <%= grandTotal.toLocaleString('id-ID') %></td>
+            </tr>
         </tbody>
     </table>
 </body>

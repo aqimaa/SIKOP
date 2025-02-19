@@ -308,7 +308,7 @@ exports.prosesBayar = async (req, res) => {
           }
 
           const kreditUmroh = results[0];
-          const sisaPiutangBaru = kreditUmroh.sisa_piutang - jumlahBayar;
+          const sisaPiutangBaru = kreditUmroh.sisa_piutang - kreditUmroh.pokok;
           const angsuranKeBaru = kreditUmroh.angsuran_ke + 1;
           const statusPinjaman = sisaPiutangBaru <= 0 ? 'Lunas' : 'Belum Lunas';
 

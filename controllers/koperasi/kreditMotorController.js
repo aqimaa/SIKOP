@@ -314,7 +314,7 @@ exports.prosesBayarKreditMotor = async (req, res) => {
       }
 
       const kreditMotor = results[0];
-      const sisaPiutangBaru = kreditMotor.sisa_piutang - jumlahBayar;
+      const sisaPiutangBaru = kreditMotor.sisa_piutang - kreditMotor.pokok;
       const angsuranKeBaru = kreditMotor.angsuran_ke + 1;
       const statusPinjaman = sisaPiutangBaru <= 0 ? 'Lunas' : 'Belum Lunas';
 

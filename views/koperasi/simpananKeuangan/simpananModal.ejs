@@ -150,7 +150,7 @@ function initializeForm() {
 
 async function loadAnggotaList() {
     try {
-        const response = await fetch('/api/anggota');
+        const response = await fetch('/api/anggotaSimpanan');
         anggotaList = await response.json();
         
         const anggotaSelect = document.getElementById('anggotaSelect');

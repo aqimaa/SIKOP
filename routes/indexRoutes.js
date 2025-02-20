@@ -125,7 +125,7 @@ router.get("/api/simpanan", simpananController.getSimpananData);
 router.get("/simpanankoperasi", simpananController.lihatSimpanan);
 router.get("/api/simpanan/filter", simpananController.filterSimpanan);
 router.get("/api/simpanan/years", simpananController.getAvailableYears);
-router.get("/api/anggota", simpananController.getAnggotaListSimpanan);
+router.get("/api/anggotaSimpanan", simpananController.getAnggotaListSimpanan);
 router.get("/api/simpanan/history/:id_anggota", simpananController.getHistorySimpanan);
 router.get("/api/simpanan/check/:id_anggota", simpananController.checkAnggotaSimpanan);
 router.get('/simpanan/export', simpananController.exportSimpananPDF);

@@ -18,9 +18,9 @@ Welcome to the SIKOP repository, a Cooperative Information System project develo
 
 ### Technologies Used
 
-- **Frontend**: 
-- **Backend**: 
-- **Database**: 
+- **Frontend**: Tailwindcss
+- **Backend**: Express.js, Node.js
+- **Database**: Mysql
 
 ---
 

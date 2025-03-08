@@ -5,7 +5,6 @@
         <div class="p-6 border-b bg-[#5D8736] rounded-t-lg" style="background-color: #5D8736">
             <h2 class="text-xl font-semibold text-white">Tambah Simpanan Baru</h2>
         </div>
-
         <!-- Body -->
         <div class="p-6 overflow-y-auto">
             <form id="simpananForm" class="space-y-6">
@@ -30,7 +29,6 @@
                         </select>
                         <div id="searchResults" class="absolute z-10 w-full bg-white border rounded-lg mt-1 shadow-lg hidden max-h-60 overflow-y-auto"></div>
                     </div>
-
                     <!-- NIP Field (Read Only) -->
                     <div>
                         <label class="block text-sm font-medium mb-2">NIP</label>
@@ -54,11 +52,11 @@
                         </label>
                         <div id="formPokok" class="mt-4">
                             <label class="block text-sm text-gray-600 mb-2">Jumlah (Rp)</label>
-                            <input 
-                                type="number" 
-                                name="simpanan_pokok" 
+                            <input
+                                type="number"
+                                name="simpanan_pokok"
                                 value="100000"
-                                class="w-full p-3 border rounded-lg bg-gray-100" 
+                                class="w-full p-3 border rounded-lg bg-gray-100"
                                 readonly
                             >
                             <p class="text-sm text-gray-500 mt-2">*Simpanan pokok ditetapkan sebesar Rp 100.000</p>
@@ -73,8 +71,8 @@
                         </label>
                         <div id="formWajib" class="mt-4">
                             <label class="block text-sm text-gray-600 mb-2">Jumlah (Rp)</label>
-                            <input 
-                                type="number" 
+                            <input
+                                type="number"
                                 name="simpanan_wajib"
                                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500"
                             >
@@ -89,8 +87,8 @@
                         </label>
                         <div id="formSukarela" class="mt-4">
                             <label class="block text-sm text-gray-600 mb-2">Jumlah (Rp)</label>
-                            <input 
-                                type="number" 
+                            <input
+                                type="number"
                                 name="simpanan_sukarela"
                                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500"
                             >
@@ -132,6 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadAnggotaList();
     setupSearchHandler();
     initializeForm();
+    setupCheckboxHandlers();
 });
 
 function initializeForm() {
@@ -148,11 +147,23 @@ function initializeForm() {
     }
 }
 
+function setupCheckboxHandlers() {
+    // Add event listeners to checkboxes
+    ['Wajib', 'Pokok', 'Sukarela'].forEach(type => {
+        const checkbox = document.getElementById(`check${type}`);
+        if (checkbox) {
+            checkbox.addEventListener('change', function() {
+                toggleSimpananForm(type);
+            });
+        }
+    });
+}
+
 async function loadAnggotaList() {
     try {
         const response = await fetch('/api/anggotaSimpanan');
         anggotaList = await response.json();
-        
+       
         const anggotaSelect = document.getElementById('anggotaSelect');
         anggotaList.forEach(anggota => {
             const option = document.createElement('option');
@@ -170,7 +181,7 @@ function setupSearchHandler() {
     const searchInput = document.getElementById('searchAnggota');
     const searchResults = document.getElementById('searchResults');
     const nipField = document.getElementById('nipField');
-    
+   
     searchInput.addEventListener('input', (e) => {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
@@ -179,15 +190,15 @@ function setupSearchHandler() {
                 searchResults.classList.add('hidden');
                 return;
             }
-            
+           
             const filteredResults = anggotaList.filter(anggota =>
                 anggota.nama.toLowerCase().includes(searchTerm)
             );
-            
+           
             displaySearchResults(filteredResults);
         }, 300);
     });
-    
+   
     document.addEventListener('click', (e) => {
         if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
             searchResults.classList.add('hidden');
@@ -199,7 +210,7 @@ async function checkAnggotaSimpanan(idAnggota) {
     try {
         const response = await fetch(`/api/simpanan/check/${idAnggota}`);
         const data = await response.json();
-
+        
         // Enable semua checkbox setelah anggota dipilih
         ['Wajib', 'Pokok', 'Sukarela'].forEach(type => {
             const checkbox = document.getElementById(`check${type}`);
@@ -219,7 +230,6 @@ async function checkAnggotaSimpanan(idAnggota) {
         const pokokContainer = document.getElementById('pokokContainer');
         const checkPokok = document.getElementById('checkPokok');
         const formPokok = document.getElementById('formPokok');
-
         if (data.has_simpanan_pokok) {
             pokokContainer.style.display = 'none';
         } else {
@@ -228,12 +238,12 @@ async function checkAnggotaSimpanan(idAnggota) {
             formPokok.classList.remove('hidden');
         }
 
-        // Reset simpanan sukarela
+        // Reset simpanan sukarela - but keep it enabled
         const checkSukarela = document.getElementById('checkSukarela');
         const formSukarela = document.getElementById('formSukarela');
         checkSukarela.checked = false;
         formSukarela.classList.add('hidden');
-
+        
     } catch (error) {
         console.error('Error checking simpanan:', error);
         showNotification('Gagal memeriksa data simpanan', 'error');
@@ -243,10 +253,10 @@ async function checkAnggotaSimpanan(idAnggota) {
 function displaySearchResults(results) {
     const searchResults = document.getElementById('searchResults');
     const anggotaSelect = document.getElementById('anggotaSelect');
-    
+   
     searchResults.innerHTML = '';
     searchResults.classList.remove('hidden');
-    
+   
     if (results.length === 0) {
         searchResults.innerHTML = `
             <div class="p-4 text-gray-500 text-center">
@@ -255,7 +265,7 @@ function displaySearchResults(results) {
         `;
         return;
     }
-    
+   
     results.forEach(anggota => {
         const div = document.createElement('div');
         div.className = 'p-3 hover:bg-gray-100 cursor-pointer';
@@ -263,17 +273,17 @@ function displaySearchResults(results) {
             <div class="font-medium">${anggota.nama}</div>
             <div class="text-sm text-gray-600">${anggota.nip}</div>
         `;
-        
+       
         div.addEventListener('click', async () => {
             document.getElementById('searchAnggota').value = anggota.nama;
             document.getElementById('nipField').value = anggota.nip;
             anggotaSelect.value = anggota.id;
             searchResults.classList.add('hidden');
-            
+           
             // Check simpanan history dan update form
             await checkAnggotaSimpanan(anggota.id);
         });
-        
+       
         searchResults.appendChild(div);
     });
 }
@@ -281,7 +291,7 @@ function displaySearchResults(results) {
 function toggleSimpananForm(type) {
     const checkbox = document.getElementById(`check${type}`);
     const form = document.getElementById(`form${type}`);
-    
+   
     if (checkbox.checked) {
         form.classList.remove('hidden');
     } else {
@@ -294,12 +304,12 @@ function clearForm() {
     document.getElementById('nipField').value = '';
     document.getElementById('anggotaSelect').value = '';
     document.getElementById('searchResults').classList.add('hidden');
-    
+   
     // Reset semua checkbox dan form
     ['Wajib', 'Pokok', 'Sukarela'].forEach(type => {
         const checkbox = document.getElementById(`check${type}`);
         const form = document.getElementById(`form${type}`);
-        
+       
         if (checkbox) {
             checkbox.checked = false;
             checkbox.disabled = true;
@@ -308,7 +318,6 @@ function clearForm() {
             form.classList.add('hidden');
         }
     });
-
     // Reset input values
     document.querySelector('input[name="simpanan_wajib"]').value = "";
     document.querySelector('input[name="simpanan_sukarela"]').value = "";
@@ -329,11 +338,9 @@ async function submitSimpanan() {
     if (!validateForm()) {
         return;
     }
-
     const form = document.getElementById('simpananForm');
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
-
     try {
         const response = await fetch('/api/simpanan', {
             method: 'POST',
@@ -342,20 +349,19 @@ async function submitSimpanan() {
             },
             body: JSON.stringify(data)
         });
-
         if (!response.ok) throw new Error('Network response was not ok');
-        
+       
         const result = await response.json();
-        
+       
         if (result.type === 'update') {
             showNotification('Simpanan berhasil diperbarui untuk anggota yang sudah ada', 'success');
         } else {
             showNotification('Simpanan baru berhasil ditambahkan', 'success');
         }
-        
+       
         closeSimpananModal();
         handleFilter();
-        
+       
     } catch (error) {
         console.error('Error submitting simpanan:', error);
         showNotification('Terjadi kesalahan saat menyimpan data', 'error');
@@ -368,22 +374,19 @@ function validateForm() {
         showNotification('Silakan pilih anggota terlebih dahulu', 'warning');
         return false;
     }
-
     const checkWajib = document.getElementById('checkWajib').checked;
     const checkPokok = document.getElementById('checkPokok').checked;
     const checkSukarela = document.getElementById('checkSukarela').checked;
-    
+   
     if (!checkWajib && !checkPokok && !checkSukarela) {
         showNotification('Pilih minimal satu jenis simpanan', 'warning');
         return false;
     }
-
     const metodeBayar = document.querySelector('select[name="metode_bayar"]').value;
     if (!metodeBayar) {
         showNotification('Pilih metode pembayaran', 'warning');
         return false;
     }
-
     return true;
 }
 </script>

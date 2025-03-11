@@ -363,7 +363,6 @@ exports.simpanEditPinjaman = async (req, res) => {
     kategori,
     jumlah_pinjaman,
     jangka_waktu,
-    margin_persen,
     tanggal_perjanjian,
     angsuran_pokok,
     margin_per_bulan,
@@ -371,56 +370,75 @@ exports.simpanEditPinjaman = async (req, res) => {
     sisa_piutang,
   } = req.body;
 
-  const cleanNumberFormat = (value) => {
-    return parseFloat(value.replace(/\./g, '').replace(',', '.'));
-  };
+  try {
+    // Ambil data pinjaman yang sudah ada
+    const getPinjamanQuery = 'SELECT margin_persen FROM pinjaman WHERE id = ?';
+    db.query(getPinjamanQuery, [id], (error, results) => {
+      if (error) {
+        console.error("Error saat mengambil data pinjaman:", error);
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mengambil data pinjaman." });
+      }
+      if (results.length === 0) {
+        return res.status(404).json({ success: false, message: "Data pinjaman tidak ditemukan." });
+      }
 
-  const formattedJumlahPinjaman = cleanNumberFormat(jumlah_pinjaman);
-  const formattedAngsuranPokok = cleanNumberFormat(angsuran_pokok);
-  const formattedMarginPerBulan = cleanNumberFormat(margin_per_bulan);
-  const formattedTotalAngsuran = cleanNumberFormat(total_angsuran);
-  const formattedSisaPiutang = cleanNumberFormat(sisa_piutang);
+      const margin_persen = results[0].margin_persen;
 
-  const query = `
-    UPDATE pinjaman
-    SET 
-      id_anggota = ?,
-      kategori = ?,
-      jumlah_pinjaman = ?,
-      jangka_waktu = ?,
-      margin_persen = ?,
-      tanggal_perjanjian = ?,
-      angsuran_pokok = ?,
-      margin_per_bulan = ?,
-      total_angsuran = ?,
-      sisa_piutang = ?,
-      ket_status = ?
-    WHERE id = ?
-  `;
+      const cleanNumberFormat = (value) => {
+        return parseFloat(value.replace(/\./g, '').replace(',', '.'));
+      };
 
-  const values = [
-    id_anggota,
-    kategori,
-    formattedJumlahPinjaman,
-    jangka_waktu,
-    margin_persen,
-    tanggal_perjanjian,
-    formattedAngsuranPokok,
-    formattedMarginPerBulan,
-    formattedTotalAngsuran,
-    formattedSisaPiutang,
-    formattedSisaPiutang <= 0 ? 'Lunas' : 'Belum Lunas', 
-    id
-  ];
+      const formattedJumlahPinjaman = cleanNumberFormat(jumlah_pinjaman);
+      const formattedAngsuranPokok = cleanNumberFormat(angsuran_pokok);
+      const formattedMarginPerBulan = cleanNumberFormat(margin_per_bulan);
+      const formattedTotalAngsuran = cleanNumberFormat(total_angsuran);
+      const formattedSisaPiutang = cleanNumberFormat(sisa_piutang);
 
-  db.query(query, values, (error, results) => {
-    if (error) {
-      console.error("Error saat mengupdate pinjaman:", error);
-      return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mengupdate pinjaman." });
-    }
-    if (results.affectedRows === 0) {
-      return res.status(404).json({ success: false, message: "Data pinjaman tidak ditemukan." });
-    }
-    res.redirect('/lihatPinjaman');
-  });
+      const query = `
+        UPDATE pinjaman
+        SET 
+          id_anggota = ?,
+          kategori = ?,
+          jumlah_pinjaman = ?,
+          jangka_waktu = ?,
+          margin_persen = ?,
+          tanggal_perjanjian = ?,
+          angsuran_pokok = ?,
+          margin_per_bulan = ?,
+          total_angsuran = ?,
+          sisa_piutang = ?,
+          ket_status = ?
+        WHERE id = ?
+      `;
+
+      const values = [
+        id_anggota,
+        kategori,
+        formattedJumlahPinjaman,
+        jangka_waktu,
+        margin_persen, // Gunakan margin_persen yang sudah ada
+        tanggal_perjanjian,
+        formattedAngsuranPokok,
+        formattedMarginPerBulan,
+        formattedTotalAngsuran,
+        formattedSisaPiutang,
+        formattedSisaPiutang <= 0 ? 'Lunas' : 'Belum Lunas', 
+        id
+      ];
+
+      db.query(query, values, (error, results) => {
+        if (error) {
+          console.error("Error saat mengupdate pinjaman:", error);
+          return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mengupdate pinjaman." });
+        }
+        if (results.affectedRows === 0) {
+          return res.status(404).json({ success: false, message: "Data pinjaman tidak ditemukan." });
+        }
+        res.redirect('/lihatPinjaman');
+      });
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ success: false, message: "Terjadi kesalahan saat mengupdate pinjaman." });
+  }
 };

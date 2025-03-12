@@ -366,7 +366,6 @@ exports.simpanEditKreditElektronik = async (req, res) => {
     id_anggota,
     jumlah_pinjaman,
     jangka_waktu,
-    margin_persen,
     tanggal_mulai,
     pokok,
     margin,
@@ -384,44 +383,56 @@ exports.simpanEditKreditElektronik = async (req, res) => {
   const formattedTotalAngsuran = cleanNumberFormat(total_angsuran);
   const formattedSisaPiutang = cleanNumberFormat(sisa_piutang);
 
-  const query = `
-    UPDATE kredit_elektronik
-    SET 
-      id_anggota = ?,
-      jumlah_pinjaman = ?,
-      jangka_waktu = ?,
-      margin_persen = ?,
-      tanggal_mulai = ?,
-      pokok = ?,
-      margin = ?,
-      total_angsuran = ?,
-      sisa_piutang = ?,
-      ket_status = ?
-    WHERE id = ?
-  `;
-
-  const values = [
-    id_anggota,
-    formattedJumlahPinjaman,
-    jangka_waktu,
-    margin_persen,
-    tanggal_mulai,
-    formattedPokok,
-    formattedMargin,
-    formattedTotalAngsuran,
-    formattedSisaPiutang,
-    formattedSisaPiutang <= 0 ? "Lunas" : "Belum Lunas",
-    id
-  ];
-
-  db.query(query, values, (error, results) => {
+  // Ambil margin_persen yang sudah ada dari database
+  const getMarginQuery = "SELECT margin_persen FROM kredit_elektronik WHERE id = ?";
+  db.query(getMarginQuery, [id], (error, results) => {
     if (error) {
-      console.error("Error saat mengupdate kredit elektronik:", error);
-      return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mengupdate kredit elektronik." });
+      console.error("Error saat mengambil margin_persen:", error);
+      return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mengambil margin_persen." });
     }
-    if (results.affectedRows === 0) {
+    if (results.length === 0) {
       return res.status(404).json({ success: false, message: "Data kredit elektronik tidak ditemukan." });
     }
-    res.redirect('/lihatKreditElektronik');
+
+    const margin_persen = results[0].margin_persen;
+
+    const query = `
+      UPDATE kredit_elektronik
+      SET 
+        id_anggota = ?,
+        jumlah_pinjaman = ?,
+        jangka_waktu = ?,
+        tanggal_mulai = ?,
+        pokok = ?,
+        margin = ?,
+        total_angsuran = ?,
+        sisa_piutang = ?,
+        ket_status = ?
+      WHERE id = ?
+    `;
+
+    const values = [
+      id_anggota,
+      formattedJumlahPinjaman,
+      jangka_waktu,
+      tanggal_mulai,
+      formattedPokok,
+      formattedMargin,
+      formattedTotalAngsuran,
+      formattedSisaPiutang,
+      formattedSisaPiutang <= 0 ? "Lunas" : "Belum Lunas",
+      id
+    ];
+
+    db.query(query, values, (error, results) => {
+      if (error) {
+        console.error("Error saat mengupdate kredit elektronik:", error);
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan saat mengupdate kredit elektronik." });
+      }
+      if (results.affectedRows === 0) {
+        return res.status(404).json({ success: false, message: "Data kredit elektronik tidak ditemukan." });
+      }
+      res.redirect('/lihatKreditElektronik');
+    });
   });
 };

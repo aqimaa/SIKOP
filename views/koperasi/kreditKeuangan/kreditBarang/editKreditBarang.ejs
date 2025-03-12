@@ -185,7 +185,7 @@
             // Log data yang akan dikirim
             console.log('Sending data:', data);
 
-            fetch(`/kredit-barang/${<%= kredit.id %>}`, {
+            fetch(`/kredit-barang/${'<%= kredit.id %>'}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

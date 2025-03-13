@@ -23,9 +23,3 @@ Welcome to the SIKOP repository, a Cooperative Information System project develo
 - **Database**: Mysql
 
 ---
-
-## Installation Guide
-
-1. Clone this repository to your computer:
-   ```bash
-   git clone https://github.com/username/sikop.git
